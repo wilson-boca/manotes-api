@@ -1,0 +1,6 @@
+Flask-RESTful
+Flask-SQLAlchemy
+psycopg2
+alembic==0.9.1
+Flask-Migrate==2.0.3
+sqlalchemy-utils
