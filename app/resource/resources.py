@@ -75,8 +75,6 @@ class NoteResource(ResourceBase):
             return self.return_ok()
 
         def delete(self, note_id):
-            if note_id is None:
-                raise Exception('Please, send me the goddammit id')
             try:
                 self.me.delete_a_note(note_id)
                 return self.return_ok()

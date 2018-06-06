@@ -11,5 +11,6 @@ web_app.config.from_object(config)
 database.AppRepository.db = SQLAlchemy(web_app)
 api.create_api(web_app)
 
+
 def run():
     web_app.run(host='0.0.0.0', port=int(5324), debug=True)

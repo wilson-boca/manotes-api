@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from importlib import import_module
 
+
 class classproperty(object):
     def __init__(self, getter):
         self.getter = getter
