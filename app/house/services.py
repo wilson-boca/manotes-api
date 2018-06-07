@@ -2,7 +2,7 @@
 from importlib import import_module
 
 
-class classproperty(object):
+class ClassProperty(object):
     def __init__(self, getter):
         self.getter = getter
 
@@ -10,14 +10,15 @@ class classproperty(object):
         return self.getter(owner)
 
 
+def classproperty(func):
+    return ClassProperty(func)
+
+
 class Service(object):
     _entity = None
 
     class InvalidDomain(Exception):
         pass
-
-    def __init__(self):
-        self.domain()
 
     @classproperty
     def entity(cls):
@@ -30,26 +31,32 @@ class Service(object):
 
 
 class NoteService(Service):
-    _entity = 'app.entities'
+    _entity = 'app.house.wall'
+
+    class DeleteError(Exception):
+        pass
 
     @classmethod
-    def create_a_note_for_user(cls, note_json):
+    def create(cls, note_json):
         cls.entity.Note.create_new(note_json)
 
     @classmethod
-    def list_notes_for_user(cls):
-        return cls.entity.Note.list_for_user()
+    def list(cls):
+        return cls.entity.Note.list()
 
     @classmethod
-    def delete_a_note_for_user(cls, id):
+    def delete(cls, id):
+        try:
+            note = cls.entity.Note.create_with_id(id)
+            return note.delete_db()
+        except Exception as ex:
+            raise cls.DeleteError('The note couldnt be deleted')
+
+    @classmethod
+    def get_by_id(cls, id):
+        return cls.entity.Note.get_by_id(id)
+
+    @classmethod
+    def update_by_id(cls, id, note_json):
         note = cls.entity.Note.create_with_id(id)
-        return note.delete_db()
-
-    @classmethod
-    def get_a_note_for_user(cls, id):
-        return cls.entity.Note.get_note_for_user(id)
-
-    @classmethod
-    def update_a_note_for_user(cls, id, note_json):
-        note = cls.entity.Note.create_with_id(id)
-        return note.update_note_for_user(note_json)
+        return note.update(note_json)

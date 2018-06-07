@@ -1,6 +1,6 @@
 import re
 from flask_restful import Resource, request
-from app import entities
+from app.house import residents
 
 
 class ResourceBase(Resource):
@@ -54,7 +54,10 @@ class ResourceBase(Resource):
 
 
 class NoteResource(ResourceBase):
-        me = entities.User
+        me = residents.User
+
+        class DeleteError(Exception):
+            pass
 
         def query(self):
             notes = self.me.list_notes()
@@ -78,5 +81,7 @@ class NoteResource(ResourceBase):
             try:
                 self.me.delete_a_note(note_id)
                 return self.return_ok()
+            except self.me.DeleteNoteError as ex:
+                return self.response({'error': 'Couldnt Delete Note', 'message': ex.message})
             except Exception as ex:
-                pass
+                return self.return_unexpected_error()
