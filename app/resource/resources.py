@@ -71,7 +71,7 @@ class NoteResource(ResourceBase):
             return self.return_ok()
 
         def put(self, note_id):
-            note = self.me.update_a_note(note_id, self.payload)
+            self.me.update_a_note(note_id, self.payload)
             return self.return_ok()
 
         def delete(self, note_id):

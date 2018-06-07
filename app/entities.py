@@ -59,7 +59,6 @@ class Note(Entity):
     def delete_db(self):
         self.db_instance.delete_db()
 
-
     def as_dict(self):
         return {
             'id': self.id,

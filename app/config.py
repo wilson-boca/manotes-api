@@ -1,13 +1,13 @@
 import os
 from importlib import import_module # WTF?????????
 
+
 class Config(object):
     DEBUG = False
     TESTING = False
     DEVELOPMENT = False
     ENVIRONMENT = 'development'
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
-    APP_URL = os.environ['APP_URL']
 
 
 class ProductionConfig(Config):
