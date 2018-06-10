@@ -45,7 +45,7 @@ class AbstractModel(object):
             instance.save_db()
             return instance
         except Exception as ex:
-            raise cls.RepositoryError(ex.message)
+            raise cls.RepositoryError(str(ex))
 
     def update_from_json(self, json_data):
         try:
@@ -53,7 +53,7 @@ class AbstractModel(object):
             self.save_db()
             return self
         except Exception as ex:
-            raise self.RepositoryError(ex.message)
+            raise self.RepositoryError(str(ex))
 
     def set_values(self, json_data):
         for key, value in json_data.items():

@@ -52,6 +52,12 @@ class ResourceBase(Resource):
             result.update(extra)
         return result
 
+    def return_not_found(self, **extra):
+        result = {'result': 'not-found', 'error': 'Resource Not Found'}
+        if extra is not None:
+            result.update(extra)
+        return result, 404
+
 
 class NoteResource(ResourceBase):
         me = residents.User
@@ -66,22 +72,33 @@ class NoteResource(ResourceBase):
         def get(self, note_id=None):
             if note_id is None:
                 return self.query()
-            note = self.me.get_a_note(note_id)
-            return note.as_dict()
+
+            try:
+                note = self.me.get_a_note(note_id)
+                return note.as_dict()
+            except self.me.NoteNotFound as ex:
+                return self.return_not_found()
+            except Exception as ex:
+                return self.return_unexpected_error()
 
         def post(self):
             self.me.create_a_note(self.payload)
             return self.return_ok()
 
         def put(self, note_id):
-            self.me.update_a_note(note_id, self.payload)
-            return self.return_ok()
+            try:
+                self.me.update_a_note(note_id, self.payload)
+                return self.return_ok()
+            except self.me.NoteNotFound as ex:
+                return self.return_not_found()
+            except Exception as ex:
+                return self.return_unexpected_error()
 
         def delete(self, note_id):
             try:
                 self.me.delete_a_note(note_id)
                 return self.return_ok()
-            except self.me.DeleteNoteError as ex:
-                return self.response({'error': 'Couldnt Delete Note', 'message': ex.message})
+            except self.me.NoteNotFound as ex:
+                return self.return_not_found()
             except Exception as ex:
                 return self.return_unexpected_error()

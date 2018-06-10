@@ -36,6 +36,9 @@ class NoteService(Service):
     class DeleteError(Exception):
         pass
 
+    class NotFound(Exception):
+        pass
+
     @classmethod
     def create(cls, note_json):
         cls.entity.Note.create_new(note_json)
@@ -49,14 +52,20 @@ class NoteService(Service):
         try:
             note = cls.entity.Note.create_with_id(id)
             return note.delete_db()
-        except Exception as ex:
-            raise cls.DeleteError('The note couldnt be deleted')
+        except cls.entity.Note.NotFound as ex:
+            raise cls.NotFound(str(ex))
 
     @classmethod
     def get_by_id(cls, id):
-        return cls.entity.Note.get_by_id(id)
+        try:
+            return cls.entity.Note.get_by_id(id)
+        except cls.entity.Note.NotFound as ex:
+            raise cls.NotFound(str(ex))
 
     @classmethod
     def update_by_id(cls, id, note_json):
-        note = cls.entity.Note.create_with_id(id)
-        return note.update(note_json)
+        try:
+            note = cls.entity.Note.create_with_id(id)
+            return note.update(note_json)
+        except cls.entity.Note.NotFound as ex:
+            raise cls.NotFound(str(ex))
