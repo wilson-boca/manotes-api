@@ -3,9 +3,6 @@ from app.house import services
 
 class User(object):
 
-    class DeleteNoteError(Exception):
-        pass
-
     class NoteNotFound(Exception):
         pass
 
