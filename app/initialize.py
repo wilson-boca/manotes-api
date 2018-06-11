@@ -1,5 +1,5 @@
-import os
-from flask import Flask, send_from_directory
+import datetime, os
+from flask import Flask, g
 from flask_sqlalchemy import SQLAlchemy
 from app import config as config_module
 from app import api, database
@@ -20,6 +20,19 @@ CORS(
 )
 database.AppRepository.db = SQLAlchemy(web_app)
 api.create_api(web_app)
+
+
+@web_app.after_request
+def add_token_header(response):
+    user = g.get("user")
+    if user is not None:
+        token = g.current_token
+
+        expire_date = datetime.datetime.now()
+        expire_date = expire_date + datetime.timedelta(days=90)
+        response.set_cookie('userToken', token, expires=expire_date)
+
+    return response
 
 
 def run():

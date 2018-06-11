@@ -1,7 +1,26 @@
 import re
-from flask_restful import Resource, request
+from functools import wraps
+from flask_restful import Resource
+from flask import g, Response, request
 from app.house import residents
 
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        authenticated = getattr(g, 'authenticated', False)
+        if not authenticated:
+            return Response('{"result": "Not Authorized"}', 401, content_type='application/json')
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
+def not_allowed(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        return Response('{"result": "Method not allowed"}', 405, content_type='application/json')
+    return decorated_function
 
 class ResourceBase(Resource):
 
@@ -59,11 +78,37 @@ class ResourceBase(Resource):
         return result, 404
 
 
+class LoginResource(ResourceBase):
+    entity = residents.EnemDoorman
+
+    @not_allowed
+    def get(self):
+        pass
+
+    def post(self):
+        try:
+            if self.entity.authenticate(self.payload):
+                g.user = self.entity
+                g.current_token = 'MoCkEdToKeN'
+                return {'result': 'OK'}, 200
+            else:
+                return {'result': 'Not Authorized'}, 401
+        except self.entity.UserNotExists as ex:
+            return {'result': 'not-found', 'error': 'Resource Not Found'}
+        except Exception as ex:
+            return {'result': 'Not Authorized'}, 401
+
+    @not_allowed
+    def put(self):
+        pass
+
+    @not_allowed
+    def delete(self):
+        pass
+
+
 class NoteResource(ResourceBase):
         me = residents.User
-
-        class DeleteError(Exception):
-            pass
 
         def query(self):
             notes = self.me.list_notes()
