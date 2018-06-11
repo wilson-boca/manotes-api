@@ -2,7 +2,7 @@ import re
 from functools import wraps
 from flask_restful import Resource
 from flask import g, Response, request
-from app.house import residents
+from app.house import residents, authentication
 
 
 def login_required(f):
@@ -79,7 +79,7 @@ class ResourceBase(Resource):
 
 
 class LoginResource(ResourceBase):
-    entity = residents.EnemDoorman
+    entity = authentication.EnemDoorman
 
     @not_allowed
     def get(self):
@@ -88,7 +88,7 @@ class LoginResource(ResourceBase):
     def post(self):
         try:
             if self.entity.authenticate(self.payload):
-                g.user = self.entity
+                g.user = residents.User
                 g.current_token = 'MoCkEdToKeN'
                 return {'result': 'OK'}, 200
             else:
