@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class EnemDoorman(object):
 
     class UserNotExists(Exception):
@@ -10,3 +11,9 @@ class EnemDoorman(object):
                 return True
             return False
         raise cls.UserNotExists('The user {} not exists')
+
+    @classmethod
+    def authenticate_token(cls, token):
+        if token == 'MoCkEdToKeN':
+            return True
+        return False

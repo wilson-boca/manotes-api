@@ -114,6 +114,7 @@ class NoteResource(ResourceBase):
             notes = self.me.list_notes()
             return self.response([note.as_dict() for note in notes])
 
+        @login_required
         def get(self, note_id=None):
             if note_id is None:
                 return self.query()
@@ -126,10 +127,12 @@ class NoteResource(ResourceBase):
             except Exception as ex:
                 return self.return_unexpected_error()
 
+        @login_required
         def post(self):
             self.me.create_a_note(self.payload)
             return self.return_ok()
 
+        @login_required
         def put(self, note_id):
             try:
                 self.me.update_a_note(note_id, self.payload)
@@ -139,6 +142,7 @@ class NoteResource(ResourceBase):
             except Exception as ex:
                 return self.return_unexpected_error()
 
+        @login_required
         def delete(self, note_id):
             try:
                 self.me.delete_a_note(note_id)

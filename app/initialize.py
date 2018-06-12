@@ -1,8 +1,10 @@
-import datetime, os
-from flask import Flask, g
+# -*- coding: utf-8 -*-
+import datetime
+from flask import Flask, g, request
 from flask_sqlalchemy import SQLAlchemy
 from app import config as config_module
 from app import api, database
+from app.house import authentication, residents
 from flask_cors import CORS
 
 config = config_module.get_config()
@@ -20,6 +22,17 @@ CORS(
 )
 database.AppRepository.db = SQLAlchemy(web_app)
 api.create_api(web_app)
+
+
+@web_app.before_request
+def before_request():
+    token = request.cookies.get('userToken')
+    authenticated = None
+    if authentication.EnemDoorman.authenticate_token(token):
+        g.user = residents.User
+        g.current_token = token
+        authenticated = True
+    g.authenticated = authenticated
 
 
 @web_app.after_request
