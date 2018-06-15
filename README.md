@@ -81,6 +81,11 @@ Add additional notes about how to deploy this on a live system
 ## Built With
 
 * [Flask](http://flask.pocoo.org/) - The web framework used
+* [Flask-RESTful](https://flask-restful.readthedocs.io/en/latest/) - an extension for Flask that adds support for quickly building REST APIs
+* [Psycopg](http://initd.org/psycopg/) - PostgreSQL adapter for the Python programming language
+* [SQLAlchemy](https://www.sqlalchemy.org/) - Python SQL toolkit and Object Relational Mapper
+* [Alembic](http://alembic.zzzcomputing.com/en/latest/) - lightweight database migration tool for usage with the SQLAlchemy Database Toolkit
+* [Flask Migrate](https://flask-migrate.readthedocs.io/en/latest/) - an extension that handles SQLAlchemy database migrations for Flask applications using Alembic.
 * [pip](https://pypi.org/project/pip/) - Dependency Management
 
 ## Contributing
