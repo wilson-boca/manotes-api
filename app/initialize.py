@@ -26,7 +26,7 @@ api.create_api(web_app)
 
 @web_app.before_request
 def before_request():
-    token = request.cookies.get('userToken')
+    token = request.cookies.get('userTokennnn')
     authenticated = None
     if authentication.EnemDoorman.authenticate_token(token):
         g.user = residents.User
@@ -43,10 +43,10 @@ def add_token_header(response):
 
         expire_date = datetime.datetime.now()
         expire_date = expire_date + datetime.timedelta(days=90)
-        response.set_cookie('userToken', token, expires=expire_date)
+        response.set_cookie('userTokennnn', token, expires=expire_date)
 
     return response
 
 
 def run():
-    web_app.run(host='0.0.0.0', port=int(5324), debug=True, threaded=True)
+    web_app.run(host='127.0.0.1', port=int(5324), debug=True, threaded=True)
