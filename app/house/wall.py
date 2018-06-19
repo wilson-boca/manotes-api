@@ -44,10 +44,6 @@ class Note(object):
         notes = [cls.create_with_instance(note_db) for note_db in notes_db]
         return notes
 
-    @classmethod
-    def get_by_id(cls, id):
-        return cls.create_with_id(id)
-
     def update(self, note_json):
         return self.db_instance.update_from_json(note_json)
 

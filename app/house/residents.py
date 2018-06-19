@@ -29,7 +29,7 @@ class User(object):
     @classmethod
     def get_a_note(cls, id):
         try:
-            return services.NoteService.get_by_id(id)
+            return services.NoteService.create_with_id(id)
         except services.NoteService.NotFound as ex:
             raise cls.NoteNotFound(str(ex))
 

@@ -56,9 +56,9 @@ class NoteService(Service):
             raise cls.NotFound(str(ex))
 
     @classmethod
-    def get_by_id(cls, id):
+    def create_with_id(cls, id):
         try:
-            return cls.entity.Note.get_by_id(id)
+            return cls.entity.Note.create_with_id(id)
         except cls.entity.Note.NotFound as ex:
             raise cls.NotFound(str(ex))
 

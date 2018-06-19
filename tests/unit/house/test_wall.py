@@ -5,6 +5,11 @@ from app.house import wall
 class NoteTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.house.wall.Note.repository.one_or_none')
+    def setUp(self, one_or_none_mock):
+        one_or_none_mock = self.mock.MagicMock()
+        self.note = wall.Note.create_with_id(1)
+
+    @base.TestCase.mock.patch('app.house.wall.Note.repository.one_or_none')
     @base.TestCase.mock.patch('app.house.wall.Note.repository')
     def test_create_with_id(self, repository_mock, one_or_none_mock):
         repository_mock = self.mock.MagicMock()
@@ -28,9 +33,21 @@ class NoteTest(base.TestCase):
         self.assertTrue(isinstance(created_note, wall.Note))
 
     @base.TestCase.mock.patch('app.house.wall.Note.repository.create_from_json')
-    @base.TestCase.mock.patch('app.house.wall.Note.repository')
-    def test_create_new(self, repository_mock, create_from_json_mock):
-        repository_mock = self.mock.MagicMock()
+    def test_create_new(self, create_from_json_mock):
         instance_mock = self.mock.MagicMock()
         created_note = wall.Note.create_new(instance_mock)
         self.assertTrue(create_from_json_mock.called)
+
+    @base.TestCase.mock.patch('app.house.wall.Note.repository.filter')
+    def test_list(self, filter_mock):
+        instance_mock = self.mock.MagicMock()
+        notes = wall.Note.list()
+        self.assertTrue(filter_mock.called)
+
+    def test_update(self):
+        self.note.db_instance.update_from_json = self.mock.MagicMock()
+        self.note.update({'key': 'value'})
+        self.assertTrue(self.note.db_instance.update_from_json.called)
+
+    def tearDown(self):
+        self.note = {}
