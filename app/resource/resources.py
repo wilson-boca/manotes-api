@@ -22,6 +22,7 @@ def not_allowed(f):
         return Response('{"result": "Method not allowed"}', 405, content_type='application/json')
     return decorated_function
 
+
 class ResourceBase(Resource):
 
     @property
