@@ -22,9 +22,10 @@ class NoteServiceTest(base.TestCase):
         services.NoteService.delete(1)
         self.assertTrue(delete_mock.called)
 
-    @base.TestCase.mock.patch('app.house.wall.Note.update')
-    @base.TestCase.mock.patch('app.house.wall.Note.create_with_id')
-    def test_update_by_id(self, create_with_id_mock, update_mock):
-        create_with_id_mock.return_value = wall.Note(db_instance=mock.MagicMock())
+    @base.TestCase.mock.patch('app.house.wall.Note')
+    def test_update_by_id(self, note_mock):
+        note_instance_mock = self.mock.MagicMock(breno='conaldo')
+        note_mock.create_with_id.return_value = note_instance_mock
+        note_instance_mock.update.return_value = None
         services.NoteService.update_by_id(1, {'i am': 'a python dict'})
-        self.assertTrue(update_mock.called)
+        self.assertTrue(note_instance_mock.update.called)
