@@ -1,6 +1,5 @@
 from tests import base
-from mock import mock
-from app.house import services, wall
+from app.house import services
 
 
 class NoteServiceTest(base.TestCase):
@@ -15,16 +14,17 @@ class NoteServiceTest(base.TestCase):
         services.NoteService.list()
         self.assertTrue(list_mock.called)
 
-    @base.TestCase.mock.patch('app.house.wall.Note.delete_db')
-    @base.TestCase.mock.patch('app.house.wall.Note.create_with_id')
-    def test_delete(self, create_with_id_mock, delete_mock):
-        create_with_id_mock.return_value = wall.Note(db_instance=mock.MagicMock())
+    @base.TestCase.mock.patch('app.house.wall.Note')
+    def test_delete(self, note_mock):
+        note_instance_mock = self.mock.MagicMock()
+        note_mock.create_with_id.return_value = note_instance_mock
+        note_instance_mock.delete.return_value = None
         services.NoteService.delete(1)
-        self.assertTrue(delete_mock.called)
+        self.assertTrue(note_instance_mock.delete_db.called)
 
     @base.TestCase.mock.patch('app.house.wall.Note')
     def test_update_by_id(self, note_mock):
-        note_instance_mock = self.mock.MagicMock(breno='conaldo')
+        note_instance_mock = self.mock.MagicMock()
         note_mock.create_with_id.return_value = note_instance_mock
         note_instance_mock.update.return_value = None
         services.NoteService.update_by_id(1, {'i am': 'a python dict'})
