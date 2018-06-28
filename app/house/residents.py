@@ -10,7 +10,6 @@ class User(object):
         pass
 
 
-
     @classmethod
     def create_a_note(cls, note_json):
         services.NoteService.create(note_json)
