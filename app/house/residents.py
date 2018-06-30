@@ -9,6 +9,22 @@ class User(object):
     class UserNotExists(Exception):
         pass
 
+    def __init__(self, id, token):
+        self._id = id
+        self._token = token
+
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def token(self):
+        return self._token
+
+    @classmethod
+    def create_with_token(cls, token):
+        mocked_id = 1
+        return cls(mocked_id, token)
 
     @classmethod
     def create_a_note(cls, note_json):

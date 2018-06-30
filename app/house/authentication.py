@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-class EnemDoorman(object):
+from app.house import residents
+
+
+class AuthService(object):
 
     class UserNotExists(Exception):
         pass
@@ -14,6 +17,8 @@ class EnemDoorman(object):
 
     @classmethod
     def authenticate_token(cls, token):
+        authenticated = False
         if token == 'MoCkEdToKeN':
-            return True
-        return False
+            authenticated = True
+            return authenticated, residents.User.create_with_token(token)
+        return authenticated, None

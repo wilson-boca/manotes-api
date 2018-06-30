@@ -26,12 +26,11 @@ api.create_api(web_app)
 
 @web_app.before_request
 def before_request():
-    token = request.cookies.get('userTokennnn')
-    authenticated = None
-    if authentication.EnemDoorman.authenticate_token(token):
-        g.user = residents.User
+    token = request.cookies.get('userToken')
+    authenticated, user = authentication.AuthService.authenticate_token(token)
+    if authenticated:
+        g.user = user
         g.current_token = token
-        authenticated = True
     g.authenticated = authenticated
 
 
@@ -43,7 +42,7 @@ def add_token_header(response):
 
         expire_date = datetime.datetime.now()
         expire_date = expire_date + datetime.timedelta(days=90)
-        response.set_cookie('userTokennnn', token, expires=expire_date)
+        response.set_cookie('userToken', token, expires=expire_date)
 
     return response
 

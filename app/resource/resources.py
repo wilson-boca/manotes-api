@@ -25,6 +25,14 @@ def not_allowed(f):
 
 class ResourceBase(Resource):
 
+    def __init__(self):
+        super(ResourceBase, self).__init__()
+        self.me = self.logged_user
+
+    @property
+    def logged_user(self):
+        return getattr(g, 'user', None)
+
     @property
     def payload(self):
         payload = {}
@@ -80,7 +88,7 @@ class ResourceBase(Resource):
 
 
 class LoginResource(ResourceBase):
-    entity = authentication.EnemDoorman
+    auth_service = authentication.AuthService
 
     @not_allowed
     def get(self):
@@ -88,13 +96,13 @@ class LoginResource(ResourceBase):
 
     def post(self):
         try:
-            if self.entity.authenticate(self.payload):
+            if self.auth_service.authenticate(self.payload):
                 g.user = residents.User
                 g.current_token = 'MoCkEdToKeN'
                 return {'result': 'OK'}, 200
             else:
                 return {'result': 'Not Authorized'}, 401
-        except self.entity.UserNotExists as ex:
+        except self.auth_service.UserNotExists as ex:
             return {'result': 'not-found', 'error': 'Resource Not Found'}
         except Exception as ex:
             return {'result': 'Not Authorized'}, 401
@@ -109,7 +117,6 @@ class LoginResource(ResourceBase):
 
 
 class NoteResource(ResourceBase):
-        me = residents.User
 
         def query(self):
             notes = self.me.list_notes()
