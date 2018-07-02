@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from importlib import import_module
+from passlib.hash import pbkdf2_sha256
 
 
 class ClassProperty(object):
@@ -69,3 +70,10 @@ class NoteService(Service):
             return note.update(note_json)
         except cls.entity.Note.NotFound as ex:
             raise cls.NotFound(str(ex))
+
+
+class EncryptionService(Service):
+
+    @classmethod
+    def is_equal(cls, string, hashed_string):
+        return pbkdf2_sha256.verify(string, hashed_string)

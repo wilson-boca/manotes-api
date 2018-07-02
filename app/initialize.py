@@ -27,11 +27,11 @@ api.create_api(web_app)
 @web_app.before_request
 def before_request():
     token = request.cookies.get('userToken')
-    authenticated, user = authentication.AuthService.authenticate_token(token)
-    if authenticated:
-        g.user = user
-        g.current_token = token
-    g.authenticated = authenticated
+    try:
+        g.user = authentication.AuthService.authenticate_token(token)
+        g.authenticated = True
+    except authentication.AuthService.UserNotExists:
+        g.authenticated = False
 
 
 @web_app.after_request

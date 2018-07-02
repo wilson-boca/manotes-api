@@ -73,4 +73,5 @@ class User(db.Model, AbstractModel):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True)
     email = db.Column(db.String, unique=True)
+    token = db.Column(db.String, unique=True)
     password = db.Column(db.String)
