@@ -66,3 +66,11 @@ class Note(db.Model, AbstractModel):
     name = db.Column(db.String)
     content = db.Column(db.String)
     color = db.Column(db.String)
+
+
+class User(db.Model, AbstractModel):
+    __tablename__ = 'manotes_user'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, unique=True)
+    email = db.Column(db.String, unique=True)
+    password = db.Column(db.String)
