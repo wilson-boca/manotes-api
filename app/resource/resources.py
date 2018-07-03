@@ -3,6 +3,7 @@ from functools import wraps
 from flask_restful import Resource
 from flask import g, Response, request
 from app import authentication
+from app.house import residents
 
 
 def login_required(f):
@@ -26,6 +27,7 @@ def not_allowed(f):
 class ResourceBase(Resource):
 
     def __init__(self):
+        from app.house import residents
         super(ResourceBase, self).__init__()
         self.me = self.logged_user
 
@@ -130,7 +132,7 @@ class NoteResource(ResourceBase):
             try:
                 note = self.me.get_a_note(note_id)
                 return note.as_dict()
-            except self.me.NoteNotFound as ex:
+            except residents.NotFound as ex:
                 return self.return_not_found()
             except Exception as ex:
                 return self.return_unexpected_error()

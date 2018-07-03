@@ -2,12 +2,11 @@
 import datetime
 from flask import Flask, g, request
 from flask_sqlalchemy import SQLAlchemy
-from app import config as config_module, authentication
-from app import api, database
+from app import database, config as config_module
 from flask_cors import CORS
 
-config = config_module.get_config()
 
+config = config_module.get_config()
 web_app = Flask(__name__)
 web_app.config.from_object(config)
 CORS(
@@ -20,11 +19,11 @@ CORS(
     supports_credentials=True
 )
 database.AppRepository.db = SQLAlchemy(web_app)
-api.create_api(web_app)
 
 
 @web_app.before_request
 def before_request():
+    from app import authentication
     token = request.cookies.get('userToken')
     authentication.AuthService.authenticate_token(token)
 
@@ -42,5 +41,11 @@ def add_token_header(response):
     return response
 
 
+def create_api():
+    from app import api
+    api.create_api(web_app)
+
+
 def run():
+    create_api()
     web_app.run(host='127.0.0.1', port=int(5324), debug=True, threaded=True)

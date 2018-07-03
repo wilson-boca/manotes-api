@@ -2,17 +2,16 @@ from app.house import services
 from app import models
 
 
+class NotFound(Exception):
+    pass
+
+
+class NotExists(Exception):
+    pass
+
+
 class User(object):
     repository = models.User
-
-    class NotFound(Exception):
-        pass
-
-    class NoteNotFound(Exception):
-        pass
-
-    class UserNotExists(Exception):
-        pass
 
     def __init__(self, db_instance):
         self.db_instance = db_instance
@@ -30,7 +29,7 @@ class User(object):
     def create_with_id(cls, id):
         db_instance = cls.repository.one_or_none(id=id)
         if db_instance is None:
-            raise cls.NotFound('Could not find a note with id {}'.format(id))
+            raise NotFound('Could not find a note with id {}'.format(id))
         return cls(db_instance=db_instance)
 
     @classmethod
@@ -41,14 +40,14 @@ class User(object):
     def create_with_token(cls, token):
         db_instance = cls.repository.one_or_none(token=token)
         if db_instance is None:
-            raise cls.NotFound('Could not find a user with token {}'.format(token))
+            raise NotFound('Could not find a user with token {}'.format(token))
         return cls(db_instance=db_instance)
 
     @classmethod
     def create_with_username(cls, username):
         db_instance = cls.repository.one_or_none(username=username)
         if db_instance is None:
-            raise cls.NotFound('Could not find a user with username {}'.format(username))
+            raise NotFound('Could not find a user with username {}'.format(username))
         return cls(db_instance=db_instance)
 
     @classmethod
@@ -63,19 +62,19 @@ class User(object):
     def delete_a_note(cls, id):
         try:
             return services.NoteService.delete(id)
-        except services.NoteService.NotFound as ex:
-            raise cls.NoteNotFound(str(ex))
+        except services.NotFound as ex:
+            raise NotFound(str(ex))
 
     @classmethod
     def get_a_note(cls, id):
         try:
             return services.NoteService.create_with_id(id)
-        except services.NoteService.NotFound as ex:
-            raise cls.NoteNotFound(str(ex))
+        except services.NotFound as ex:
+            raise NotFound(str(ex))
 
     @classmethod
     def update_a_note(cls, id, note_json):
         try:
             return services.NoteService.update_by_id(id, note_json)
-        except services.NoteService.NotFound as ex:
-            raise cls.NoteNotFound(str(ex))
+        except services.NotFound as ex:
+            raise NotFound(str(ex))

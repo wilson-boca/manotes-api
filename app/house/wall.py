@@ -4,11 +4,12 @@ from app import models
 config = config.get_config()
 
 
+class NotFound(Exception):
+    pass
+
+
 class Note(object):
     repository = models.Note
-
-    class NotFound(Exception):
-        pass
 
     def __init__(self, db_instance):
         self.db_instance = db_instance
@@ -27,7 +28,7 @@ class Note(object):
     def create_with_id(cls, note_id):
         db_instance = cls.repository.one_or_none(id=note_id)
         if db_instance is None:
-            raise cls.NotFound('Could not find a note with id {}'.format(note_id))
+            raise NotFound('Could not find a note with id {}'.format(note_id))
         return cls(db_instance=db_instance)
 
     @classmethod
