@@ -3,7 +3,7 @@ from app import models
 
 
 class User(object):
-    repository = models.Note
+    repository = models.User
 
     class NotFound(Exception):
         pass
@@ -21,6 +21,10 @@ class User(object):
     @property
     def token(self):
         return self.db_instance.token
+
+    @property
+    def password(self):
+        return self.db_instance.password
 
     @classmethod
     def create_with_id(cls, id):

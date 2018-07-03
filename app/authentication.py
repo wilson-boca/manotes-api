@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from passlib.hash import pbkdf2_sha256
+from flask import g
 
 
 class AuthService(object):
@@ -19,12 +20,10 @@ class AuthService(object):
     @classmethod
     def authenticate_token(cls, token):
         from app.house import residents
-        # authenticated = False
-        # if token == 'MoCkEdToKeN':
-        #     authenticated = True
-        #     return authenticated, residents.User.create_with_token(token)
-        # return authenticated, None
         try:
-            return residents.User.create_with_token(token)
+            user = residents.User.create_with_token(token)
+            g.user = user
+            g.current_token = user.token
+            g.authenticated = True
         except residents.User.NotFound:
-            raise cls.UserNotExists('Could not find a user with token {}'.format(token))
+            g.authenticated = False
