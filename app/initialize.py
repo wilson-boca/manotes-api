@@ -2,9 +2,8 @@
 import datetime
 from flask import Flask, g, request
 from flask_sqlalchemy import SQLAlchemy
-from app import config as config_module
+from app import config as config_module, authentication
 from app import api, database
-from app.house import authentication, residents
 from flask_cors import CORS
 
 config = config_module.get_config()

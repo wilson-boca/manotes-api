@@ -1,8 +1,9 @@
 from app.house import services
-
+from app import models
 
 
 class User(object):
+    repository = models.Note
 
     class NotFound(Exception):
         pass

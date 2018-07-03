@@ -2,7 +2,7 @@ import re
 from functools import wraps
 from flask_restful import Resource
 from flask import g, Response, request
-from app.house import residents, authentication
+from app import authentication
 
 
 def login_required(f):
@@ -96,12 +96,12 @@ class LoginResource(ResourceBase):
 
     def post(self):
         try:
-            if self.auth_service.authenticate(self.payload):
-                g.user = residents.User
-                g.current_token = 'MoCkEdToKeN'
+            authenticated, user = self.auth_service.authenticate(self.payload)
+            if authenticated:
+                g.user = user
+                g.current_token = user.token
                 return {'result': 'OK'}, 200
-            else:
-                return {'result': 'Not Authorized'}, 401
+            return {'result': 'Not Authorized'}, 401
         except self.auth_service.UserNotExists as ex:
             return {'result': 'not-found', 'error': 'Resource Not Found'}
         except Exception as ex:
