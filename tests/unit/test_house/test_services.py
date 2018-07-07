@@ -9,6 +9,18 @@ class NoteServiceTest(base.TestCase):
         services.NoteService.create_new({'key': 'value'})
         self.assertTrue(create_new_mock.called)
 
+    @base.TestCase.mock.patch('app.house.wall.Note')
+    def test_create_not_found(self, note_mock):
+        note_mock.create_new = self.mock.MagicMock(side_effect=services.NotFound('foo'))
+        with self.assertRaises(services.NotFound):
+            services.NoteService.create_new({'key': 'value'})
+
+    @base.TestCase.mock.patch('app.house.wall.Note')
+    def test_create_not_mine(self, note_mock):
+        note_mock.create_new = self.mock.MagicMock(side_effect=services.NotMine('foo'))
+        with self.assertRaises(services.NotMine):
+            services.NoteService.create_new({'key': 'value'})
+
     @base.TestCase.mock.patch('app.house.wall.Note.list_for_user')
     def test_list(self, list_mock):
         services.NoteService.list_for_user(1)
