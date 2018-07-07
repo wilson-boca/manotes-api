@@ -131,7 +131,7 @@ class NoteResource(ResourceBase):
 
             try:
                 note = self.me.get_a_note(note_id)
-                return note.as_dict()
+                return self.response(note.as_dict())
             except residents.NotFound as ex:
                 return self.return_not_found()
             except Exception as ex:
