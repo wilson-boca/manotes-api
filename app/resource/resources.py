@@ -88,6 +88,11 @@ class ResourceBase(Resource):
             result.update(extra)
         return result, 404
 
+    def return_not_mine(self, **extra):
+        result = {'result': 'not-mine', 'error': 'Resource Not Mine'}
+        if extra is not None:
+            result.update(extra)
+        return result, 405
 
 class LoginResource(ResourceBase):
     auth_service = authentication.AuthService
@@ -133,7 +138,9 @@ class NoteResource(ResourceBase):
                 note = self.me.get_a_note(note_id)
                 return self.response(note.as_dict())
             except residents.NotFound as ex:
-                return self.return_not_found()
+                return self.return_not_found(id=note_id)
+            except residents.NotMine as ex:
+                return self.return_not_mine(id=note_id)
             except Exception as ex:
                 return self.return_unexpected_error()
 
@@ -147,8 +154,10 @@ class NoteResource(ResourceBase):
             try:
                 self.me.update_a_note(note_id, self.payload)
                 return self.return_ok()
-            except self.me.NoteNotFound as ex:
-                return self.return_not_found()
+            except residents.NotFound as ex:
+                return self.return_not_found(id=note_id)
+            except residents.NotMine as ex:
+                return self.return_not_mine(id=note_id)
             except Exception as ex:
                 return self.return_unexpected_error()
 
@@ -157,7 +166,9 @@ class NoteResource(ResourceBase):
             try:
                 self.me.delete_a_note(note_id)
                 return self.return_ok()
-            except self.me.NoteNotFound as ex:
-                return self.return_not_found()
+            except residents.NotFound as ex:
+                return self.return_not_found(id=note_id)
+            except residents.NotMine as ex:
+                return self.return_not_mine(id=note_id)
             except Exception as ex:
                 return self.return_unexpected_error()

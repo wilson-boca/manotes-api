@@ -10,6 +10,10 @@ class NotExists(Exception):
     pass
 
 
+class NotMine(Exception):
+    pass
+
+
 class User(object):
     repository = models.User
 
@@ -21,7 +25,7 @@ class User(object):
     @property
     def notes(self):
         if self._notes is None:
-            self._notes = services.NoteService.list(user_id=self.id)
+            self._notes = services.NoteService.list_for_user(user_id=self.id)
         return self._notes
 
     @property
@@ -59,25 +63,28 @@ class User(object):
 
     def create_a_note(self, note_json):
         note_json['user_id'] = self.id
-        services.NoteService.create(note_json)
-
-    def list_notes(self):
-        return services.NoteService.list(user_id=self.id)
+        services.NoteService.create_new(note_json)
 
     def delete_a_note(self, id):
         try:
             return services.NoteService.delete(id, self.id)
         except services.NotFound as ex:
             raise NotFound(str(ex))
+        except services.NotMine as ex:
+            raise NotMine(str(ex))
 
     def get_a_note(self, id):
         try:
             return services.NoteService.create_for_user(id, self.id)
         except services.NotFound as ex:
             raise NotFound(str(ex))
+        except services.NotMine as ex:
+            raise NotMine(str(ex))
 
     def update_a_note(self, id, note_json):
         try:
             return services.NoteService.update_by_id(id, note_json, self.id)
         except services.NotFound as ex:
             raise NotFound(str(ex))
+        except services.NotMine as ex:
+            raise NotMine(str(ex))

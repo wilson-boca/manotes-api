@@ -48,20 +48,22 @@ class NoteService(Service):
     _entity = 'app.house.wall'
 
     @classmethod
-    def create(cls, note_json):
+    def create_new(cls, note_json):
         cls.entity.Note.create_new(note_json)
 
     @classmethod
-    def list(cls, **kwargs):
-        return cls.entity.Note.list(**kwargs)
+    def list_for_user(cls, user_id):
+        return cls.entity.Note.list_for_user(user_id)
 
     @classmethod
     def delete(cls, id, user_id):
         try:
-            note = cls.entity.Note.create_with_id(id, user_id)
+            note = cls.entity.Note.create_for_user(id, user_id)
             return note.delete_db()
         except wall.NotFound as ex:
             raise NotFound(str(ex))
+        except wall.NotMine as ex:
+            raise NotMine(str(ex))
 
     @classmethod
     def create_for_user(cls, id, user_id):
@@ -75,10 +77,12 @@ class NoteService(Service):
     @classmethod
     def update_by_id(cls, id, note_json, user_id):
         try:
-            note = cls.entity.Note.create_with_id(id)
+            note = cls.entity.Note.create_for_user(id, user_id)
             return note.update(note_json)
         except wall.NotFound as ex:
             raise NotFound(str(ex))
+        except wall.NotMine as ex:
+            raise NotMine(str(ex))
 
 
 class EncryptionService(Service):
