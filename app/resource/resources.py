@@ -121,7 +121,7 @@ class LoginResource(ResourceBase):
 class NoteResource(ResourceBase):
 
         def query(self):
-            notes = self.me.list_notes()
+            notes = self.me.notes
             return self.response([note.as_dict() for note in notes])
 
         @login_required
