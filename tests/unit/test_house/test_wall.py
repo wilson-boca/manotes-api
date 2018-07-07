@@ -32,6 +32,15 @@ class NoteTest(base.TestCase):
         created_note = wall.Note.create_with_instance(instance_mock)
         self.assertTrue(isinstance(created_note, wall.Note))
 
+    @base.TestCase.mock.patch('app.house.wall.Note.repository.one_or_none')
+    def test_create_for_user(self, one_or_none_mock):
+        note_mock = self.mock.MagicMock()
+        note_mock.user_id = 1
+        one_or_none_mock.return_value = note_mock
+        created_note = wall.Note.create_for_user(1, 1)
+        self.assertTrue(one_or_none_mock.called)
+        self.assertTrue(isinstance(created_note, wall.Note))
+
     @base.TestCase.mock.patch('app.house.wall.Note.repository.create_from_json')
     def test_create_new(self, create_from_json_mock):
         instance_mock = self.mock.MagicMock()
@@ -41,7 +50,7 @@ class NoteTest(base.TestCase):
     @base.TestCase.mock.patch('app.house.wall.Note.repository.filter')
     def test_list(self, filter_mock):
         instance_mock = self.mock.MagicMock()
-        notes = wall.Note.list()
+        notes = wall.Note.list_for_user(1)
         self.assertTrue(filter_mock.called)
 
     def test_update(self):
