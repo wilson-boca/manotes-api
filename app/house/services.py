@@ -24,6 +24,10 @@ class NotFound(Exception):
     pass
 
 
+class NotMine(Exception):
+    pass
+
+
 class Service(object):
     _entity = None
 
@@ -44,35 +48,41 @@ class NoteService(Service):
     _entity = 'app.house.wall'
 
     @classmethod
-    def create(cls, note_json):
+    def create_new(cls, note_json):
         cls.entity.Note.create_new(note_json)
 
     @classmethod
-    def list(cls):
-        return cls.entity.Note.list()
+    def list_for_user(cls, user_id):
+        return cls.entity.Note.list_for_user(user_id)
 
     @classmethod
-    def delete(cls, id):
+    def delete(cls, id, user_id):
         try:
-            note = cls.entity.Note.create_with_id(id)
+            note = cls.entity.Note.create_for_user(id, user_id)
             return note.delete_db()
         except wall.NotFound as ex:
             raise NotFound(str(ex))
+        except wall.NotMine as ex:
+            raise NotMine(str(ex))
 
     @classmethod
-    def create_with_id(cls, id):
+    def create_for_user(cls, id, user_id):
         try:
-            return cls.entity.Note.create_with_id(id)
+            return cls.entity.Note.create_for_user(id, user_id)
         except wall.NotFound as ex:
             raise NotFound(str(ex))
+        except wall.NotMine as ex:
+            raise NotMine(str(ex))
 
     @classmethod
-    def update_by_id(cls, id, note_json):
+    def update_by_id(cls, id, note_json, user_id):
         try:
-            note = cls.entity.Note.create_with_id(id)
+            note = cls.entity.Note.create_for_user(id, user_id)
             return note.update(note_json)
         except wall.NotFound as ex:
             raise NotFound(str(ex))
+        except wall.NotMine as ex:
+            raise NotMine(str(ex))
 
 
 class EncryptionService(Service):

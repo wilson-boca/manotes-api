@@ -10,12 +10,23 @@ class NotExists(Exception):
     pass
 
 
+class NotMine(Exception):
+    pass
+
+
 class User(object):
     repository = models.User
 
     def __init__(self, db_instance):
         self.db_instance = db_instance
         self.id = db_instance.id
+        self._notes = None
+
+    @property
+    def notes(self):
+        if self._notes is None:
+            self._notes = services.NoteService.list_for_user(user_id=self.id)
+        return self._notes
 
     @property
     def token(self):
@@ -50,31 +61,30 @@ class User(object):
             raise NotFound('Could not find a user with username {}'.format(username))
         return cls(db_instance=db_instance)
 
-    @classmethod
-    def create_a_note(cls, note_json):
-        services.NoteService.create(note_json)
+    def create_a_note(self, note_json):
+        note_json['user_id'] = self.id
+        services.NoteService.create_new(note_json)
 
-    @classmethod
-    def list_notes(cls):
-        return services.NoteService.list()
-
-    @classmethod
-    def delete_a_note(cls, id):
+    def delete_a_note(self, id):
         try:
-            return services.NoteService.delete(id)
+            return services.NoteService.delete(id, self.id)
         except services.NotFound as ex:
             raise NotFound(str(ex))
+        except services.NotMine as ex:
+            raise NotMine(str(ex))
 
-    @classmethod
-    def get_a_note(cls, id):
+    def get_a_note(self, id):
         try:
-            return services.NoteService.create_with_id(id)
+            return services.NoteService.create_for_user(id, self.id)
         except services.NotFound as ex:
             raise NotFound(str(ex))
+        except services.NotMine as ex:
+            raise NotMine(str(ex))
 
-    @classmethod
-    def update_a_note(cls, id, note_json):
+    def update_a_note(self, id, note_json):
         try:
-            return services.NoteService.update_by_id(id, note_json)
+            return services.NoteService.update_by_id(id, note_json, self.id)
         except services.NotFound as ex:
             raise NotFound(str(ex))
+        except services.NotMine as ex:
+            raise NotMine(str(ex))
