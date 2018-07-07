@@ -94,6 +94,7 @@ class ResourceBase(Resource):
             result.update(extra)
         return result, 405
 
+
 class LoginResource(ResourceBase):
     auth_service = authentication.AuthService
 
