@@ -83,7 +83,8 @@ class UserTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.house.services.NoteService')
     def test_get_a_note_return_not_found(self, note_service_mock):
-        note_service_mock.create_for_user = self.mock.MagicMock(side_effect=services.NotFound('foo'))
+        note_service_mock.create_for_user = self.mock.MagicMock(
+            side_effect=services.NotFound('Could not find a note with id 1'))
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
         user = residents.User(db_instance=db_instance)
@@ -92,7 +93,8 @@ class UserTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.house.services.NoteService')
     def test_get_a_note_return_not_mine(self, note_service_mock):
-        note_service_mock.create_for_user = self.mock.MagicMock(side_effect=services.NotMine('foo'))
+        note_service_mock.create_for_user = self.mock.MagicMock(
+            side_effect=services.NotMine('Could not create note because it dont belong to user id 1'))
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
         user = residents.User(db_instance=db_instance)
@@ -129,7 +131,8 @@ class UserTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.house.services.NoteService')
     def test_update_a_note_raise_not_found(self, note_service):
-        note_service.update_by_id = self.mock.MagicMock(side_effect=services.NotFound('foo'))
+        note_service.update_by_id = self.mock.MagicMock(
+            side_effect=services.NotFound('Could not find a note with id 1'))
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
         user = residents.User(db_instance=db_instance)
@@ -144,7 +147,8 @@ class UserTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.house.services.NoteService')
     def test_update_a_note_raise_not_mine(self, note_service):
-        note_service.update_by_id = self.mock.MagicMock(side_effect=services.NotMine('foo'))
+        note_service.update_by_id = self.mock.MagicMock(
+            side_effect=services.NotMine('Could not create note because it dont belong to user id 1'))
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
         user = residents.User(db_instance=db_instance)
@@ -167,7 +171,8 @@ class UserTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.house.services.NoteService')
     def test_delete_a_note_raise_not_found(self, note_service):
-        note_service.delete = self.mock.MagicMock(side_effect=services.NotFound('foo'))
+        note_service.delete = self.mock.MagicMock(
+            side_effect=services.NotFound('Could not find a note with id 1'))
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
         user = residents.User(db_instance=db_instance)
@@ -176,7 +181,8 @@ class UserTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.house.services.NoteService')
     def test_delete_a_note_raise_not_mine(self, note_service):
-        note_service.delete = self.mock.MagicMock(side_effect=services.NotMine('foo'))
+        note_service.delete = self.mock.MagicMock(
+            side_effect=services.NotMine('Could not create note because it dont belong to user id 1'))
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
         user = residents.User(db_instance=db_instance)

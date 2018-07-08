@@ -45,8 +45,13 @@ class NoteResourceTest(base.TestCase):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
         note_mock = self.mock.MagicMock()
-        note_mock.as_dict.return_value = {'id': 1}
-        logged_user_mock.get_a_note = self.mock.MagicMock(side_effect=residents.NotFound('foo'))
+        note_mock.as_dict.return_value = {
+            'id': 1,
+            'name': 'This is a note',
+            'content': 'And I need to write a mock content',
+            'color': '#FFFFFF'
+        }
+        logged_user_mock.get_a_note = self.mock.MagicMock(side_effect=residents.NotFound('Could not find a note with id 1'))
         note_resource = resources.NoteResource()
         response = note_resource.get(1)
         self.assertEqual(response[0], {'result': 'not-found', 'error': 'Resource Not Found', 'id': 1})
@@ -57,7 +62,20 @@ class NoteResourceTest(base.TestCase):
         g_mock.authenticated.return_value = True
         note_resource = resources.NoteResource()
         note_resource.query = self.mock.MagicMock()
-        note_resource.query.return_value = [{'id': 1}, {'id': 2}]
+        note_resource.query.return_value = [
+            {
+                'id': 1,
+                'name': 'This is a note',
+                'content': 'And I need to write a mock content',
+                'color': '#FFFFFF'
+            },
+            {
+                'id': 2,
+                'name': 'This is another note',
+                'content': 'And I need to write another mock content',
+                'color': '#FFFFFF'
+            },
+        ]
         response = note_resource.get()
         self.assertTrue(note_resource.query.called)
 
@@ -77,9 +95,9 @@ class NoteResourceTest(base.TestCase):
         g_mock.authenticated.return_value = True
         logged_user_mock.create_a_note = self.mock.MagicMock()
         payload_mock = {
-            'id': '1',
-            'name': 'this is a note',
-            'content': 'This is a note',
+            'id': 1,
+            'name': 'This is a note',
+            'content': 'And I need to write a mock content',
             'color': '#FFFFFF'
         }
         note_resource = resources.NoteResource()
@@ -103,9 +121,9 @@ class NoteResourceTest(base.TestCase):
         g_mock.authenticated.return_value = True
         logged_user_mock.update_a_note = self.mock.MagicMock()
         payload_mock = {
-            'id': '1',
-            'name': 'this is a note',
-            'content': 'This is a note',
+            'id': 1,
+            'name': 'This is a note',
+            'content': 'And I need to write a mock content',
             'color': '#FFFFFF'
         }
         note_resource = resources.NoteResource()
@@ -121,9 +139,9 @@ class NoteResourceTest(base.TestCase):
         g_mock.authenticated.return_value = True
         logged_user_mock.update_a_note = self.mock.MagicMock(side_effect=residents.NotFound('foo'))
         payload_mock = {
-            'id': '1',
-            'name': 'this is a note',
-            'content': 'This is a note',
+            'id': 1,
+            'name': 'This is a note',
+            'content': 'And I need to write a mock content',
             'color': '#FFFFFF'
         }
         note_resource = resources.NoteResource()
@@ -140,9 +158,9 @@ class NoteResourceTest(base.TestCase):
         g_mock.authenticated.return_value = True
         logged_user_mock.update_a_note = self.mock.MagicMock(side_effect=residents.NotMine('foo'))
         payload_mock = {
-            'id': '1',
-            'name': 'this is a note',
-            'content': 'This is a note',
+            'id': 1,
+            'name': 'This is a note',
+            'content': 'And I need to write a mock content',
             'color': '#FFFFFF'
         }
         note_resource = resources.NoteResource()
