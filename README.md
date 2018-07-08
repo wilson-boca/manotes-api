@@ -91,6 +91,8 @@ Add additional notes about how to deploy this on a live system
 * [Flask Migrate](https://flask-migrate.readthedocs.io/en/latest/) - an extension that handles SQLAlchemy database migrations for Flask applications using Alembic.
 * [flask-CORS](https://flask-cors.readthedocs.io/en/latest/) - A Flask extension for handling Cross Origin Resource Sharing (CORS), making cross-origin AJAX possible.
 * [pip](https://pypi.org/project/pip/) - Dependency Management
+* [mock](https://pypi.org/project/mock/) - mock is a library for testing in Python. It allows you to replace parts of your system under test with mock objects and make assertions about how they have been used.
+* [testtools](testtools is a set of extensions to Python’s standard unittest module.) - testtools is a set of extensions to Python’s standard unittest module.
 
 ## Contributing
 
