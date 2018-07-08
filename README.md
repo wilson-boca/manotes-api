@@ -57,6 +57,9 @@ $ python manage.py db upgrade
 ## Running the tests
 
 Explain how to run the automated tests for this system
+```
+python -m testtools.run
+```
 
 ### Break down into end to end tests
 
