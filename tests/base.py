@@ -1,5 +1,5 @@
 import unittest, os
-from mock import mock
+from unittest import mock
 
 from app import initialize
 
