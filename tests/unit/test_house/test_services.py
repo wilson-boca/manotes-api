@@ -4,15 +4,17 @@ from app.house import services
 
 class NoteServiceTest(base.TestCase):
 
-    @base.TestCase.mock.patch('app.house.wall.Note.create_new')
-    def test_create(self, create_new_mock):
+    @base.TestCase.mock.patch('app.house.wall.Note')
+    def test_create(self, note_mock):
+        note_mock.create_new = self.mock.MagicMock(return_value=None)
         services.NoteService.create_new({'key': 'value'})
-        self.assertTrue(create_new_mock.called)
+        self.assertTrue(note_mock.create_new.called)
 
-    @base.TestCase.mock.patch('app.house.wall.Note.list_for_user')
-    def test_list(self, list_mock):
+    @base.TestCase.mock.patch('app.house.wall.Note')
+    def test_list(self, note_mock):
+        note_mock.list_for_user = self.mock.MagicMock(return_value=None)
         services.NoteService.list_for_user(1)
-        self.assertTrue(list_mock.called)
+        self.assertTrue(note_mock.list_for_user.called)
 
     @base.TestCase.mock.patch('app.house.wall.Note')
     def test_delete(self, note_mock):
