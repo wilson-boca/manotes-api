@@ -1,5 +1,6 @@
 from app.house import services
 from app import models
+from passlib.hash import pbkdf2_sha256
 
 
 class NotFound(Exception):
@@ -14,8 +15,19 @@ class NotMine(Exception):
     pass
 
 
-class User(object):
+class UsernameAlreadyExists(Exception):
+    pass
+
+
+class EmailAlreadyExists(Exception):
+    pass
+
+
+class AbstractUser(object):
     repository = models.User
+
+
+class User(AbstractUser):
 
     def __init__(self, db_instance):
         self.db_instance = db_instance
@@ -88,3 +100,16 @@ class User(object):
             raise NotFound(str(ex))
         except services.NotMine as ex:
             raise NotMine(str(ex))
+
+
+class UnknowUser(AbstractUser):
+
+    @classmethod
+    def create_account(cls, payload):
+        payload['password'] = pbkdf2_sha256.hash(payload['password'])
+        try:
+            cls.repository.create_from_json(payload)
+        except models.UsernameAlreadyExists as ex:
+            raise UsernameAlreadyExists(str(ex))
+        except models.EmailAlreadyExists as ex:
+            raise EmailAlreadyExists(str(ex))

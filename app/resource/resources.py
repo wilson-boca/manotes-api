@@ -30,6 +30,7 @@ class ResourceBase(Resource):
         from app.house import residents
         super(ResourceBase, self).__init__()
         self.me = self.logged_user
+        self.unknow_user = residents.UnknowUser()
 
     @property
     def logged_user(self):
@@ -93,6 +94,20 @@ class ResourceBase(Resource):
         if extra is not None:
             result.update(extra)
         return result, 405
+
+
+class CreateAccountResource(ResourceBase):
+
+    def post(self):
+        try:
+            self.unknow_user.create_account(self.payload)
+            return self.return_ok()
+        except residents.EmailAlreadyExists as ex:
+            return {'result': 'email-already-exists', 'error': 'The resource was not created because the email already exists'}, 400
+        except residents.UsernameAlreadyExists as ex:
+            return {'result': 'username-already-exists', 'error': 'The resource was not created because the username already exists'}, 400
+        except Exception as ex:
+            return self.return_unexpected_error()
 
 
 class LoginResource(ResourceBase):

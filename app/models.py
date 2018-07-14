@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import psycopg2
 from app import config as config_module
 
 from app import database
@@ -8,15 +9,27 @@ db = database.AppRepository.db
 config = config_module.get_config()
 
 
+class AlreadyExist(Exception):
+    pass
+
+
+class NotExist(Exception):
+    pass
+
+
+class RepositoryError(Exception):
+    pass
+
+
+class EmailAlreadyExists(Exception):
+    pass
+
+
+class UsernameAlreadyExists(Exception):
+    pass
+
+
 class AbstractModel(object):
-    class AlreadyExist(Exception):
-        pass
-
-    class NotExist(Exception):
-        pass
-
-    class RepositoryError(Exception):
-        pass
 
     @classmethod
     def one_or_none(cls, **kwargs):
@@ -45,7 +58,7 @@ class AbstractModel(object):
             instance.save_db()
             return instance
         except Exception as ex:
-            raise cls.RepositoryError(str(ex))
+            raise RepositoryError(str(ex))
 
     def update_from_json(self, json_data):
         try:
@@ -53,7 +66,7 @@ class AbstractModel(object):
             self.save_db()
             return self
         except Exception as ex:
-            raise self.RepositoryError(str(ex))
+            raise RepositoryError(str(ex))
 
     def set_values(self, json_data):
         for key, value in json_data.items():
@@ -67,6 +80,20 @@ class User(db.Model, AbstractModel):
     email = db.Column(db.String, unique=True)
     token = db.Column(db.String)
     password = db.Column(db.String)
+
+    @classmethod
+    def create_from_json(cls, json_data):
+        try:
+            instance = cls()
+            instance.set_values(json_data)
+            instance.save_db()
+            return instance
+        except Exception as ex:
+            if 'manotes_user_email_key' in str(ex):
+                raise EmailAlreadyExists('Could not create user because the email already exists')
+            if 'manotes_user_username_key' in str(ex):
+                raise UsernameAlreadyExists('Could not create user because the username already exists')
+            raise RepositoryError(str(ex))
 
 
 class Note(db.Model, AbstractModel):
