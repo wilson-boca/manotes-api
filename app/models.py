@@ -95,6 +95,18 @@ class User(db.Model, AbstractModel):
                 raise UsernameAlreadyExists('Could not create user because the username already exists')
             raise RepositoryError(str(ex))
 
+    def update_from_json(self, json_data):
+        try:
+            self.set_values(json_data)
+            self.save_db()
+            return self
+        except Exception as ex:
+            if 'manotes_user_email_key' in str(ex):
+                raise EmailAlreadyExists('Could not update user because the email already exists')
+            if 'manotes_user_username_key' in str(ex):
+                raise UsernameAlreadyExists('Could not update user because the username already exists')
+            raise RepositoryError(str(ex))
+
 
 class Note(db.Model, AbstractModel):
     __tablename__ = 'manotes_notes'

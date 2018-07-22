@@ -96,7 +96,11 @@ class ResourceBase(Resource):
         return result, 405
 
 
-class CreateAccountResource(ResourceBase):
+class AccountResource(ResourceBase):
+
+    @not_allowed
+    def get(self):
+        pass
 
     def post(self):
         try:
@@ -108,6 +112,22 @@ class CreateAccountResource(ResourceBase):
             return {'result': 'username-already-exists', 'error': 'The resource was not created because the username already exists'}, 400
         except Exception as ex:
             return self.return_unexpected_error()
+
+    @login_required
+    def put(self):
+        try:
+            self.me.update(self.payload)
+            return self.return_ok()
+        except residents.EmailAlreadyExists as ex:
+            return {'result': 'email-already-exists', 'error': 'The resource was not created because the email already exists'}, 400
+        except residents.UsernameAlreadyExists as ex:
+            return {'result': 'username-already-exists', 'error': 'The resource was not created because the username already exists'}, 400
+        except Exception as ex:
+            return self.return_unexpected_error()
+
+    @not_allowed
+    def delete(self):
+        pass
 
 
 class LoginResource(ResourceBase):

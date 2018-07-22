@@ -1,6 +1,7 @@
+import secrets
+from passlib.hash import pbkdf2_sha256
 from app.house import services
 from app import models
-from passlib.hash import pbkdf2_sha256
 
 
 class NotFound(Exception):
@@ -101,12 +102,21 @@ class User(AbstractUser):
         except services.NotMine as ex:
             raise NotMine(str(ex))
 
+    def update(self, payload):
+        try:
+            self.db_instance.update_from_json(payload)
+        except models.UsernameAlreadyExists as ex:
+            raise UsernameAlreadyExists(str(ex))
+        except models.EmailAlreadyExists as ex:
+            raise EmailAlreadyExists(str(ex))
+
 
 class UnknowUser(AbstractUser):
 
     @classmethod
     def create_account(cls, payload):
         payload['password'] = pbkdf2_sha256.hash(payload['password'])
+        payload['token'] = secrets.token_hex(40)
         try:
             cls.repository.create_from_json(payload)
         except models.UsernameAlreadyExists as ex:
