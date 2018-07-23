@@ -61,9 +61,12 @@ python -m testtools.run
 ## Features
 | Features        | Description   |
 | -------------   |:-------------:| 
-| Create Account  | [POST] in the endpoint 'api/account' unknow users can create account passing email, username and password | 
-| Update Account  | [PUT] in the endpoint 'api/account' authenticated users can update account infos passing email and/or username | 
-| Create Note   | [POST] in the endpoint 'ap/notes' authenticated user can update account infos passing name, content and color    |
+| Create Account  | [POST] in the endpoint 'api/account' unknow users can create account passing email, username and password| 
+| Update Account  | [PUT] in the endpoint 'api/account' authenticated users can update account infos passing email and/or username| 
+| Create Note     | [POST] in the endpoint 'api/notes' authenticated user can create a note passing name, content and color |
+| Update Note     | [PUT] in the endpoint 'api/notes' authenticated user can update a note passing name, content and color |
+| Get Note        | [GET] in the endpoint 'api/notes/<note_id>' authenticated user can list all notes or get a specific note if note_id is passed |
+| Delete Note     | [DELETE] in the endpoint 'api/notes/<note_id>' authenticated user can delete a note |
 
 ### Break down into end to end tests
 
