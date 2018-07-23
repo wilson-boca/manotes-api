@@ -8,11 +8,11 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-Linux
-Python 3+
-Pip3
-Virtualenvwrapper (optional but recommended)
-PostgreSQL 10+ 
+* Linux
+* Python 3+
+* Pip3
+* Virtualenvwrapper (optional but recommended)
+* PostgreSQL 10+ 
 
 ### Installing
 
