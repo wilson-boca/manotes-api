@@ -18,6 +18,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 Installing requirements
 ```
+$ sudo apt-get install redis-server
 $ git clone git@github.com:antunesleo/manotes-api.git
 $ mkvirtualenv manotes-api (Optional)
 $ workon manotes-api (Optional)

@@ -2,13 +2,18 @@
 import datetime
 from flask import Flask, g, request
 from flask_sqlalchemy import SQLAlchemy
-from app import database, config as config_module
 from flask_cors import CORS
+from celery import Celery
+from app import database, config as config_module
 
 
 config = config_module.get_config()
 web_app = Flask(__name__)
 web_app.config.from_object(config)
+
+celery = Celery(web_app.import_name, broker=config.REDIS_URL)
+
+
 CORS(
     web_app, origins="*",
     allow_headers=[

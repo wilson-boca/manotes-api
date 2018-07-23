@@ -8,6 +8,7 @@ class Config(object):
     DEVELOPMENT = False
     ENVIRONMENT = 'development'
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    REDIS_URL = os.environ['REDIS_URL']
 
 
 class ProductionConfig(Config):
