@@ -3,15 +3,17 @@ import datetime
 from flask import Flask, g, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from celery import Celery
 from app import database, config as config_module
+from app.async_tasks import establish
 
 
 config = config_module.get_config()
 web_app = Flask(__name__)
 web_app.config.from_object(config)
 
-celery = Celery(web_app.import_name, broker=config.REDIS_URL)
+establish.make_worker(web_app)
+worker = establish.worker
+establish.register_tasks(worker)
 
 
 CORS(

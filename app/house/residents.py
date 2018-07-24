@@ -1,6 +1,7 @@
 import secrets
 from passlib.hash import pbkdf2_sha256
 from app.house import services
+from app.async_tasks import tasks
 from app import models
 
 
@@ -124,3 +125,5 @@ class UnknowUser(AbstractUser):
             raise UsernameAlreadyExists(str(ex))
         except models.EmailAlreadyExists as ex:
             raise EmailAlreadyExists(str(ex))
+
+        tasks.start_sending_email('This is my first and sweat async """"email"""')
