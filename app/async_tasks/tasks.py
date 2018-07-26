@@ -1,13 +1,13 @@
 from app.async_tasks import establish
+from app.mail import postman
 
 
-def start_sending_email(email):
+def start_sending_email(name, from_address, to_address, subject):
     establish.logger.info('STARTING SENDING EMAIL')
-    task = send_email.apply_async((email, ))
+    task = send_email.apply_async((name, from_address, to_address, subject, ))
     return task.id
 
 
 @establish.worker.task
-def send_email(email):
-    for number in range(1, 100000):
-        print(email + str(number))
+def send_email(name, from_address, to_address, subject):
+    postman.Postman.send_confirmation_email(name, from_address, to_address, subject)

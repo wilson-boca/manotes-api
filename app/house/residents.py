@@ -119,11 +119,17 @@ class UnknowUser(AbstractUser):
     def create_account(cls, payload):
         payload['password'] = pbkdf2_sha256.hash(payload['password'])
         payload['token'] = secrets.token_hex(40)
+        user = None
         try:
-            cls.repository.create_from_json(payload)
+            user = cls.repository.create_from_json(payload)
         except models.UsernameAlreadyExists as ex:
             raise UsernameAlreadyExists(str(ex))
         except models.EmailAlreadyExists as ex:
             raise EmailAlreadyExists(str(ex))
 
-        tasks.start_sending_email('This is my first and sweat async """"email"""')
+        name = user.username
+        from_address = "antunesleo4@gmail.com"
+        to_address = user.email
+        subject = "Test"
+
+        tasks.start_sending_email(name, from_address, to_address, subject)

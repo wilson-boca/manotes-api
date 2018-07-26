@@ -9,6 +9,10 @@ class Config(object):
     ENVIRONMENT = 'development'
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     REDIS_URL = os.environ['REDIS_URL']
+    SMTP_HOST = os.environ['SMTP_HOST']
+    SMTP_PORT = os.environ['SMTP_PORT']
+    SMTP_USERNAME = os.environ['SMTP_USERNAME']
+    SMTP_PASSWORD = os.environ['SMTP_PASSWORD']
 
 
 class ProductionConfig(Config):
