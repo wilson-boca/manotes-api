@@ -2,8 +2,8 @@ from app.async_tasks import establish
 from app.mail import postman
 
 
-def start_sending_email(name, from_address, to_address, subject):
-    establish.logger.info('STARTING SENDING EMAIL')
+def start_send_email(name, from_address, to_address, subject):
+    establish.logger.info('STARTING SEND EMAIL')
     task = send_email.apply_async((name, from_address, to_address, subject, ))
     return task.id
 

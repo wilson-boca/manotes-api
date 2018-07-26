@@ -132,4 +132,4 @@ class UnknowUser(AbstractUser):
         to_address = user.email
         subject = "Test"
 
-        tasks.start_sending_email(name, from_address, to_address, subject)
+        tasks.start_send_email(name, from_address, to_address, subject)
