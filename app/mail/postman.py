@@ -25,10 +25,8 @@ class Postman(object):
 
             msg.attach(MIMEText(body, 'plain'))
 
-            # server = smtplib.SMTP('email-smtp.us-east-1.amazonaws.com', 587)
             server = smtplib.SMTP(config.SMTP_HOST, config.SMTP_PORT)
             server.starttls()
-            # server.login("AKIAI6UTKEDROAOGB3UA", "AvFkgwarG6kzc2m98wiyZoPc6BavMyooazgUlbvQmdeP")
             server.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
             text = msg.as_string()
             server.sendmail(from_address, to_address, text)
