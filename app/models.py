@@ -74,7 +74,7 @@ class AbstractModel(object):
 
 
 class User(db.Model, AbstractModel):
-    __tablename__ = 'manotes_user'
+    __tablename__ = 'manotes_users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True)
     email = db.Column(db.String, unique=True)
@@ -111,7 +111,7 @@ class User(db.Model, AbstractModel):
 class Note(db.Model, AbstractModel):
     __tablename__ = 'manotes_notes'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column('user_id', db.Integer, db.ForeignKey('manotes_user.id'), nullable=False)
+    user_id = db.Column('user_id', db.Integer, db.ForeignKey('manotes_users.id'), nullable=False)
     name = db.Column(db.String)
     content = db.Column(db.String)
     color = db.Column(db.String)
