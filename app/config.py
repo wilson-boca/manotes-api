@@ -6,6 +6,7 @@ class Config(object):
     DEBUG = False
     TESTING = False
     DEVELOPMENT = False
+    PRODUCTION = False
     ENVIRONMENT = 'development'
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     REDIS_URL = os.environ['REDIS_URL']
@@ -13,9 +14,11 @@ class Config(object):
     SMTP_PORT = os.environ['SMTP_PORT']
     SMTP_USERNAME = os.environ['SMTP_USERNAME']
     SMTP_PASSWORD = os.environ['SMTP_PASSWORD']
+    FILE_STORAGE_PATH = os.environ['FILE_STORAGE_PATH']
 
 
 class ProductionConfig(Config):
+    PRODUCTION = True
     pass
 
 

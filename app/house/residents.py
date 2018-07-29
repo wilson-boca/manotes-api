@@ -116,7 +116,8 @@ class User(AbstractUser):
 
     def change_avatar(self, files):
         try:
-            avatar = files['avatar']
+            avatar_file = files['avatar']
+            services.FileService.save(avatar_file)
         except Exception as ex:
             pass
 

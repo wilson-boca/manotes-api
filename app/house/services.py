@@ -90,3 +90,12 @@ class EncryptionService(Service):
     @classmethod
     def is_equal(cls, string, hashed_string):
         return pbkdf2_sha256.verify(string, hashed_string)
+
+
+class FileService(Service):
+
+    @classmethod
+    def save(cls, file):
+        from app.files_drawer import drawer
+        file = drawer.File.create_with_environment()
+        file.save(file)
