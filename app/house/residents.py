@@ -114,6 +114,12 @@ class User(AbstractUser):
         except models.EmailAlreadyExists as ex:
             raise EmailAlreadyExists(str(ex))
 
+    def change_avatar(self, files):
+        try:
+            avatar = files['avatar']
+        except Exception as ex:
+            pass
+
 
 class UnknowUser(AbstractUser):
 

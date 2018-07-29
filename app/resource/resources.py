@@ -1,4 +1,5 @@
 import re
+import werkzeug
 from functools import wraps
 from flask_restful import Resource
 from flask import g, Response, request
@@ -46,6 +47,10 @@ class ResourceBase(Resource):
         if request.args:
             payload.update(self.transform_key(request.args, self.camel_to_snake))
         return payload
+
+    @property
+    def files(self):
+        return request.files
 
     @staticmethod
     def camel_to_snake(name):
@@ -208,3 +213,13 @@ class NoteResource(ResourceBase):
                 return self.return_not_mine(id=note_id)
             except Exception as ex:
                 return self.return_unexpected_error()
+
+
+class AvatarResource(ResourceBase):
+
+    @login_required
+    def put(self):
+        try:
+            self.me.change_avatar(self.files)
+        except Exception as ex:
+            return self.return_unexpected_error()

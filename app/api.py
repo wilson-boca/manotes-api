@@ -7,3 +7,4 @@ def create_api(app):
     api.add_resource(resources.NoteResource, '/api/notes', '/api/notes/<int:note_id>')
     api.add_resource(resources.AccountResource, '/api/account')
     api.add_resource(resources.LoginResource, '/api/login')
+    api.add_resource(resources.AvatarResource, '/api/account/avatar')
