@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import psycopg2
+import datetime
 from app import config as config_module
-
 from app import database
 
 db = database.AppRepository.db
@@ -76,6 +75,8 @@ class AbstractModel(object):
 class User(db.Model, AbstractModel):
     __tablename__ = 'manotes_users'
     id = db.Column(db.Integer, primary_key=True)
+    creation_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    update_date = db.Column(db.DateTime)
     username = db.Column(db.String, unique=True)
     email = db.Column(db.String, unique=True)
     token = db.Column(db.String)
@@ -111,6 +112,8 @@ class User(db.Model, AbstractModel):
 class Note(db.Model, AbstractModel):
     __tablename__ = 'manotes_notes'
     id = db.Column(db.Integer, primary_key=True)
+    creation_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    update_date = db.Column(db.DateTime)
     user_id = db.Column('user_id', db.Integer, db.ForeignKey('manotes_users.id'), nullable=False)
     name = db.Column(db.String)
     content = db.Column(db.String)

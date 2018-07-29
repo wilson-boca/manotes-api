@@ -1,3 +1,4 @@
+import datetime
 from app import config
 from app import models
 
@@ -59,6 +60,7 @@ class Note(object):
         return notes
 
     def update(self, note_json):
+        note_json['update_date'] = datetime.datetime.utcnow()
         return self.db_instance.update_from_json(note_json)
 
     def delete_db(self):

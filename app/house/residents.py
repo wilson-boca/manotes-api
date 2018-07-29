@@ -1,3 +1,4 @@
+import datetime
 import secrets
 from passlib.hash import pbkdf2_sha256
 from app.house import services
@@ -106,6 +107,7 @@ class User(AbstractUser):
     def update(self, payload):
         try:
             payload.pop('password', None)
+            payload['update_date'] = datetime.datetime.utcnow()
             self.db_instance.update_from_json(payload)
         except models.UsernameAlreadyExists as ex:
             raise UsernameAlreadyExists(str(ex))
