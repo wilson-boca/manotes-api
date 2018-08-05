@@ -3,27 +3,7 @@ import secrets
 from passlib.hash import pbkdf2_sha256
 from app.house import services
 from app.async_tasks import tasks
-from app import models
-
-
-class NotFound(Exception):
-    pass
-
-
-class NotExists(Exception):
-    pass
-
-
-class NotMine(Exception):
-    pass
-
-
-class UsernameAlreadyExists(Exception):
-    pass
-
-
-class EmailAlreadyExists(Exception):
-    pass
+from app import models, exceptions
 
 
 class AbstractUser(object):
@@ -55,7 +35,7 @@ class User(AbstractUser):
     def create_with_id(cls, id):
         db_instance = cls.repository.one_or_none(id=id)
         if db_instance is None:
-            raise NotFound('Could not find a note with id {}'.format(id))
+            raise exceptions.NotFound('Could not find a note with id {}'.format(id))
         return cls(db_instance=db_instance)
 
     @classmethod
@@ -66,14 +46,14 @@ class User(AbstractUser):
     def create_with_token(cls, token):
         db_instance = cls.repository.one_or_none(token=token)
         if db_instance is None:
-            raise NotFound('Could not find a user with token {}'.format(token))
+            raise exceptions.NotFound('Could not find a user with token {}'.format(token))
         return cls(db_instance=db_instance)
 
     @classmethod
     def create_with_username(cls, username):
         db_instance = cls.repository.one_or_none(username=username)
         if db_instance is None:
-            raise NotFound('Could not find a user with username {}'.format(username))
+            raise exceptions.NotFound('Could not find a user with username {}'.format(username))
         return cls(db_instance=db_instance)
 
     def create_a_note(self, note_json):
@@ -81,38 +61,18 @@ class User(AbstractUser):
         services.NoteService.create_new(note_json)
 
     def delete_a_note(self, id):
-        try:
-            return services.NoteService.delete(id, self.id)
-        except services.NotFound as ex:
-            raise NotFound(str(ex))
-        except services.NotMine as ex:
-            raise NotMine(str(ex))
+        services.NoteService.delete(id, self.id)
 
     def get_a_note(self, id):
-        try:
-            return services.NoteService.create_for_user(id, self.id)
-        except services.NotFound as ex:
-            raise NotFound(str(ex))
-        except services.NotMine as ex:
-            raise NotMine(str(ex))
+        return services.NoteService.create_for_user(id, self.id)
 
     def update_a_note(self, id, note_json):
-        try:
-            return services.NoteService.update_by_id(id, note_json, self.id)
-        except services.NotFound as ex:
-            raise NotFound(str(ex))
-        except services.NotMine as ex:
-            raise NotMine(str(ex))
+        return services.NoteService.update_by_id(id, note_json, self.id)
 
     def update(self, payload):
-        try:
-            payload.pop('password', None)
-            payload['update_date'] = datetime.datetime.utcnow()
-            self.db_instance.update_from_json(payload)
-        except models.UsernameAlreadyExists as ex:
-            raise UsernameAlreadyExists(str(ex))
-        except models.EmailAlreadyExists as ex:
-            raise EmailAlreadyExists(str(ex))
+        payload.pop('password', None)
+        payload['update_date'] = datetime.datetime.utcnow()
+        self.db_instance.update_from_json(payload)
 
     def change_avatar(self, files):
         try:

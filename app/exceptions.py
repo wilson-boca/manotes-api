@@ -12,3 +12,11 @@ class NotFound(Exception):
 
 class NotMine(Exception):
     pass
+
+
+class UserNotExists(Exception):
+    pass
+
+
+class RepositoryError(Exception):
+    pass

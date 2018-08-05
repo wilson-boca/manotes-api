@@ -1,16 +1,7 @@
 import datetime
-from app import config
-from app import models
+from app import config, models, exceptions
 
 config = config.get_config()
-
-
-class NotFound(Exception):
-    pass
-
-
-class NotMine(Exception):
-    pass
 
 
 class Note(object):
@@ -33,16 +24,16 @@ class Note(object):
     def create_with_id(cls, note_id):
         db_instance = cls.repository.one_or_none(id=note_id)
         if db_instance is None:
-            raise NotFound('Could not find a note with id {}'.format(note_id))
+            raise exceptions.NotFound('Could not find a note with id {}'.format(note_id))
         return cls(db_instance=db_instance)
 
     @classmethod
     def create_for_user(cls, id, user_id):
         db_instance = cls.repository.one_or_none(id=id)
         if db_instance is None:
-            raise NotFound('Could not find a note with id {}'.format(id))
+            raise exceptions.NotFound('Could not find a note with id {}'.format(id))
         if db_instance.user_id != user_id:
-            raise NotMine('Could not create note because it dont belong to user id {}'.format(user_id))
+            raise exceptions.NotMine('Could not create note because it dont belong to user id {}'.format(user_id))
         return cls(db_instance=db_instance)
 
     @classmethod

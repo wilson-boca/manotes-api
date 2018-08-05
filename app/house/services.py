@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from importlib import import_module
 from passlib.hash import pbkdf2_sha256
-from app.house import wall, residents
 
 
 class ClassProperty(object):
@@ -14,18 +13,6 @@ class ClassProperty(object):
 
 def classproperty(func):
     return ClassProperty(func)
-
-
-class DeleteError(Exception):
-    pass
-
-
-class NotFound(Exception):
-    pass
-
-
-class NotMine(Exception):
-    pass
 
 
 class Service(object):
@@ -57,32 +44,17 @@ class NoteService(Service):
 
     @classmethod
     def delete(cls, id, user_id):
-        try:
-            note = cls.entity.Note.create_for_user(id, user_id)
-            return note.delete_db()
-        except wall.NotFound as ex:
-            raise NotFound(str(ex))
-        except wall.NotMine as ex:
-            raise NotMine(str(ex))
+        note = cls.entity.Note.create_for_user(id, user_id)
+        return note.delete_db()
 
     @classmethod
     def create_for_user(cls, id, user_id):
-        try:
-            return cls.entity.Note.create_for_user(id, user_id)
-        except wall.NotFound as ex:
-            raise NotFound(str(ex))
-        except wall.NotMine as ex:
-            raise NotMine(str(ex))
+        return cls.entity.Note.create_for_user(id, user_id)
 
     @classmethod
     def update_by_id(cls, id, note_json, user_id):
-        try:
-            note = cls.entity.Note.create_for_user(id, user_id)
-            return note.update(note_json)
-        except wall.NotFound as ex:
-            raise NotFound(str(ex))
-        except wall.NotMine as ex:
-            raise NotMine(str(ex))
+        note = cls.entity.Note.create_for_user(id, user_id)
+        return note.update(note_json)
 
 
 class EncryptionService(Service):
