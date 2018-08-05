@@ -66,7 +66,7 @@ class User(AbstractUser):
 
     def create_a_note(self, note_json):
         note_json['user_id'] = self.id
-        services.NoteService.create_new(note_json)
+        return services.NoteService.create_new(note_json)
 
     def delete_a_note(self, id):
         services.NoteService.delete(id, self.id)
