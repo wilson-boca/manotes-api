@@ -31,6 +31,14 @@ class User(AbstractUser):
     def password(self):
         return self.db_instance.password
 
+    @property
+    def username(self):
+        return self.db_instance.username
+
+    @property
+    def email(self):
+        return self.db_instance.email
+
     @classmethod
     def create_with_id(cls, id):
         db_instance = cls.repository.one_or_none(id=id)
@@ -81,6 +89,12 @@ class User(AbstractUser):
         except Exception as ex:
             pass
 
+    def as_dict(self):
+        return {
+            "username": self.username,
+            "email": self.email
+        }
+
 
 class UnknowUser(AbstractUser):
 
@@ -95,3 +109,4 @@ class UnknowUser(AbstractUser):
         subject = "Test"
 
         tasks.start_send_email(name, from_address, to_address, subject)
+        return User(user)

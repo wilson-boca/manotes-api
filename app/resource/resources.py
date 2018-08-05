@@ -109,8 +109,8 @@ class AccountResource(ResourceBase):
 
     def post(self):
         try:
-            self.unknow_user.create_account(self.payload)
-            return self.return_ok()
+            user = self.unknow_user.create_account(self.payload)
+            return self.response(user.as_dict()), 201
         except exceptions.EmailAlreadyExists as ex:
             return {'result': 'email-already-exists', 'error': 'The resource was not created because the email already exists'}, 400
         except exceptions.UsernameAlreadyExists as ex:
