@@ -92,10 +92,9 @@ class User(AbstractUser):
             temp_file_path = '{}/{}-{}'.format(config.TEMP_PATH, self.id, 'avatar.png')
             avatar_file.save(temp_file_path)
 
-            file_path_to_save = services.AvatarFilePath.bring_file_path_to_save(self.id)
-            services.FileService.save(temp_file_path, file_path_to_save, self.id)
+            image_path = services.AvatarFileService.save(temp_file_path, self.id)
 
-            self.avatar_path = file_path_to_save
+            self.avatar_path = image_path
             self.db_instance.save_db()
         except Exception as ex:
             pass

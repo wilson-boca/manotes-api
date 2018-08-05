@@ -20,3 +20,7 @@ class UserNotExists(Exception):
 
 class RepositoryError(Exception):
     pass
+
+
+class InvalidRouter(Exception):
+    pass

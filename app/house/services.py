@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from importlib import import_module
 from passlib.hash import pbkdf2_sha256
-from app.files_drawer import drawer, hang_tags
+from app.files_drawer import drawer
 
 
 class ClassProperty(object):
@@ -78,9 +78,9 @@ class AvatarDirectoryRouter(Service):
         return avatar_file_path.file_path
 
 
-class FileService(Service):
+class AvatarFileService(Service):
 
     @classmethod
-    def save(cls, temp_file_path, file_path_to_save, user_id):
-        file = drawer.File.create_with_environment(user_id)
-        file.save(temp_file_path, file_path_to_save)
+    def save(cls, temp_file_path, user_id):
+        file = drawer.File.create_with_environment(user_id, router='avatar')
+        return file.save(temp_file_path)
