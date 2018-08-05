@@ -1,10 +1,8 @@
 import re
-import werkzeug
 from functools import wraps
 from flask_restful import Resource
 from flask import g, Response, request
 from app import authentication, exceptions
-from app.house import residents
 
 
 def login_required(f):
