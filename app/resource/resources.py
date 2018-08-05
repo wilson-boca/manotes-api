@@ -3,7 +3,7 @@ import werkzeug
 from functools import wraps
 from flask_restful import Resource
 from flask import g, Response, request
-from app import authentication
+from app import authentication, exceptions
 from app.house import residents
 
 
@@ -111,9 +111,9 @@ class AccountResource(ResourceBase):
         try:
             self.unknow_user.create_account(self.payload)
             return self.return_ok()
-        except residents.EmailAlreadyExists as ex:
+        except exceptions.EmailAlreadyExists as ex:
             return {'result': 'email-already-exists', 'error': 'The resource was not created because the email already exists'}, 400
-        except residents.UsernameAlreadyExists as ex:
+        except exceptions.UsernameAlreadyExists as ex:
             return {'result': 'username-already-exists', 'error': 'The resource was not created because the username already exists'}, 400
         except Exception as ex:
             return self.return_unexpected_error()
