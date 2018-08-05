@@ -19,7 +19,7 @@ class File(object):
     @classmethod
     def create_with_environment(cls, user_id):
         if config.DEVELOPMENT:
-            return LocalFile(config.FILE_STORAGE_PATH, user_id)
+            return LocalFile(user_id)
         if config.PRODUCTION:
             return S3File()
         raise InvalidEnvironment('Could  not instantiate a file class '
@@ -31,8 +31,7 @@ class File(object):
 
 class LocalFile(File):
 
-    def __init__(self, storage_path, user_id):
-        self._storage_path = storage_path
+    def __init__(self, user_id):
         self._user_id = user_id
 
     def save(self, temp_file_path, file_path_to_save):

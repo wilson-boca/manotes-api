@@ -35,6 +35,14 @@ class User(AbstractUser):
     def password(self):
         return self.db_instance.password
 
+    @property
+    def avatar_path(self):
+        return self.db_instance.avatar_path
+
+    @avatar_path.setter
+    def avatar_path(self, avatar_path):
+        self.db_instance.avatar_path = avatar_path
+
     @classmethod
     def create_with_id(cls, id):
         db_instance = cls.repository.one_or_none(id=id)
@@ -85,8 +93,10 @@ class User(AbstractUser):
             avatar_file.save(temp_file_path)
 
             file_path_to_save = services.AvatarFilePath.bring_file_path_to_save(self.id)
-
             services.FileService.save(temp_file_path, file_path_to_save, self.id)
+
+            self.avatar_path = file_path_to_save
+            self.db_instance.save_db()
         except Exception as ex:
             pass
 
