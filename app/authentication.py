@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 from passlib.hash import pbkdf2_sha256
 from flask import g
+from app import exceptions
 
 
 class AuthService(object):
-
-    class UserNotExists(Exception):
-        pass
 
     @classmethod
     def authenticate(cls, credentials):
         from app.house import residents, services
         try:
             user = residents.User.create_with_username(credentials['username'])
-        except residents.NotFound:
-            raise cls.UserNotExists('Could not find a user with username {}'.format(credentials['username']))
+        except exceptions.NotFound:
+            raise exceptions.UserNotExists('Could not find a user with username {}'.format(credentials['username']))
         return services.EncryptionService.is_equal(credentials['password'], user.password), user
 
     @classmethod
@@ -25,5 +23,5 @@ class AuthService(object):
             g.user = user
             g.current_token = user.token
             g.authenticated = True
-        except residents.NotFound:
+        except exceptions.NotFound:
             g.authenticated = False

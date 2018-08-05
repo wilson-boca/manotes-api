@@ -1,31 +1,11 @@
 # -*- coding: utf-8 -*-
 import datetime
 from app import config as config_module
-from app import database
+from app import database, exceptions
 
 db = database.AppRepository.db
 
 config = config_module.get_config()
-
-
-class AlreadyExist(Exception):
-    pass
-
-
-class NotExist(Exception):
-    pass
-
-
-class RepositoryError(Exception):
-    pass
-
-
-class EmailAlreadyExists(Exception):
-    pass
-
-
-class UsernameAlreadyExists(Exception):
-    pass
 
 
 class AbstractModel(object):
@@ -57,7 +37,7 @@ class AbstractModel(object):
             instance.save_db()
             return instance
         except Exception as ex:
-            raise RepositoryError(str(ex))
+            raise exceptions.RepositoryError(str(ex))
 
     def update_from_json(self, json_data):
         try:
@@ -65,7 +45,7 @@ class AbstractModel(object):
             self.save_db()
             return self
         except Exception as ex:
-            raise RepositoryError(str(ex))
+            raise exceptions.RepositoryError(str(ex))
 
     def set_values(self, json_data):
         for key, value in json_data.items():
@@ -90,11 +70,11 @@ class User(db.Model, AbstractModel):
             instance.save_db()
             return instance
         except Exception as ex:
-            if 'manotes_user_email_key' in str(ex):
-                raise EmailAlreadyExists('Could not create user because the email already exists')
-            if 'manotes_user_username_key' in str(ex):
-                raise UsernameAlreadyExists('Could not create user because the username already exists')
-            raise RepositoryError(str(ex))
+            if 'manotes_users_email_key' in str(ex):
+                raise exceptions.EmailAlreadyExists('Could not create user because the email already exists')
+            if 'manotes_users_username_key' in str(ex):
+                raise exceptions.UsernameAlreadyExists('Could not create user because the username already exists')
+            raise exceptions.RepositoryError(str(ex))
 
     def update_from_json(self, json_data):
         try:
@@ -103,10 +83,10 @@ class User(db.Model, AbstractModel):
             return self
         except Exception as ex:
             if 'manotes_user_email_key' in str(ex):
-                raise EmailAlreadyExists('Could not update user because the email already exists')
+                raise exceptions.EmailAlreadyExists('Could not update user because the email already exists')
             if 'manotes_user_username_key' in str(ex):
-                raise UsernameAlreadyExists('Could not update user because the username already exists')
-            raise RepositoryError(str(ex))
+                raise exceptions.UsernameAlreadyExists('Could not update user because the username already exists')
+            raise exceptions.RepositoryError(str(ex))
 
 
 class Note(db.Model, AbstractModel):

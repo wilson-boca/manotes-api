@@ -3,7 +3,7 @@ import werkzeug
 from functools import wraps
 from flask_restful import Resource
 from flask import g, Response, request
-from app import authentication
+from app import authentication, exceptions
 from app.house import residents
 
 
@@ -111,9 +111,9 @@ class AccountResource(ResourceBase):
         try:
             self.unknow_user.create_account(self.payload)
             return self.return_ok()
-        except residents.EmailAlreadyExists as ex:
+        except exceptions.EmailAlreadyExists as ex:
             return {'result': 'email-already-exists', 'error': 'The resource was not created because the email already exists'}, 400
-        except residents.UsernameAlreadyExists as ex:
+        except exceptions.UsernameAlreadyExists as ex:
             return {'result': 'username-already-exists', 'error': 'The resource was not created because the username already exists'}, 400
         except Exception as ex:
             return self.return_unexpected_error()
@@ -123,9 +123,9 @@ class AccountResource(ResourceBase):
         try:
             self.me.update(self.payload)
             return self.return_ok()
-        except residents.EmailAlreadyExists as ex:
+        except exceptions.EmailAlreadyExists as ex:
             return {'result': 'email-already-exists', 'error': 'The resource was not created because the email already exists'}, 400
-        except residents.UsernameAlreadyExists as ex:
+        except exceptions.UsernameAlreadyExists as ex:
             return {'result': 'username-already-exists', 'error': 'The resource was not created because the username already exists'}, 400
         except Exception as ex:
             return self.return_unexpected_error()
@@ -150,7 +150,7 @@ class LoginResource(ResourceBase):
                 g.current_token = user.token
                 return {'result': 'OK'}, 200
             return {'result': 'Not Authorized'}, 401
-        except self.auth_service.UserNotExists as ex:
+        except exceptions.UserNotExists as ex:
             return {'result': 'not-found', 'error': 'Resource Not Found'}
         except Exception as ex:
             return {'result': 'Not Authorized'}, 401
@@ -178,9 +178,9 @@ class NoteResource(ResourceBase):
             try:
                 note = self.me.get_a_note(note_id)
                 return self.response(note.as_dict())
-            except residents.NotFound as ex:
+            except exceptions.NotFound as ex:
                 return self.return_not_found(id=note_id)
-            except residents.NotMine as ex:
+            except exceptions.NotMine as ex:
                 return self.return_not_mine(id=note_id)
             except Exception as ex:
                 return self.return_unexpected_error()
@@ -195,9 +195,9 @@ class NoteResource(ResourceBase):
             try:
                 self.me.update_a_note(note_id, self.payload)
                 return self.return_ok()
-            except residents.NotFound as ex:
+            except exceptions.NotFound as ex:
                 return self.return_not_found(id=note_id)
-            except residents.NotMine as ex:
+            except exceptions.NotMine as ex:
                 return self.return_not_mine(id=note_id)
             except Exception as ex:
                 return self.return_unexpected_error()
@@ -207,9 +207,9 @@ class NoteResource(ResourceBase):
             try:
                 self.me.delete_a_note(note_id)
                 return self.return_ok()
-            except residents.NotFound as ex:
+            except exceptions.NotFound as ex:
                 return self.return_not_found(id=note_id)
-            except residents.NotMine as ex:
+            except exceptions.NotMine as ex:
                 return self.return_not_mine(id=note_id)
             except Exception as ex:
                 return self.return_unexpected_error()
