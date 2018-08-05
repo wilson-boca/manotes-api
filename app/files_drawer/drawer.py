@@ -1,3 +1,5 @@
+import shutil
+import os
 from app import config as config_module
 
 config = config_module.get_config()
@@ -23,7 +25,7 @@ class File(object):
         raise InvalidEnvironment('Could  not instantiate a file class '
                                  'because the environment config is not development or production')
 
-    def save(self, file):
+    def save(self, temp_file_path, file_path_to_save):
         raise NotImplemented
 
 
@@ -33,10 +35,12 @@ class LocalFile(File):
         self._storage_path = storage_path
         self._user_id = user_id
 
-    def save(self, file):
-        pass
+    def save(self, temp_file_path, file_path_to_save):
+        if not os.path.exists(file_path_to_save):
+            os.makedirs(file_path_to_save)
+        shutil.move(temp_file_path, file_path_to_save)
 
 
 class S3File(File):
-    def save(self, file):
+    def save(self, temp_file_path, file_path_to_save):
         pass

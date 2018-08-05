@@ -1,9 +1,13 @@
 import datetime
 import secrets
+import io
+import os
 from passlib.hash import pbkdf2_sha256
 from app.house import services
 from app.async_tasks import tasks
-from app import models, exceptions
+from app import models, exceptions, config as config_module
+
+config = config_module.get_config()
 
 
 class AbstractUser(object):
@@ -77,7 +81,12 @@ class User(AbstractUser):
     def change_avatar(self, files):
         try:
             avatar_file = files['avatar']
-            services.FileService.save(avatar_file)
+            temp_file_path = '{}/{}-{}'.format(config.TEMP_PATH, self.id, 'avatar.png')
+            avatar_file.save(temp_file_path)
+
+            file_path_to_save = services.AvatarFilePath.bring_file_path_to_save(self.id)
+
+            services.FileService.save(temp_file_path, file_path_to_save, self.id)
         except Exception as ex:
             pass
 

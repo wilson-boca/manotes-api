@@ -15,6 +15,7 @@ class Config(object):
     SMTP_USERNAME = os.environ['SMTP_USERNAME']
     SMTP_PASSWORD = os.environ['SMTP_PASSWORD']
     FILE_STORAGE_PATH = os.environ['FILE_STORAGE_PATH']
+    TEMP_PATH = os.environ['TEMP_PATH']
 
 
 class ProductionConfig(Config):

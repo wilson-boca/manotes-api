@@ -221,5 +221,6 @@ class AvatarResource(ResourceBase):
     def put(self):
         try:
             self.me.change_avatar(self.files)
+            return self.return_ok()
         except Exception as ex:
             return self.return_unexpected_error()
