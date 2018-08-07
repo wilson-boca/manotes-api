@@ -65,19 +65,6 @@ class EncryptionService(Service):
         return pbkdf2_sha256.verify(string, hashed_string)
 
 
-class AvatarDirectoryRouter(Service):
-
-    @classmethod
-    def bring_path_to_save(cls, user_id):
-        avatar_file_path = hang_tags.AvatarDirectoryRouter.create_for_user(user_id)
-        return avatar_file_path.path
-
-    @classmethod
-    def bring_file_path_to_save(cls, user_id):
-        avatar_file_path = hang_tags.AvatarDirectoryRouter.create_for_user(user_id)
-        return avatar_file_path.file_path
-
-
 class AvatarFileService(Service):
 
     @classmethod

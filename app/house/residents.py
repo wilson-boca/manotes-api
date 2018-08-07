@@ -38,8 +38,8 @@ class User(AbstractUser):
         return self.db_instance.avatar_path
 
     @avatar_path.setter
-    def avatar_path(self, avatar_path):
-        self.db_instance.avatar_path = avatar_path
+    def avatar_path(self, new_avatar_path):
+        self.db_instance.avatar_path = new_avatar_path
 
     @classmethod
     def create_with_id(cls, id):

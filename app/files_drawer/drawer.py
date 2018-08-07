@@ -58,7 +58,6 @@ class S3File(File):
         self._access_key_id = config.S3_AWS_ACCESS_KEY_ID
         self._secret_access_key = config.S3_AWS_SECRET_ACCESS_KEY
         self._bucket_name = config.AVATAR_BUCKET_NAME
-        session = boto3.session.Session()
         self._s3_client = boto3.client(
             's3',
             aws_access_key_id=self.access_key_id,
@@ -91,6 +90,7 @@ class S3File(File):
 
     def save(self, file):
         self.s3_client.upload_file(file, self.bucket_name, self.router.file_name)
+        return self.router.file_name
 
 
 class DirectoryRouter(object):
@@ -121,11 +121,11 @@ class AvatarDirectoryRouter(DirectoryRouter):
 
     @property
     def file_path(self):
-        return '{}avatar-{}.png'.format(self.path, self._hash)
+        return '{}avatar-{}-{}.png'.format(self.path, self.hash, self.user_id)
 
     @property
     def file_name(self):
-        return 'avatar-{}.png'.format(self._hash)
+        return 'avatar-{}-{}.png'.format(self.hash, self.user_id)
 
     @property
     def bucket_name(self):
