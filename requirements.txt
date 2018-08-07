@@ -8,3 +8,4 @@ sqlalchemy-utils
 passlib
 celery
 redis
+boto3
