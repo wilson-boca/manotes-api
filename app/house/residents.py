@@ -3,7 +3,9 @@ import secrets
 from passlib.hash import pbkdf2_sha256
 from app.house import services
 from app.async_tasks import tasks
-from app import models, exceptions
+from app import models, exceptions, config as config_module
+
+config = config_module.get_config()
 
 
 class AbstractUser(object):
@@ -38,6 +40,13 @@ class User(AbstractUser):
     @property
     def email(self):
         return self.db_instance.email
+
+    def avatar_path(self):
+        return self.db_instance.avatar_path
+
+    @avatar_path.setter
+    def avatar_path(self, new_avatar_path):
+        self.db_instance.avatar_path = new_avatar_path
 
     @classmethod
     def create_with_id(cls, id):
@@ -85,7 +94,13 @@ class User(AbstractUser):
     def change_avatar(self, files):
         try:
             avatar_file = files['avatar']
-            services.FileService.save(avatar_file)
+            temp_file_path = '{}/{}-{}'.format(config.TEMP_PATH, self.id, 'avatar.png')
+            avatar_file.save(temp_file_path)
+
+            image_path = services.AvatarFileService.save(temp_file_path, self.id)
+
+            self.avatar_path = image_path
+            self.db_instance.save_db()
         except Exception as ex:
             pass
 

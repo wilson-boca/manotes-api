@@ -61,6 +61,7 @@ class User(db.Model, AbstractModel):
     email = db.Column(db.String, unique=True)
     token = db.Column(db.String)
     password = db.Column(db.String)
+    avatar_path = db.Column(db.String)
 
     @classmethod
     def create_from_json(cls, json_data):

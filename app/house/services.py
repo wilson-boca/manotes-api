@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from importlib import import_module
 from passlib.hash import pbkdf2_sha256
+from app.files_drawer import drawer
 
 
 class ClassProperty(object):
@@ -65,10 +66,9 @@ class EncryptionService(Service):
         return pbkdf2_sha256.verify(string, hashed_string)
 
 
-class FileService(Service):
+class AvatarFileService(Service):
 
     @classmethod
-    def save(cls, file):
-        from app.files_drawer import drawer
-        file = drawer.File.create_with_environment()
-        file.save(file)
+    def save(cls, temp_file_path, user_id):
+        file = drawer.File.create_with_environment(user_id, router='avatar')
+        return file.save(temp_file_path)

@@ -15,6 +15,10 @@ class Config(object):
     SMTP_USERNAME = os.environ['SMTP_USERNAME']
     SMTP_PASSWORD = os.environ['SMTP_PASSWORD']
     FILE_STORAGE_PATH = os.environ['FILE_STORAGE_PATH']
+    AVATAR_BUCKET_NAME = os.environ['AVATAR_BUCKET_NAME']
+    S3_AWS_ACCESS_KEY_ID = os.environ['S3_AWS_ACCESS_KEY_ID']
+    S3_AWS_SECRET_ACCESS_KEY = os.environ['S3_AWS_SECRET_ACCESS_KEY']
+    TEMP_PATH = os.environ['TEMP_PATH']
 
 
 class ProductionConfig(Config):
