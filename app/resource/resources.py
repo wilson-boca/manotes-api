@@ -1,10 +1,8 @@
 import re
-import werkzeug
 from functools import wraps
 from flask_restful import Resource
 from flask import g, Response, request
 from app import authentication, exceptions
-from app.house import residents
 
 
 def login_required(f):
@@ -109,8 +107,8 @@ class AccountResource(ResourceBase):
 
     def post(self):
         try:
-            self.unknow_user.create_account(self.payload)
-            return self.return_ok()
+            user = self.unknow_user.create_account(self.payload)
+            return self.response(user.as_dict())
         except exceptions.EmailAlreadyExists as ex:
             return {'result': 'email-already-exists', 'error': 'The resource was not created because the email already exists'}, 400
         except exceptions.UsernameAlreadyExists as ex:
@@ -122,7 +120,7 @@ class AccountResource(ResourceBase):
     def put(self):
         try:
             self.me.update(self.payload)
-            return self.return_ok()
+            return self.response(self.me.as_dict())
         except exceptions.EmailAlreadyExists as ex:
             return {'result': 'email-already-exists', 'error': 'The resource was not created because the email already exists'}, 400
         except exceptions.UsernameAlreadyExists as ex:
@@ -187,14 +185,14 @@ class NoteResource(ResourceBase):
 
         @login_required
         def post(self):
-            self.me.create_a_note(self.payload)
-            return self.return_ok()
+            note = self.me.create_a_note(self.payload)
+            return self.response(note.as_dict())
 
         @login_required
         def put(self, note_id):
             try:
-                self.me.update_a_note(note_id, self.payload)
-                return self.return_ok()
+                note = self.me.update_a_note(note_id, self.payload)
+                return self.response(note.as_dict())
             except exceptions.NotFound as ex:
                 return self.return_not_found(id=note_id)
             except exceptions.NotMine as ex:
