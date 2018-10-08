@@ -54,7 +54,7 @@ class Note(object):
         note_json['update_date'] = datetime.datetime.utcnow()
         return self.db_instance.update_from_json(note_json)
 
-    def delete_db(self):
+    def delete(self):
         self.db_instance.delete_db()
 
     def as_dict(self):

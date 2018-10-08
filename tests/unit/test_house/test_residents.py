@@ -1,5 +1,6 @@
 from tests import base
-from app.house import residents, services
+from app import exceptions
+from app.house import residents
 
 
 class UserTest(base.TestCase):
@@ -36,7 +37,7 @@ class UserTest(base.TestCase):
     @base.TestCase.mock.patch('app.house.residents.User.repository')
     def test_create_with_id_raise_not_found(self, repository_mock):
         repository_mock.one_or_none.return_value = None
-        with self.assertRaises(residents.NotFound):
+        with self.assertRaises(exceptions.NotFound):
             residents.User.create_with_id(1)
 
     def test_create_with_instance(self):
@@ -56,7 +57,7 @@ class UserTest(base.TestCase):
     @base.TestCase.mock.patch('app.house.residents.User.repository')
     def test_create_with_token_raise_not_found(self, repository_mock):
         repository_mock.one_or_none.return_value = None
-        with self.assertRaises(residents.NotFound):
+        with self.assertRaises(exceptions.NotFound):
             residents.User.create_with_token('UsErRToKeN')
 
     @base.TestCase.mock.patch('app.house.residents.User.repository')
@@ -70,7 +71,7 @@ class UserTest(base.TestCase):
     @base.TestCase.mock.patch('app.house.residents.User.repository')
     def test_create_with_username_raise_not_found(self, repository_mock):
         repository_mock.one_or_none.return_value = None
-        with self.assertRaises(residents.NotFound):
+        with self.assertRaises(exceptions.NotFound):
             residents.User.create_with_username('UsErRToKeN')
 
     @base.TestCase.mock.patch('app.house.services.NoteService')
@@ -80,26 +81,6 @@ class UserTest(base.TestCase):
         user = residents.User(db_instance=db_instance)
         user.get_a_note(1)
         self.assertTrue(note_service_mock.create_for_user.called)
-
-    @base.TestCase.mock.patch('app.house.services.NoteService')
-    def test_get_a_note_return_not_found(self, note_service_mock):
-        note_service_mock.create_for_user = self.mock.MagicMock(
-            side_effect=services.NotFound('Could not find a note with id 1'))
-        db_instance = self.mock.MagicMock()
-        db_instance.id = 1
-        user = residents.User(db_instance=db_instance)
-        with self.assertRaises(residents.NotFound):
-            user.get_a_note(1)
-
-    @base.TestCase.mock.patch('app.house.services.NoteService')
-    def test_get_a_note_return_not_mine(self, note_service_mock):
-        note_service_mock.create_for_user = self.mock.MagicMock(
-            side_effect=services.NotMine('Could not create note because it dont belong to user id 1'))
-        db_instance = self.mock.MagicMock()
-        db_instance.id = 1
-        user = residents.User(db_instance=db_instance)
-        with self.assertRaises(residents.NotMine):
-            user.get_a_note(1)
 
     @base.TestCase.mock.patch('app.house.services.NoteService')
     def test_create_a_note(self, note_service_mock):
@@ -116,7 +97,9 @@ class UserTest(base.TestCase):
         self.assertTrue(note_service_mock.create_new.called)
 
     @base.TestCase.mock.patch('app.house.services.NoteService')
-    def test_update_a_note(self, note_service_mock):
+    def test_update_a_note_should_call_note_service_create_for_user(self, note_service_note):
+        note_mock = self.mock.MagicMock()
+        note_service_note.create_for_user.return_value = note_mock
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
         user = residents.User(db_instance=db_instance)
@@ -127,12 +110,12 @@ class UserTest(base.TestCase):
             'color': '#FFFFFF'
         }
         user.update_a_note(id=1, note_json=note_json)
-        self.assertTrue(note_service_mock.update_by_id.called)
+        self.assertTrue(note_service_note.create_for_user.called)
 
     @base.TestCase.mock.patch('app.house.services.NoteService')
-    def test_update_a_note_raise_not_found(self, note_service):
-        note_service.update_by_id = self.mock.MagicMock(
-            side_effect=services.NotFound('Could not find a note with id 1'))
+    def test_update_a_note_should_call_update(self, note_service_note):
+        note_mock = self.mock.MagicMock()
+        note_service_note.create_for_user.return_value = note_mock
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
         user = residents.User(db_instance=db_instance)
@@ -142,49 +125,25 @@ class UserTest(base.TestCase):
             'content': 'This is a note',
             'color': '#FFFFFF'
         }
-        with self.assertRaises(residents.NotFound):
-            user.update_a_note(id=1, note_json=note_json)
+        user.update_a_note(id=1, note_json=note_json)
+        self.assertTrue(note_mock.update.called)
 
     @base.TestCase.mock.patch('app.house.services.NoteService')
-    def test_update_a_note_raise_not_mine(self, note_service):
-        note_service.update_by_id = self.mock.MagicMock(
-            side_effect=services.NotMine('Could not create note because it dont belong to user id 1'))
-        db_instance = self.mock.MagicMock()
-        db_instance.id = 1
-        user = residents.User(db_instance=db_instance)
-        note_json = {
-            'id': '1',
-            'name': 'this is a note',
-            'content': 'This is a note',
-            'color': '#FFFFFF'
-        }
-        with self.assertRaises(residents.NotMine):
-            user.update_a_note(id=1, note_json=note_json)
-
-    @base.TestCase.mock.patch('app.house.services.NoteService')
-    def test_delete_a_note(self, note_service_note):
+    def test_delete_a_note_should_call_note_service_create_for_user(self, note_service_note):
+        note_mock = self.mock.MagicMock()
+        note_service_note.create_for_user.return_value = note_mock
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
         user = residents.User(db_instance=db_instance)
         user.delete_a_note(id=1)
-        self.assertTrue(note_service_note.delete.called)
+        self.assertTrue(note_service_note.create_for_user)
 
     @base.TestCase.mock.patch('app.house.services.NoteService')
-    def test_delete_a_note_raise_not_found(self, note_service):
-        note_service.delete = self.mock.MagicMock(
-            side_effect=services.NotFound('Could not find a note with id 1'))
+    def test_delete_a_note_should_call_delete(self, note_service_note):
+        note_mock = self.mock.MagicMock()
+        note_service_note.create_for_user.return_value = note_mock
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
         user = residents.User(db_instance=db_instance)
-        with self.assertRaises(residents.NotFound):
-            user.delete_a_note(id=1)
-
-    @base.TestCase.mock.patch('app.house.services.NoteService')
-    def test_delete_a_note_raise_not_mine(self, note_service):
-        note_service.delete = self.mock.MagicMock(
-            side_effect=services.NotMine('Could not create note because it dont belong to user id 1'))
-        db_instance = self.mock.MagicMock()
-        db_instance.id = 1
-        user = residents.User(db_instance=db_instance)
-        with self.assertRaises(residents.NotMine):
-            user.delete_a_note(id=1)
+        user.delete_a_note(id=1)
+        self.assertTrue(note_mock.delete.called)

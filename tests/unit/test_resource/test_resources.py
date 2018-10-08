@@ -1,5 +1,6 @@
 import json
 from tests import base
+from app import exceptions
 from app.resource import resources
 from app.house import residents
 
@@ -34,7 +35,7 @@ class NoteResourceTest(base.TestCase):
         g_mock.authenticated.return_value = True
         note_mock = self.mock.MagicMock()
         note_mock.as_dict.return_value = {'id': 1}
-        logged_user_mock.get_a_note = self.mock.MagicMock(side_effect=residents.NotMine('foo'))
+        logged_user_mock.get_a_note = self.mock.MagicMock(side_effect=exceptions.NotMine('foo'))
         note_resource = resources.NoteResource()
         response = note_resource.get(1)
         self.assertEqual(response[0], {'result': 'not-mine', 'error': 'Resource Not Mine', 'id': 1})
@@ -51,7 +52,7 @@ class NoteResourceTest(base.TestCase):
             'content': 'And I need to write a mock content',
             'color': '#FFFFFF'
         }
-        logged_user_mock.get_a_note = self.mock.MagicMock(side_effect=residents.NotFound('Could not find a note with id 1'))
+        logged_user_mock.get_a_note = self.mock.MagicMock(side_effect=exceptions.NotFound('Could not find a note with id 1'))
         note_resource = resources.NoteResource()
         response = note_resource.get(1)
         self.assertEqual(response[0], {'result': 'not-found', 'error': 'Resource Not Found', 'id': 1})
@@ -137,7 +138,7 @@ class NoteResourceTest(base.TestCase):
     def test_put_return_not_found(self, payload_mock, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
-        logged_user_mock.update_a_note = self.mock.MagicMock(side_effect=residents.NotFound('foo'))
+        logged_user_mock.update_a_note = self.mock.MagicMock(side_effect=exceptions.NotFound('foo'))
         payload_mock = {
             'id': 1,
             'name': 'This is a note',
@@ -156,7 +157,7 @@ class NoteResourceTest(base.TestCase):
     def test_put_return_not_mine(self, payload_mock, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
-        logged_user_mock.update_a_note = self.mock.MagicMock(side_effect=residents.NotMine('foo'))
+        logged_user_mock.update_a_note = self.mock.MagicMock(side_effect=exceptions.NotMine('foo'))
         payload_mock = {
             'id': 1,
             'name': 'This is a note',
@@ -193,7 +194,7 @@ class NoteResourceTest(base.TestCase):
     def test_delete_return_not_found(self, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
-        logged_user_mock.delete_a_note = self.mock.MagicMock(side_effect=residents.NotFound('foo'))
+        logged_user_mock.delete_a_note = self.mock.MagicMock(side_effect=exceptions.NotFound('foo'))
         note_resource = resources.NoteResource()
         response = note_resource.delete(1)
         self.assertTrue(note_resource.me.delete_a_note.called)
@@ -205,7 +206,7 @@ class NoteResourceTest(base.TestCase):
     def test_delete_return_not_mine(self, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
-        logged_user_mock.delete_a_note = self.mock.MagicMock(side_effect=residents.NotMine('foo'))
+        logged_user_mock.delete_a_note = self.mock.MagicMock(side_effect=exceptions.NotMine('foo'))
         note_resource = resources.NoteResource()
         response = note_resource.delete(1)
         self.assertTrue(note_resource.me.delete_a_note.called)

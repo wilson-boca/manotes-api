@@ -71,13 +71,15 @@ class User(AbstractUser):
         services.NoteService.create_new(note_json)
 
     def delete_a_note(self, id):
-        services.NoteService.delete(id, self.id)
+        note = services.NoteService.create_for_user(id, self.id)
+        note.delete()
 
     def get_a_note(self, id):
         return services.NoteService.create_for_user(id, self.id)
 
     def update_a_note(self, id, note_json):
-        return services.NoteService.update_by_id(id, note_json, self.id)
+        note = services.NoteService.create_for_user(id, self.id)
+        note.update()
 
     def update(self, payload):
         payload.pop('password', None)

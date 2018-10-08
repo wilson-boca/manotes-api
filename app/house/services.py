@@ -44,18 +44,8 @@ class NoteService(Service):
         return cls.entity.Note.list_for_user(user_id)
 
     @classmethod
-    def delete(cls, id, user_id):
-        note = cls.entity.Note.create_for_user(id, user_id)
-        return note.delete_db()
-
-    @classmethod
     def create_for_user(cls, id, user_id):
         return cls.entity.Note.create_for_user(id, user_id)
-
-    @classmethod
-    def update_by_id(cls, id, note_json, user_id):
-        note = cls.entity.Note.create_for_user(id, user_id)
-        return note.update(note_json)
 
 
 class EncryptionService(Service):
