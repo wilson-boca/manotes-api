@@ -41,6 +41,7 @@ class User(AbstractUser):
     def email(self):
         return self.db_instance.email
 
+    @property
     def avatar_path(self):
         return self.db_instance.avatar_path
 

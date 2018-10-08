@@ -2,7 +2,6 @@ import json
 from tests import base
 from app import exceptions
 from app.resource import resources
-from app.house import residents
 
 
 class NoteResourceTest(base.TestCase):
