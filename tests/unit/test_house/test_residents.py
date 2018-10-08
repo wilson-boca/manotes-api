@@ -1,6 +1,6 @@
 from tests import base
 from app import exceptions
-from app.house import residents
+from app.house import residents, services
 
 
 class UserTest(base.TestCase):

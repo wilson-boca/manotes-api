@@ -34,6 +34,13 @@ class User(AbstractUser):
         return self.db_instance.password
 
     @property
+    def username(self):
+        return self.db_instance.username
+
+    @property
+    def email(self):
+        return self.db_instance.email
+
     def avatar_path(self):
         return self.db_instance.avatar_path
 
@@ -68,7 +75,7 @@ class User(AbstractUser):
 
     def create_a_note(self, note_json):
         note_json['user_id'] = self.id
-        services.NoteService.create_new(note_json)
+        return services.NoteService.create_new(note_json)
 
     def delete_a_note(self, id):
         note = services.NoteService.create_for_user(id, self.id)
@@ -99,6 +106,12 @@ class User(AbstractUser):
         except Exception as ex:
             pass
 
+    def as_dict(self):
+        return {
+            "username": self.username,
+            "email": self.email
+        }
+
 
 class UnknowUser(AbstractUser):
 
@@ -113,3 +126,4 @@ class UnknowUser(AbstractUser):
         subject = "Test"
 
         tasks.start_send_email(name, from_address, to_address, subject)
+        return User(user)

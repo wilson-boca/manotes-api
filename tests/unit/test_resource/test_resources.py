@@ -94,17 +94,17 @@ class NoteResourceTest(base.TestCase):
     def test_post_return_ok(self, payload_mock, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
-        logged_user_mock.create_a_note = self.mock.MagicMock()
         payload_mock = {
             'id': 1,
             'name': 'This is a note',
             'content': 'And I need to write a mock content',
             'color': '#FFFFFF'
         }
+        logged_user_mock.create_a_note = self.mock.MagicMock()
+        logged_user_mock.create_a_note.as_dict = payload_mock
         note_resource = resources.NoteResource()
         response = note_resource.post()
         self.assertTrue(note_resource.me.create_a_note.called)
-        self.assertEqual(response, {'result': 'OK'})
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     def test_put_return_not_auth(self, g_mock):
@@ -130,7 +130,6 @@ class NoteResourceTest(base.TestCase):
         note_resource = resources.NoteResource()
         response = note_resource.put(1)
         self.assertTrue(note_resource.me.update_a_note.called)
-        self.assertEqual(response, {'result': 'OK'})
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')

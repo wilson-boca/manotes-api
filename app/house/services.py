@@ -37,7 +37,7 @@ class NoteService(Service):
 
     @classmethod
     def create_new(cls, note_json):
-        cls.entity.Note.create_new(note_json)
+        return cls.entity.Note.create_new(note_json)
 
     @classmethod
     def list_for_user(cls, user_id):
@@ -46,6 +46,12 @@ class NoteService(Service):
     @classmethod
     def create_for_user(cls, id, user_id):
         return cls.entity.Note.create_for_user(id, user_id)
+
+    @classmethod
+    def update_by_id(cls, id, note_json, user_id):
+        note = cls.entity.Note.create_for_user(id, user_id)
+        note.update(note_json)
+        return note
 
 
 class EncryptionService(Service):

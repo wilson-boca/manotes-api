@@ -83,9 +83,9 @@ class User(db.Model, AbstractModel):
             self.save_db()
             return self
         except Exception as ex:
-            if 'manotes_user_email_key' in str(ex):
+            if 'manotes_users_email_key' in str(ex):
                 raise exceptions.EmailAlreadyExists('Could not update user because the email already exists')
-            if 'manotes_user_username_key' in str(ex):
+            if 'manotes_users_username_key' in str(ex):
                 raise exceptions.UsernameAlreadyExists('Could not update user because the username already exists')
             raise exceptions.RepositoryError(str(ex))
 

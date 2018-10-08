@@ -42,7 +42,8 @@ class Note(object):
 
     @classmethod
     def create_new(cls, note_json):
-        cls.repository.create_from_json(note_json)
+        note_instance = cls.repository.create_from_json(note_json)
+        return cls.create_with_instance(note_instance)
 
     @classmethod
     def list_for_user(cls, user_id):
@@ -52,7 +53,7 @@ class Note(object):
 
     def update(self, note_json):
         note_json['update_date'] = datetime.datetime.utcnow()
-        return self.db_instance.update_from_json(note_json)
+        self.db_instance.update_from_json(note_json)
 
     def delete(self):
         self.db_instance.delete_db()
