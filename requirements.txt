@@ -9,3 +9,4 @@ passlib
 celery
 redis
 boto3
+gunicorn
