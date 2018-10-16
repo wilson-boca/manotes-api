@@ -222,3 +222,9 @@ class AvatarResource(ResourceBase):
             return self.return_ok()
         except Exception as ex:
             return self.return_unexpected_error()
+
+
+class HealthCheckResource(ResourceBase):
+
+    def get(self):
+        return self.response({'yes': 'i am ok'})
