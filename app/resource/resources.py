@@ -26,14 +26,27 @@ def not_allowed(f):
 class ResourceBase(Resource):
 
     def __init__(self):
-        from app.house import residents
         super(ResourceBase, self).__init__()
-        self.me = self.logged_user
-        self.unknow_user = residents.UnknowUser()
+        self._unknow_user = None
+        self._me = None
+        self._logged_user = None
 
     @property
     def logged_user(self):
         return getattr(g, 'user', None)
+
+    @property
+    def me(self):
+        if self._me is None:
+            self._me = self.logged_user
+        return self._me
+
+    @property
+    def unkown_user(self):
+        from app.house import residents
+        if self._unknow_user is None:
+            self._unknow_user = residents.UnknowUser()
+        return self._unknow_user
 
     @property
     def payload(self):
