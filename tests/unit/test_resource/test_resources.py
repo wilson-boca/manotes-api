@@ -4,7 +4,7 @@ from app import exceptions
 from app.resource import resources
 
 
-class NoteResourceTest(base.TestCase):
+class NoteResourceGetTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     def test_get_return_not_auth(self, g_mock):
@@ -76,8 +76,11 @@ class NoteResourceTest(base.TestCase):
                 'color': '#FFFFFF'
             },
         ]
-        response = note_resource.get()
+        note_resource.get()
         self.assertTrue(note_resource.query.called)
+
+
+class NoteResourcePostTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     def test_post_return_not_auth(self, g_mock):
@@ -102,8 +105,11 @@ class NoteResourceTest(base.TestCase):
         logged_user_mock.create_a_note = self.mock.MagicMock()
         logged_user_mock.create_a_note.as_dict = payload_mock
         note_resource = resources.NoteResource()
-        response = note_resource.post()
+        note_resource.post()
         self.assertTrue(note_resource.me.create_a_note.called)
+
+
+class NoteResourcePutTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     def test_put_return_not_auth(self, g_mock):
@@ -127,7 +133,7 @@ class NoteResourceTest(base.TestCase):
             'color': '#FFFFFF'
         }
         note_resource = resources.NoteResource()
-        response = note_resource.put(1)
+        note_resource.put(1)
         self.assertTrue(note_resource.me.update_a_note.called)
 
     @base.TestCase.mock.patch('app.resource.resources.g')
@@ -167,6 +173,9 @@ class NoteResourceTest(base.TestCase):
         self.assertTrue(note_resource.me.update_a_note.called)
         self.assertEqual(response[0], {'result': 'not-mine', 'error': 'Resource Not Mine', 'id': 1})
         self.assertEqual(response[1], 405)
+
+
+class NoteResourceGetDeleteTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     def test_delete_return_not_auth(self, g_mock):

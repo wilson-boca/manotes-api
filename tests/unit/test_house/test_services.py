@@ -2,7 +2,7 @@ from tests import base
 from app.house import services
 
 
-class NoteServiceTest(base.TestCase):
+class NoteServiceCreateNewTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.house.wall.Note')
     def test_create_new_should_call_entity_to_create_new(self, note_mock):
@@ -16,6 +16,9 @@ class NoteServiceTest(base.TestCase):
         note_mock.create_new = self.mock.MagicMock(return_value=new_note_mock)
         new_note = services.NoteService.create_new({'key': 'value'})
         self.assertEqual(new_note_mock, new_note)
+
+
+class NoteServiceListForUserTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.house.wall.Note')
     def test_list_for_user_should_call_entity_to_list(self, note_mock):

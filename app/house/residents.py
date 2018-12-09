@@ -125,6 +125,5 @@ class UnknowUser(AbstractUser):
         from_address = "antunesleo4@gmail.com"
         to_address = user.email
         subject = "Test"
-
         tasks.start_send_email(name, from_address, to_address, subject)
         return User(user)
