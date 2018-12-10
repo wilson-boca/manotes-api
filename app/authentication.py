@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from passlib.hash import pbkdf2_sha256
 from flask import g
 from app import exceptions
 
@@ -13,7 +12,7 @@ class AuthService(object):
             user = residents.User.create_with_username(credentials['username'])
         except exceptions.NotFound:
             raise exceptions.UserNotExists('Could not find a user with username {}'.format(credentials['username']))
-        return services.EncryptionService.is_equal(credentials['password'], user.password), user
+        return services.SecurityService.is_string_equals_to_hash(credentials['password'], user.password), user
 
     @classmethod
     def authenticate_with_token(cls, token):

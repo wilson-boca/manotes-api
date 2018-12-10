@@ -27,7 +27,7 @@ class ResourceBase(Resource):
 
     def __init__(self):
         super(ResourceBase, self).__init__()
-        self._prospect_user = None
+        self._visitor_user = None
         self._me = None
         self._logged_user = None
 
@@ -44,9 +44,9 @@ class ResourceBase(Resource):
     @property
     def unkown_user(self):
         from app.house import residents
-        if self._prospect_user is None:
-            self._prospect_user = residents.ProspectUser()
-        return self._prospect_user
+        if self._visitor_user is None:
+            self._visitor_user = residents.VisitorUser()
+        return self._visitor_user
 
     @property
     def payload(self):
@@ -120,7 +120,7 @@ class AccountResource(ResourceBase):
 
     def post(self):
         try:
-            user = self.prospect_user.create_account(self.payload)
+            user = self.visitor_user.create_account(self.payload)
             return self.response(user.as_dict())
         except exceptions.EmailAlreadyExists as ex:
             return {'result': 'email-already-exists', 'error': 'The resource was not created because the email already exists'}, 400

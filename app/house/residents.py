@@ -1,6 +1,4 @@
 import datetime
-import secrets
-from passlib.hash import pbkdf2_sha256
 from app.house import services
 from app.async_tasks import tasks
 from app import models, exceptions, config as config_module
@@ -114,12 +112,12 @@ class User(AbstractUser):
         }
 
 
-class ProspectUser(AbstractUser):
+class VisitorUser(AbstractUser):
 
     @classmethod
     def create_account(cls, payload):
-        payload['password'] = pbkdf2_sha256.hash(payload['password'])
-        payload['token'] = secrets.token_hex(40)
+        payload['password'] = services.SecurityService.hash(payload['password'])
+        payload['token'] = services.SecurityService.generate_a_token()
         user = cls.repository.create_from_json(payload)
         name = user.username
         from_address = "antunesleo4@gmail.com"
