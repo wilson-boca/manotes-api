@@ -7,7 +7,7 @@ from app import exceptions
 class AuthService(object):
 
     @classmethod
-    def authenticate(cls, credentials):
+    def authenticate_with_credentials(cls, credentials):
         from app.house import residents, services
         try:
             user = residents.User.create_with_username(credentials['username'])
@@ -16,7 +16,7 @@ class AuthService(object):
         return services.EncryptionService.is_equal(credentials['password'], user.password), user
 
     @classmethod
-    def authenticate_token(cls, token):
+    def authenticate_with_token(cls, token):
         from app.house import residents
         try:
             user = residents.User.create_with_token(token)

@@ -114,7 +114,7 @@ class User(AbstractUser):
         }
 
 
-class UnknowUser(AbstractUser):
+class ProspectUser(AbstractUser):
 
     @classmethod
     def create_account(cls, payload):
