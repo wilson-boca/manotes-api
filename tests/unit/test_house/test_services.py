@@ -33,6 +33,32 @@ class NoteServiceListForUserTest(base.TestCase):
         self.assertTrue(isinstance(notes, list))
 
 
+class FileServiceSaveAvatarTest(base.TestCase):
+
+    @base.TestCase.mock.patch('app.house.services.drawer.File')
+    def test_should_call_drawer_file_to_create_with_environment(self, file_mock):
+        file_instance = self.mock.MagicMock()
+        file_mock.create_with_environment.return_value = file_instance
+        services.FileService.save_avatar('/some_path', 1)
+        file_mock.create_with_environment.assert_called_with(1, router='avatar')
+
+    @base.TestCase.mock.patch('app.house.services.drawer.File')
+    def test_should_call_drawer_file_to_save(self, file_mock):
+        file_instance = self.mock.MagicMock()
+        file_mock.create_with_environment.return_value = file_instance
+        file_instance.save.return_value = '/path'
+        services.FileService.save_avatar('/some_path', 1)
+        file_instance.save.assert_called_with('/some_path')
+
+    @base.TestCase.mock.patch('app.house.services.drawer.File')
+    def test_should_return_file_path(self, file_mock):
+        file_instance = self.mock.MagicMock()
+        file_mock.create_with_environment.return_value = file_instance
+        file_instance.save.return_value = '/path'
+        path = services.FileService.save_avatar('/some_path', 1)
+        self.assertEqual('/path', path)
+
+
 class SecurityServiceGenerateTokenTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.house.services.secrets.token_hex')

@@ -55,10 +55,10 @@ class NoteService(Service):
         return note
 
 
-class AvatarFileService(Service):
+class FileService(Service):
 
     @classmethod
-    def save(cls, temp_file_path, user_id):
+    def save_avatar(cls, temp_file_path, user_id):
         file = drawer.File.create_with_environment(user_id, router='avatar')
         return file.save(temp_file_path)
 

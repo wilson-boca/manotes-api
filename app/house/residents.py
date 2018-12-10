@@ -98,7 +98,7 @@ class User(AbstractUser):
             temp_file_path = '{}/{}-{}'.format(config.TEMP_PATH, self.id, 'avatar.png')
             avatar_file.save(temp_file_path)
 
-            image_path = services.AvatarFileService.save(temp_file_path, self.id)
+            image_path = services.FileService.save_avatar(temp_file_path, self.id)
 
             self.avatar_path = image_path
             self.db_instance.save_db()
