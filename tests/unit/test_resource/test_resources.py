@@ -4,94 +4,6 @@ from app import exceptions
 from app.resource import resources
 
 
-class AvatarResourceGetTest(base.TestCase):
-
-    @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_should_return_not_allowed(self, g_mock):
-        avatar_resource = resources.AvatarResource()
-        response = avatar_resource.get()
-        self.assertEqual(json.loads(response.data), {'result': 'Method not allowed'})
-
-    @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_should_return_status_code_405(self, g_mock):
-        avatar_resource = resources.AvatarResource()
-        response = avatar_resource.get()
-        self.assertEqual(response.status_code, 405)
-
-
-class AvatarResourcePostTest(base.TestCase):
-
-    @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_should_return_not_allowed(self, g_mock):
-        avatar_resource = resources.AvatarResource()
-        response = avatar_resource.post()
-        self.assertEqual(json.loads(response.data), {'result': 'Method not allowed'})
-
-    @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_should_return_status_code_405(self, g_mock):
-        avatar_resource = resources.AvatarResource()
-        response = avatar_resource.post()
-        self.assertEqual(response.status_code, 405)
-
-
-class AvatarResourcePutTest(base.TestCase):
-
-    @base.TestCase.mock.patch('app.resource.resources.AvatarResource.files')
-    @base.TestCase.mock.patch('app.resource.resources.AvatarResource.me')
-    @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_should_call_me_to_change_avatar(self, g_mock, me_mock, files_mock):
-        g_mock.authenticated.return_value = True
-        me_mock.change_avatar.return_value = None
-        avatar_resource = resources.AvatarResource()
-        avatar_resource.put()
-        me_mock.change_avatar.assert_called_with(files_mock)
-
-    @base.TestCase.mock.patch('app.resource.resources.AvatarResource.files')
-    @base.TestCase.mock.patch('app.resource.resources.AvatarResource.me')
-    @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_should_return_ok(self, g_mock, me_mock, files_mock):
-        g_mock.authenticated.return_value = True
-        me_mock.change_avatar.return_value = None
-        avatar_resource = resources.AvatarResource()
-        response = avatar_resource.put()
-        self.assertEqual(response, {'result': 'OK'})
-
-    @base.TestCase.mock.patch('app.resource.resources.AvatarResource.files')
-    @base.TestCase.mock.patch('app.resource.resources.AvatarResource.me')
-    @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_should_return_status_code_500_if_exception_raised(self, g_mock, me_mock, files_mock):
-        g_mock.authenticated.return_value = True
-        me_mock.change_avatar = self.mock.MagicMock(side_effect=Exception)
-        avatar_resource = resources.AvatarResource()
-        response = avatar_resource.put()
-        self.assertEqual(response[1], 500)
-
-    @base.TestCase.mock.patch('app.resource.resources.AvatarResource.files')
-    @base.TestCase.mock.patch('app.resource.resources.AvatarResource.me')
-    @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_should_return_unexpected_error_if_exception_raised(self, g_mock, me_mock, files_mock):
-        g_mock.authenticated.return_value = True
-        me_mock.change_avatar = self.mock.MagicMock(side_effect=Exception)
-        avatar_resource = resources.AvatarResource()
-        response = avatar_resource.put()
-        self.assertEqual(response[0], {'result': 'error', 'error': 'Internal Server Error', 'exception': 'An unexpected error occurred'})
-
-
-class AvatarResourceDeleteTest(base.TestCase):
-
-    @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_should_return_not_allowed(self, g_mock):
-        avatar_resource = resources.AvatarResource
-        response = avatar_resource.delete()
-        self.assertEqual(json.loads(response.data), {'result': 'Method not allowed'})
-
-    @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_should_return_status_code_405(self, g_mock):
-        avatar_resource = resources.AvatarResource
-        response = avatar_resource.delete()
-        self.assertEqual(response.status_code, 405)
-
-
 class NoteResourceGetTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
@@ -478,3 +390,91 @@ class NoteResourceDeleteTest(base.TestCase):
         response = note_resource.delete(1)
         self.assertTrue(note_resource.me.delete_a_note.called)
         self.assertEqual(response[1], 405)
+
+
+class AvatarResourceGetTest(base.TestCase):
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_not_allowed(self, g_mock):
+        avatar_resource = resources.AvatarResource()
+        response = avatar_resource.get()
+        self.assertEqual(json.loads(response.data), {'result': 'Method not allowed'})
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_status_code_405(self, g_mock):
+        avatar_resource = resources.AvatarResource()
+        response = avatar_resource.get()
+        self.assertEqual(response.status_code, 405)
+
+
+class AvatarResourcePostTest(base.TestCase):
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_not_allowed(self, g_mock):
+        avatar_resource = resources.AvatarResource()
+        response = avatar_resource.post()
+        self.assertEqual(json.loads(response.data), {'result': 'Method not allowed'})
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_status_code_405(self, g_mock):
+        avatar_resource = resources.AvatarResource()
+        response = avatar_resource.post()
+        self.assertEqual(response.status_code, 405)
+
+
+class AvatarResourcePutTest(base.TestCase):
+
+    @base.TestCase.mock.patch('app.resource.resources.AvatarResource.files')
+    @base.TestCase.mock.patch('app.resource.resources.AvatarResource.me')
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_call_me_to_change_avatar(self, g_mock, me_mock, files_mock):
+        g_mock.authenticated.return_value = True
+        me_mock.change_avatar.return_value = None
+        avatar_resource = resources.AvatarResource()
+        avatar_resource.put()
+        me_mock.change_avatar.assert_called_with(files_mock)
+
+    @base.TestCase.mock.patch('app.resource.resources.AvatarResource.files')
+    @base.TestCase.mock.patch('app.resource.resources.AvatarResource.me')
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_ok(self, g_mock, me_mock, files_mock):
+        g_mock.authenticated.return_value = True
+        me_mock.change_avatar.return_value = None
+        avatar_resource = resources.AvatarResource()
+        response = avatar_resource.put()
+        self.assertEqual(response, {'result': 'OK'})
+
+    @base.TestCase.mock.patch('app.resource.resources.AvatarResource.files')
+    @base.TestCase.mock.patch('app.resource.resources.AvatarResource.me')
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_status_code_500_if_exception_raised(self, g_mock, me_mock, files_mock):
+        g_mock.authenticated.return_value = True
+        me_mock.change_avatar = self.mock.MagicMock(side_effect=Exception)
+        avatar_resource = resources.AvatarResource()
+        response = avatar_resource.put()
+        self.assertEqual(response[1], 500)
+
+    @base.TestCase.mock.patch('app.resource.resources.AvatarResource.files')
+    @base.TestCase.mock.patch('app.resource.resources.AvatarResource.me')
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_unexpected_error_if_exception_raised(self, g_mock, me_mock, files_mock):
+        g_mock.authenticated.return_value = True
+        me_mock.change_avatar = self.mock.MagicMock(side_effect=Exception)
+        avatar_resource = resources.AvatarResource()
+        response = avatar_resource.put()
+        self.assertEqual(response[0], {'result': 'error', 'error': 'Internal Server Error', 'exception': 'An unexpected error occurred'})
+
+
+class AvatarResourceDeleteTest(base.TestCase):
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_not_allowed(self, g_mock):
+        avatar_resource = resources.AvatarResource
+        response = avatar_resource.delete()
+        self.assertEqual(json.loads(response.data), {'result': 'Method not allowed'})
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_status_code_405(self, g_mock):
+        avatar_resource = resources.AvatarResource
+        response = avatar_resource.delete()
+        self.assertEqual(response.status_code, 405)
