@@ -323,8 +323,14 @@ class NoteResourcePutTest(base.TestCase):
         self.assertEqual(response[1], 405)
 
 
-# TODO: have to be refactored
-class NoteResourceGetDeleteTest(base.TestCase):
+class NoteResourceDeleteTest(base.TestCase):
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_status_code_401_if_authentication_fail(self, g_mock):
+        g_mock.authenticated = False
+        note_resource = resources.NoteResource
+        response = note_resource.get()
+        self.assertEqual(response.status_code, 401)
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     def test_should_return_not_authorized_if_authentication_fail(self, g_mock):
@@ -336,13 +342,22 @@ class NoteResourceGetDeleteTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
-    def test_should_return_ok(self, logged_user_mock, g_mock):
+    def test_should_call_me_to_delete_a_note(self, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
         logged_user_mock.delete_a_note = self.mock.MagicMock()
         note_resource = resources.NoteResource()
         response = note_resource.delete(1)
         self.assertTrue(note_resource.me.delete_a_note.called)
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
+    def test_should_return_ok(self, logged_user_mock, g_mock):
+        g_mock = self.mock.MagicMock()
+        g_mock.authenticated.return_value = True
+        logged_user_mock.delete_a_note = self.mock.MagicMock()
+        note_resource = resources.NoteResource()
+        response = note_resource.delete(1)
         self.assertEqual(response, {'result': 'OK'})
 
     @base.TestCase.mock.patch('app.resource.resources.g')
@@ -353,8 +368,16 @@ class NoteResourceGetDeleteTest(base.TestCase):
         logged_user_mock.delete_a_note = self.mock.MagicMock(side_effect=exceptions.NotFound('foo'))
         note_resource = resources.NoteResource()
         response = note_resource.delete(1)
-        self.assertTrue(note_resource.me.delete_a_note.called)
         self.assertEqual(response[0], {'result': 'not-found', 'error': 'Resource Not Found', 'id': 1})
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
+    def test_should_return_status_code_404_if_not_found_raised(self, logged_user_mock, g_mock):
+        g_mock = self.mock.MagicMock()
+        g_mock.authenticated.return_value = True
+        logged_user_mock.delete_a_note = self.mock.MagicMock(side_effect=exceptions.NotFound('foo'))
+        note_resource = resources.NoteResource()
+        response = note_resource.delete(1)
         self.assertEqual(response[1], 404)
 
     @base.TestCase.mock.patch('app.resource.resources.g')
@@ -367,4 +390,14 @@ class NoteResourceGetDeleteTest(base.TestCase):
         response = note_resource.delete(1)
         self.assertTrue(note_resource.me.delete_a_note.called)
         self.assertEqual(response[0], {'result': 'not-mine', 'error': 'Resource Not Mine', 'id': 1})
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
+    def test_should_return_status_code_405_if_not_mine_raised(self, logged_user_mock, g_mock):
+        g_mock = self.mock.MagicMock()
+        g_mock.authenticated.return_value = True
+        logged_user_mock.delete_a_note = self.mock.MagicMock(side_effect=exceptions.NotMine('foo'))
+        note_resource = resources.NoteResource()
+        response = note_resource.delete(1)
+        self.assertTrue(note_resource.me.delete_a_note.called)
         self.assertEqual(response[1], 405)
