@@ -86,6 +86,7 @@ class User(AbstractUser):
     def update_a_note(self, id, note_json):
         note = services.NoteService.create_for_user(id, self.id)
         note.update()
+        return note
 
     def update(self, payload):
         payload.pop('password', None)
