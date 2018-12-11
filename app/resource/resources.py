@@ -42,7 +42,7 @@ class ResourceBase(Resource):
         return self._me
 
     @property
-    def unkown_user(self):
+    def visitor_user(self):
         from app.house import residents
         if self._visitor_user is None:
             self._visitor_user = residents.VisitorUser()
@@ -228,6 +228,14 @@ class NoteResource(ResourceBase):
 
 class AvatarResource(ResourceBase):
 
+    @not_allowed
+    def get(self):
+        pass
+
+    @not_allowed
+    def post(self):
+        pass
+
     @login_required
     def put(self):
         try:
@@ -236,8 +244,24 @@ class AvatarResource(ResourceBase):
         except Exception as ex:
             return self.return_unexpected_error()
 
+    @not_allowed
+    def delete(self):
+        pass
+
 
 class HealthCheckResource(ResourceBase):
 
     def get(self):
         return self.response({'yes': 'i am ok'})
+
+    @not_allowed
+    def post(self):
+        pass
+
+    @not_allowed
+    def put(self):
+        pass
+
+    @not_allowed
+    def delete(self):
+        pass
