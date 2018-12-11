@@ -4,19 +4,35 @@ from app import exceptions
 from app.resource import resources
 
 
+class AccountResourceGetTest(base.TestCase):
+
+    # TODO: Implement
+    def test_should_return_not_allowed(self):
+        # note_resource = resources.NoteResource
+        # response = note_resource.get()
+        # self.assertEqual()
+        self.assertTrue(True)
+
+
 class NoteResourceGetTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_get_return_not_auth(self, g_mock):
+    def test_should_return_status_code_401_if_not_auth(self, g_mock):
         g_mock.authenticated = False
         note_resource = resources.NoteResource
         response = note_resource.get()
         self.assertEqual(response.status_code, 401)
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_not_authorized_not_authenticated(self, g_mock):
+        g_mock.authenticated = False
+        note_resource = resources.NoteResource
+        response = note_resource.get()
         self.assertEqual(json.loads(response.data), {"result": "Not Authorized"})
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
-    def test_get_return_note_if_id(self, logged_user_mock, g_mock):
+    def test_should_call_me_to_get_a_note(self, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
         note_mock = self.mock.MagicMock()
@@ -25,11 +41,22 @@ class NoteResourceGetTest(base.TestCase):
         note_resource = resources.NoteResource()
         response = note_resource.get(1)
         self.assertTrue(note_resource.me.get_a_note.called)
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
+    def test_should_return_note(self, logged_user_mock, g_mock):
+        g_mock = self.mock.MagicMock()
+        g_mock.authenticated.return_value = True
+        note_mock = self.mock.MagicMock()
+        note_mock.as_dict.return_value = {'id': 1}
+        logged_user_mock.get_a_note.return_value = note_mock
+        note_resource = resources.NoteResource()
+        response = note_resource.get(1)
         self.assertEqual(response, {'id': 1})
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
-    def test_get_return_not_mine(self, logged_user_mock, g_mock):
+    def test_should_return_not_mine_if_not_mine_raised(self, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
         note_mock = self.mock.MagicMock()
@@ -41,7 +68,19 @@ class NoteResourceGetTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
-    def test_get_return_not_found(self, logged_user_mock, g_mock):
+    def test_should_return_status_code_405_if_not_mine_raised(self, logged_user_mock, g_mock):
+        g_mock = self.mock.MagicMock()
+        g_mock.authenticated.return_value = True
+        note_mock = self.mock.MagicMock()
+        note_mock.as_dict.return_value = {'id': 1}
+        logged_user_mock.get_a_note = self.mock.MagicMock(side_effect=exceptions.NotMine('foo'))
+        note_resource = resources.NoteResource()
+        response = note_resource.get(1)
+        self.assertEqual(response[1], 405)
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
+    def test_should_return_not_found_if_not_found_raised(self, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
         note_mock = self.mock.MagicMock()
@@ -56,8 +95,26 @@ class NoteResourceGetTest(base.TestCase):
         response = note_resource.get(1)
         self.assertEqual(response[0], {'result': 'not-found', 'error': 'Resource Not Found', 'id': 1})
 
+
     @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_get_call_query_if_not_note_id(self, g_mock):
+    @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
+    def test_should_return_status_code_404_if_not_found_raised(self, logged_user_mock, g_mock):
+        g_mock = self.mock.MagicMock()
+        g_mock.authenticated.return_value = True
+        note_mock = self.mock.MagicMock()
+        note_mock.as_dict.return_value = {
+            'id': 1,
+            'name': 'This is a note',
+            'content': 'And I need to write a mock content',
+            'color': '#FFFFFF'
+        }
+        logged_user_mock.get_a_note = self.mock.MagicMock(side_effect=exceptions.NotFound('Could not find a note with id 1'))
+        note_resource = resources.NoteResource()
+        response = note_resource.get(1)
+        self.assertEqual(response[1], 404)
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_call_query_if_not_note_id(self, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
         note_resource = resources.NoteResource()
@@ -83,17 +140,23 @@ class NoteResourceGetTest(base.TestCase):
 class NoteResourcePostTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_post_return_not_auth(self, g_mock):
+    def test_should_return_not_authorized_if_authentication_fail(self, g_mock):
+        g_mock.authenticated = False
+        note_resource = resources.NoteResource
+        response = note_resource.get()
+        self.assertEqual(json.loads(response.data), {"result": "Not Authorized"})
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_status_code_401_if_authentication_fail(self, g_mock):
         g_mock.authenticated = False
         note_resource = resources.NoteResource
         response = note_resource.get()
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(json.loads(response.data), {"result": "Not Authorized"})
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
     @base.TestCase.mock.patch('app.resource.resources.NoteResource.payload')
-    def test_post_return_ok(self, payload_mock, logged_user_mock, g_mock):
+    def test_should_call_me_to_create_a_note(self, payload_mock, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
         payload_mock = {
@@ -102,17 +165,38 @@ class NoteResourcePostTest(base.TestCase):
             'content': 'And I need to write a mock content',
             'color': '#FFFFFF'
         }
-        logged_user_mock.create_a_note = self.mock.MagicMock()
-        logged_user_mock.create_a_note.as_dict = payload_mock
+        note_mock = self.mock.MagicMock()
+        note_mock.as_dict.return_value = payload_mock
+        logged_user_mock.create_a_note.return_value = note_mock
         note_resource = resources.NoteResource()
         note_resource.post()
         self.assertTrue(note_resource.me.create_a_note.called)
 
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
+    @base.TestCase.mock.patch('app.resource.resources.NoteResource.payload')
+    def test_should_return_ok(self, payload_mock, logged_user_mock, g_mock):
+        g_mock = self.mock.MagicMock()
+        g_mock.authenticated.return_value = True
+        payload_mock = {
+            'id': 1,
+            'name': 'This is a note',
+            'content': 'And I need to write a mock content',
+            'color': '#FFFFFF'
+        }
+        note_mock = self.mock.MagicMock()
+        note_mock.as_dict.return_value = payload_mock
+        logged_user_mock.create_a_note.return_value = note_mock
+        note_resource = resources.NoteResource()
+        response = note_resource.post()
+        self.assertEqual(response, payload_mock)
 
+
+# TODO: Have to be refactored
 class NoteResourcePutTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_put_return_not_auth(self, g_mock):
+    def test_should_return_not_authorized_if_authentication_fail(self, g_mock):
         g_mock.authenticated = False
         note_resource = resources.NoteResource
         response = note_resource.get()
@@ -122,7 +206,7 @@ class NoteResourcePutTest(base.TestCase):
     @base.TestCase.mock.patch('app.resource.resources.g')
     @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
     @base.TestCase.mock.patch('app.resource.resources.NoteResource.payload')
-    def test_put_return_ok(self, payload_mock, logged_user_mock, g_mock):
+    def test_should_return_ok(self, payload_mock, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
         logged_user_mock.update_a_note = self.mock.MagicMock()
@@ -139,7 +223,7 @@ class NoteResourcePutTest(base.TestCase):
     @base.TestCase.mock.patch('app.resource.resources.g')
     @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
     @base.TestCase.mock.patch('app.resource.resources.NoteResource.payload')
-    def test_put_return_not_found(self, payload_mock, logged_user_mock, g_mock):
+    def test_should_return_not_found_if_not_found_raised(self, payload_mock, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
         logged_user_mock.update_a_note = self.mock.MagicMock(side_effect=exceptions.NotFound('foo'))
@@ -158,7 +242,7 @@ class NoteResourcePutTest(base.TestCase):
     @base.TestCase.mock.patch('app.resource.resources.g')
     @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
     @base.TestCase.mock.patch('app.resource.resources.NoteResource.payload')
-    def test_put_return_not_mine(self, payload_mock, logged_user_mock, g_mock):
+    def test_should_return_not_mine_if_not_mine_raised(self, payload_mock, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
         logged_user_mock.update_a_note = self.mock.MagicMock(side_effect=exceptions.NotMine('foo'))
@@ -175,10 +259,11 @@ class NoteResourcePutTest(base.TestCase):
         self.assertEqual(response[1], 405)
 
 
+#TODO: have to be refactored
 class NoteResourceGetDeleteTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_delete_return_not_auth(self, g_mock):
+    def test_should_return_not_authorized_if_authentication_fail(self, g_mock):
         g_mock.authenticated = False
         note_resource = resources.NoteResource
         response = note_resource.get()
@@ -187,7 +272,7 @@ class NoteResourceGetDeleteTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
-    def test_delete_return_ok(self, logged_user_mock, g_mock):
+    def test_should_return_ok(self, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
         logged_user_mock.delete_a_note = self.mock.MagicMock()
@@ -198,7 +283,7 @@ class NoteResourceGetDeleteTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
-    def test_delete_return_not_found(self, logged_user_mock, g_mock):
+    def test_should_return_not_found_if_not_found_raised(self, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
         logged_user_mock.delete_a_note = self.mock.MagicMock(side_effect=exceptions.NotFound('foo'))
@@ -210,7 +295,7 @@ class NoteResourceGetDeleteTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     @base.TestCase.mock.patch('app.resource.resources.NoteResource.logged_user')
-    def test_delete_return_not_mine(self, logged_user_mock, g_mock):
+    def test_should_return_not_mine_if_not_mine_raised(self, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
         logged_user_mock.delete_a_note = self.mock.MagicMock(side_effect=exceptions.NotMine('foo'))
