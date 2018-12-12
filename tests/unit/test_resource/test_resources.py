@@ -93,6 +93,20 @@ class AccountResourcePostTest(base.TestCase):
 
 class AccountResourcePutTest(base.TestCase):
 
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_status_code_401_if_not_auth(self, g_mock):
+        g_mock.authenticated = False
+        note_resource = resources.AccountResource()
+        response = note_resource.put()
+        self.assertEqual(response.status_code, 401)
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_not_authorized_not_authenticated(self, g_mock):
+        g_mock.authenticated = False
+        note_resource = resources.AccountResource()
+        response = note_resource.put()
+        self.assertEqual(json.loads(response.data), {"result": "Not Authorized"})
+
     @base.TestCase.mock.patch('app.resource.resources.AccountResource.me')
     @base.TestCase.mock.patch('app.resource.resources.AccountResource.payload')
     @base.TestCase.mock.patch('app.resource.resources.g')
