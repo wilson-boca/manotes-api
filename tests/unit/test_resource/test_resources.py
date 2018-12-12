@@ -4,6 +4,72 @@ from app import exceptions
 from app.resource import resources
 
 
+class ResourceBaseLoggedUserTest(base.TestCase):
+
+    def test_should_return_user_from_g(self):
+        pass
+
+
+class ResourceBaseMeTest(base.TestCase):
+
+    def test_should_return_me_if_me(self):
+        pass
+
+    def test_should_set_logged_user_on_me_if_me_is_none(self):
+        pass
+
+
+class ResourceBaseVisitorUserTest(base.TestCase):
+
+    def test_should_call_visitor_user_to_create_instance_if_visitor_user_is_none(self):
+        pass
+
+    def test_should_return_visitor_user(self):
+        pass
+
+
+class ResourceBasePayloadTest(base.TestCase):
+
+    def test_should_update_payload_with_transformed_if_request_json(self):
+        pass
+
+    def test_should_call_transform_key_if_request_json(self):
+        pass
+
+    def test_should_update_payload_with_transformed_if_request_form(self):
+        pass
+
+    def test_should_call_transform_key_if_request_form(self):
+        pass
+
+    def test_should_update_payload_with_transformed_if_request_args(self):
+        pass
+
+    def test_should_call_transform_key_if_request_args(self):
+        pass
+
+
+class ResourceBaseFilesTest(base.TestCase):
+
+    def test_should_call_request_to_files(self):
+        pass
+
+    def test_should_return_files(self):
+        pass
+
+
+class ResourceBaseCamelToSnakeTest(base.TestCase):
+
+    def test_should_call_re_to_sub(self):
+        pass
+
+    def test_should_call_re_to_sub_s1(self):
+        pass
+
+    def test_should_return_result_lowered(self):
+        pass
+
+
 class AccountResourceGetTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
