@@ -162,7 +162,7 @@ class LoginResource(ResourceBase):
                 return {'result': 'OK'}, 200
             return {'result': 'Not Authorized'}, 401
         except exceptions.UserNotExists as ex:
-            return {'result': 'not-found', 'error': 'Resource Not Found'}
+            return {'result': 'not-found', 'error': 'Resource Not Found'}, 404
         except Exception as ex:
             return {'result': 'Not Authorized'}, 401
 

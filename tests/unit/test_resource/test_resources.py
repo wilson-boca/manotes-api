@@ -8,13 +8,13 @@ class AccountResourceGetTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     def test_should_return_not_allowed(self, g_mock):
-        avatar_resource = resources.AccountResource()
+        avatar_resource = resources.AvatarResource()
         response = avatar_resource.get()
         self.assertEqual(json.loads(response.data), {'result': 'Method not allowed'})
 
     @base.TestCase.mock.patch('app.resource.resources.g')
     def test_should_return_status_code_405(self, g_mock):
-        avatar_resource = resources.AccountResource()
+        avatar_resource = resources.AvatarResource()
         response = avatar_resource.get()
         self.assertEqual(response.status_code, 405)
 
@@ -162,6 +162,81 @@ class AccountResourcePutTest(base.TestCase):
         account_resource = resources.AccountResource()
         response = account_resource.put()
         self.assertEqual(response, {"username": "antunesleo", "password": "fsfdsafdsa34"})
+
+
+class LoginResourceGetTest(base.TestCase):
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_not_allowed(self, g_mock):
+        avatar_resource = resources.AvatarResource()
+        response = avatar_resource.get()
+        self.assertEqual(json.loads(response.data), {'result': 'Method not allowed'})
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_status_code_405(self, g_mock):
+        avatar_resource = resources.AvatarResource()
+        response = avatar_resource.get()
+        self.assertEqual(response.status_code, 405)
+
+
+class LoginResourcePostTest(base.TestCase):
+
+    def test_should_call_authentication_to_authenticate_with_credentials(self):
+        pass
+
+    def test_should_set_user_to_g_if_authenticated(self):
+        pass
+
+    def test_should_set_token_to_g_if_authenticated(self):
+        pass
+
+    def test_should_return_result_ok_if_authenticate(self):
+        pass
+
+    def test_should_return_status_code_200_if_authenticate(self):
+        pass
+
+    def test_should_return_not_authorized_if_not_authenticated(self):
+        pass
+
+    def test_should_return_status_code_401_if_not_authenticated(self):
+        pass
+
+    def test_should_return_not_found_if_user_not_exists_raised(self):
+        pass
+
+    def test_should_return_404_if_user_not_exists_raised(self):
+        pass
+
+
+class LoginResourcePutTest(base.TestCase):
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_not_allowed(self, g_mock):
+        avatar_resource = resources.LoginResource()
+        response = avatar_resource.put()
+        self.assertEqual(json.loads(response.data), {'result': 'Method not allowed'})
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_status_code_405(self, g_mock):
+        avatar_resource = resources.LoginResource()
+        response = avatar_resource.put()
+        self.assertEqual(response.status_code, 405)
+
+
+class LoginResourceDeleteTest(base.TestCase):
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_not_allowed(self, g_mock):
+        avatar_resource = resources.AvatarResource()
+        response = avatar_resource.delete()
+        self.assertEqual(json.loads(response.data), {'result': 'Method not allowed'})
+
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_status_code_405(self, g_mock):
+        avatar_resource = resources.AvatarResource()
+        response = avatar_resource.delete()
+        self.assertEqual(response.status_code, 405)
 
 
 class NoteResourceGetTest(base.TestCase):
