@@ -70,6 +70,102 @@ class ResourceBaseCamelToSnakeTest(base.TestCase):
         pass
 
 
+class ResourceBaseSnakeToCamelTest(base.TestCase):
+
+    def test_should_capitalize_text_after_underscore(self):
+        pass
+
+    def test_should_not_capitalize_if_not_underscore(self):
+        pass
+
+
+class ResourceBaseTransformKeyTest(base.TestCase):
+
+    def test_should_for_each_item_on_dict_call_transform_key_with_value_if_data_is_a_dict(self):
+        pass
+
+    def test_should_for_each_item_on_dict_call_method_with_key_if_data_is_a_dict(self):
+        pass
+
+    def test_should_return_a_dict_if_data_is_a_dict(self):
+        pass
+
+    def test_should_for_each_item_on_list_if_data_is_a_list_call_transform_key_with_value_if_item_is_a_dict(self):
+        pass
+
+    def test_should_for_each_item_on_list_if_data_is_a_list_call_method_with_key_item_is_a_dict(self):
+        pass
+
+    def test_should_return_list_if_data_is_a_list(self):
+        pass
+
+
+class ResourceBaseResponseTest(base.TestCase):
+
+    def test_should_call_transform_key(self):
+        pass
+
+    def test_should_return_a_dict(self):
+        pass
+
+
+class ResourceBaseReturnUnexpectedErrorTest(base.TestCase):
+
+    def test_should_return_a_tuple(self):
+        pass
+
+    def test_should_return_result_error(self):
+        pass
+
+    def test_should_return_internal_server_error(self):
+        pass
+
+    def test_should_return_exception_an_unexpected_error_occurred(self):
+        pass
+
+    def test_should_return_500(self):
+        pass
+
+
+class ResourceBaseResultOkTest(base.TestCase):
+
+    def test_should_update_result_with_extra_if_extra_is_not_none(self):
+        pass
+
+    def test_should_return_dict_result_ok_if_extra_is_none(self):
+        pass
+
+
+class ResourceBaseReturnNotFoundTest(base.TestCase):
+
+    def test_should_return_not_found_if_extra_is_none(self):
+        pass
+
+    def test_should_update_result_with_extra_if_extra_is_not_none(self):
+        pass
+
+    def test_should_return_404(self):
+        pass
+
+    def test_should_return_404_if_extra_is_not_none(self):
+        pass
+
+
+class ResourceBaseReturnNotMineTest(base.TestCase):
+
+    def test_should_return_not_mine_if_extra_is_none(self):
+        pass
+
+    def test_should_update_result_with_extra_if_extra_is_not_none(self):
+        pass
+
+    def test_should_return_405(self):
+        pass
+
+    def test_should_return_405_if_extra_is_not_none(self):
+        pass
+
+
 class AccountResourceGetTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.resource.resources.g')
