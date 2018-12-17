@@ -72,9 +72,14 @@ class User(AbstractUser):
             raise exceptions.NotFound('Could not find a user with username {}'.format(username))
         return cls(db_instance=db_instance)
 
-    def create_a_note(self, note_json):
-        note_json['user_id'] = self.id
-        return services.NoteService.create_new(note_json)
+    @classmethod
+    def create_new(cls, user):
+        car = cls.repository.create_from_dict(user)
+        return cls.create_with_instance(car)
+
+    def create_a_note(self, note):
+        note['user_id'] = self.id
+        return services.NoteService.create_new(note)
 
     def delete_a_note(self, id):
         note = services.NoteService.create_for_user(id, self.id)
@@ -83,15 +88,15 @@ class User(AbstractUser):
     def get_a_note(self, id):
         return services.NoteService.create_for_user(id, self.id)
 
-    def update_a_note(self, id, note_json):
+    def update_a_note(self, id, note_changes):
         note = services.NoteService.create_for_user(id, self.id)
-        note.update()
+        note.update(note_changes)
         return note
 
     def update(self, payload):
         payload.pop('password', None)
         payload['update_date'] = datetime.datetime.utcnow()
-        self.db_instance.update_from_json(payload)
+        self.db_instance.update_from_dict(payload)
 
     def change_avatar(self, files):
         try:
@@ -111,18 +116,3 @@ class User(AbstractUser):
             "username": self.username,
             "email": self.email
         }
-
-
-class VisitorUser(AbstractUser):
-
-    @classmethod
-    def create_account(cls, payload):
-        payload['password'] = services.SecurityService.hash(payload['password'])
-        payload['token'] = services.SecurityService.generate_a_token()
-        user = cls.repository.create_from_json(payload)
-        name = user.username
-        from_address = "antunesleo4@gmail.com"
-        to_address = user.email
-        subject = "Test"
-        tasks.start_send_email(name, from_address, to_address, subject)
-        return User(user)

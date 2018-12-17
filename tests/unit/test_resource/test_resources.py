@@ -19,12 +19,12 @@ class ResourceBaseMeTest(base.TestCase):
         pass
 
 
-class ResourceBaseVisitorUserTest(base.TestCase):
+class ResourceBaseClerkTest(base.TestCase):
 
-    def test_should_call_visitor_user_to_create_instance_if_visitor_user_is_none(self):
+    def test_should_call_clerk_to_create_instance_if_clerk_is_none(self):
         pass
 
-    def test_should_return_visitor_user(self):
+    def test_should_return_clerk(self):
         pass
 
 
@@ -198,10 +198,10 @@ class AccountResourceDeleteTest(base.TestCase):
 
 class AccountResourcePostTest(base.TestCase):
 
-    @base.TestCase.mock.patch('app.resource.resources.AccountResource.visitor_user')
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.clerk')
     @base.TestCase.mock.patch('app.resource.resources.AccountResource.payload')
     @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_should_call_visitor_user_to_create_account(self, g_mock, payload_mock, visitor_user_mock):
+    def test_should_call_clerk_to_create_user_account(self, g_mock, payload_mock, clerk_mock):
         g_mock.authenticated = True
         payload_mock = {
             "username": "antunesleo",
@@ -211,15 +211,15 @@ class AccountResourcePostTest(base.TestCase):
         user_mock.as_dict.return_value = {
             "username": "antunesleo"
         }
-        visitor_user_mock.create_account.return_value = user_mock
+        clerk_mock.create_user_account.return_value = user_mock
         account_resource = resources.AccountResource()
         account_resource.post()
-        self.assertTrue(visitor_user_mock.create_account.called)
+        self.assertTrue(clerk_mock.create_user_account.called)
 
-    @base.TestCase.mock.patch('app.resource.resources.AccountResource.visitor_user')
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.clerk')
     @base.TestCase.mock.patch('app.resource.resources.AccountResource.payload')
     @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_should_call_user_to_as_dict(self, g_mock, payload_mock, visitor_user_mock):
+    def test_should_call_user_to_as_dict(self, g_mock, payload_mock, clerk_mock):
         g_mock.authenticated = True
         payload_mock = {
             "username": "antunesleo",
@@ -229,15 +229,15 @@ class AccountResourcePostTest(base.TestCase):
         user_mock.as_dict.return_value = {
             "username": "antunesleo"
         }
-        visitor_user_mock.create_account.return_value = user_mock
+        clerk_mock.create_user_account.return_value = user_mock
         account_resource = resources.AccountResource()
         account_resource.post()
         self.assertTrue(user_mock.as_dict.called)
 
-    @base.TestCase.mock.patch('app.resource.resources.AccountResource.visitor_user')
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.clerk')
     @base.TestCase.mock.patch('app.resource.resources.AccountResource.payload')
     @base.TestCase.mock.patch('app.resource.resources.g')
-    def test_should_return_user(self, g_mock, payload_mock, visitor_user_mock):
+    def test_should_return_user(self, g_mock, payload_mock, clerk_mock):
         g_mock.authenticated = True
         payload_mock = {
             "username": "antunesleo",
@@ -247,7 +247,7 @@ class AccountResourcePostTest(base.TestCase):
         user_mock.as_dict.return_value = {
             "username": "antunesleo"
         }
-        visitor_user_mock.create_account.return_value = user_mock
+        clerk_mock.create_user_account.return_value = user_mock
         account_resource = resources.AccountResource()
         response = account_resource.post()
         self.assertEqual(response, {"username": "antunesleo"})

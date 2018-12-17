@@ -41,19 +41,19 @@ class Note(object):
         return cls(db_instance)
 
     @classmethod
-    def create_new(cls, note_json):
-        note_instance = cls.repository.create_from_json(note_json)
-        return cls.create_with_instance(note_instance)
+    def create_new(cls, note):
+        db_instance = cls.repository.create_from_dict(note)
+        return cls.create_with_instance(db_instance)
 
     @classmethod
     def list_for_user(cls, user_id):
-        notes_db = cls.repository.filter(user_id=user_id)
-        notes = [cls.create_with_instance(note_db) for note_db in notes_db]
+        db_instances = cls.repository.filter(user_id=user_id)
+        notes = [cls.create_with_instance(db_instance) for db_instance in db_instances]
         return notes
 
-    def update(self, note_json):
-        note_json['update_date'] = datetime.datetime.utcnow()
-        self.db_instance.update_from_json(note_json)
+    def update(self, note):
+        note['update_date'] = datetime.datetime.utcnow()
+        self.db_instance.update_from_dict(note)
 
     def delete(self):
         self.db_instance.delete_db()

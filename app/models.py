@@ -30,7 +30,7 @@ class AbstractModel(object):
         db.session.commit()
 
     @classmethod
-    def create_from_json(cls, json_data):
+    def create_from_dict(cls, json_data):
         try:
             instance = cls()
             instance.set_values(json_data)
@@ -39,7 +39,7 @@ class AbstractModel(object):
         except Exception as ex:
             raise exceptions.RepositoryError(str(ex))
 
-    def update_from_json(self, json_data):
+    def update_from_dict(self, json_data):
         try:
             self.set_values(json_data)
             self.save_db()
@@ -64,7 +64,7 @@ class User(db.Model, AbstractModel):
     avatar_path = db.Column(db.String)
 
     @classmethod
-    def create_from_json(cls, json_data):
+    def create_from_dict(cls, json_data):
         try:
             instance = cls()
             instance.set_values(json_data)
@@ -77,7 +77,7 @@ class User(db.Model, AbstractModel):
                 raise exceptions.UsernameAlreadyExists('Could not create user because the username already exists')
             raise exceptions.RepositoryError(str(ex))
 
-    def update_from_json(self, json_data):
+    def update_from_dict(self, json_data):
         try:
             self.set_values(json_data)
             self.save_db()

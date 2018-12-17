@@ -9,7 +9,7 @@ class AbstractModelUpdateFromJsonTest(base.TestCase):
     def test_should_call_save_db(self, save_db_mock, set_values_mock):
         instance = self.mock.MagicMock()
         abstract_model = models.AbstractModel()
-        abstract_model.update_from_json({'oi': 'oi'})
+        abstract_model.update_from_dict({'oi': 'oi'})
         self.assertTrue(save_db_mock.called)
 
 
@@ -18,7 +18,7 @@ class AbstractModelUpdateFromJsonTest(base.TestCase):
     def test_should_call_set_values(self, save_db_mock, set_values_mock):
         instance = self.mock.MagicMock()
         abstract_model = models.AbstractModel()
-        abstract_model.update_from_json({'oi': 'oi'})
+        abstract_model.update_from_dict({'oi': 'oi'})
         self.assertTrue(set_values_mock.called)
 
 
@@ -74,7 +74,7 @@ class AbstractModelCreateFromJson(base.TestCase):
         db_mock.session = session
 
         abstract_model = models.AbstractModel()
-        abstract_model.create_from_json({'key': 'value'})
+        abstract_model.create_from_dict({'key': 'value'})
         self.assertTrue(set_values_mock.called)
 
     @base.TestCase.mock.patch('app.models.db')
@@ -85,5 +85,5 @@ class AbstractModelCreateFromJson(base.TestCase):
         db_mock.session = session
 
         abstract_model = models.AbstractModel()
-        abstract_model.create_from_json({'key': 'value'})
+        abstract_model.create_from_dict({'key': 'value'})
         self.assertTrue(set_values_mock.called)

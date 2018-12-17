@@ -67,16 +67,16 @@ class NoteCreateForUserTest(base.TestCase):
 
 class NoteCreateNewTest(base.TestCase):
 
-    @base.TestCase.mock.patch('app.house.wall.Note.repository.create_from_json')
-    def test_should_call_repository_to_create_from_json(self, create_from_json_mock):
+    @base.TestCase.mock.patch('app.house.wall.Note.repository.create_from_dict')
+    def test_should_call_repository_to_create_from_dict(self, create_from_dict_mock):
         db_instance_mock = self.mock.MagicMock()
         wall.Note.create_new(db_instance_mock)
-        self.assertTrue(create_from_json_mock.called)
+        self.assertTrue(create_from_dict_mock.called)
 
-    @base.TestCase.mock.patch('app.house.wall.Note.repository.create_from_json')
-    def test_should_return_created_instance(self, create_from_json_mock):
+    @base.TestCase.mock.patch('app.house.wall.Note.repository.create_from_dict')
+    def test_should_return_created_instance(self, create_from_dict_mock):
         instance_mock = self.mock.MagicMock()
-        create_from_json_mock.return_value = instance_mock
+        create_from_dict_mock.return_value = instance_mock
         created_note = wall.Note.create_new(instance_mock)
         self.assertTrue(isinstance(created_note, wall.Note))
 
@@ -97,7 +97,7 @@ class NoteListForUserTest(base.TestCase):
 
 class NoteUpdateTest(base.TestCase):
 
-    def test_update_should_call_repository_to_update_from_json(self):
+    def test_update_should_call_repository_to_update_from_dict(self):
         note = wall.Note.create_with_instance(self.mock.MagicMock())
         note.update({'key': 'value'})
-        self.assertTrue(note.db_instance.update_from_json.called)
+        self.assertTrue(note.db_instance.update_from_dict.called)

@@ -3,6 +3,7 @@ import secrets
 from importlib import import_module
 from passlib.hash import pbkdf2_sha256
 from app.files_drawer import drawer
+from app.house import residents
 
 
 class ClassProperty(object):
@@ -37,8 +38,8 @@ class NoteService(Service):
     _entity = 'app.house.wall'
 
     @classmethod
-    def create_new(cls, note_json):
-        return cls.entity.Note.create_new(note_json)
+    def create_new(cls, note):
+        return cls.entity.Note.create_new(note)
 
     @classmethod
     def list_for_user(cls, user_id):
@@ -49,9 +50,9 @@ class NoteService(Service):
         return cls.entity.Note.create_for_user(id, user_id)
 
     @classmethod
-    def update_by_id(cls, id, note_json, user_id):
+    def update_by_id(cls, id, note, user_id):
         note = cls.entity.Note.create_for_user(id, user_id)
-        note.update(note_json)
+        note.update(note)
         return note
 
 
@@ -76,3 +77,10 @@ class SecurityService(Service):
     @classmethod
     def is_string_equals_to_hash(cls, string, hashed_string):
         return pbkdf2_sha256.verify(string, hashed_string)
+
+
+class UserService(Service):
+
+    @classmethod
+    def create_new(cls, user):
+        return residents.User.create_new(user)
