@@ -23,7 +23,6 @@ class Config(object):
 
 class ProductionConfig(Config):
     PRODUCTION = True
-    pass
 
 
 class DevelopmentConfig(Config):

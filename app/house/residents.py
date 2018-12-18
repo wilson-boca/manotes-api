@@ -1,6 +1,5 @@
 import datetime
 from app.house import services
-from app.async_tasks import tasks
 from app import models, exceptions, config as config_module
 
 config = config_module.get_config()

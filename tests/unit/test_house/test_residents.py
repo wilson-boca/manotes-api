@@ -1,6 +1,6 @@
 from tests import base
 from app import exceptions
-from app.house import residents, services
+from app.house import residents
 
 
 class UserCreateWithIdTest(base.TestCase):
