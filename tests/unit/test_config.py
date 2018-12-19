@@ -18,6 +18,9 @@ class ConfigTest(base.TestCase):
     def test_has_SQLALCHEMY_DATABASE_URI_from_environment(self):
         pass
 
+    def test_has_PORT_from_environment(self):
+        pass
+
     def test_has_REDIS_from_environment(self):
         pass
 

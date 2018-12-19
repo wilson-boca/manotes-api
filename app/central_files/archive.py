@@ -12,38 +12,40 @@ class InvalidEnvironment(Exception):
     pass
 
 
-class File(object):
-    _user_id = None
+class ScribeFactory(object):
+
+    @classmethod
+    def create_with_environment(cls, user_id, router):
+        if config.DEVELOPMENT:
+            return LocalScribe.create_with_router_for_user(user_id, router)
+        if config.PRODUCTION:
+            return S3Scribe.create_with_router_for_user(user_id, router)
+        raise InvalidEnvironment('Could  not instantiate a file class '
+                                 'because the environment config is not development or production')
+
+
+class AbstractScribe(object):
+
+    def __init__(self, user_id, router):
+        self._user_id = user_id
+        self._router = router
 
     @property
     def user_id(self):
         return self._user_id
 
-    @classmethod
-    def create_with_environment(cls, user_id, router):
-        if config.DEVELOPMENT:
-            return S3File(user_id, router)
-        if config.PRODUCTION:
-            return S3File(user_id, router)
-        raise InvalidEnvironment('Could  not instantiate a file class '
-                                 'because the environment config is not development or production')
+    @property
+    def router(self):
+        return self._router
 
     def save(self, file):
         raise NotImplemented
 
 
-class LocalFile(File):
+class LocalScribe(AbstractScribe):
 
     def __init__(self, user_id, router):
-        self._user_id = user_id
-        if router == 'avatar':
-            self._router = AvatarDirectoryRouter.create_for_user(user_id)
-        else:
-            raise exceptions.InvalidRouter('Please pass a valid router for File')
-
-    @property
-    def router(self):
-        return self._router
+        super(LocalScribe, self).__init__(user_id, router)
 
     def save(self, file):
         if not os.path.exists(self.router.path):
@@ -51,49 +53,48 @@ class LocalFile(File):
         shutil.move(file, self.router.file_path)
         return self.router.file_path
 
-
-class S3File(File):
-    def __init__(self, user_id, router):
-        self._user_id = user_id
-        self._access_key_id = config.S3_AWS_ACCESS_KEY_ID
-        self._secret_access_key = config.S3_AWS_SECRET_ACCESS_KEY
-        self._bucket_name = config.AVATAR_BUCKET_NAME
-        self._s3_client = boto3.client(
-            's3',
-            aws_access_key_id=self.access_key_id,
-            aws_secret_access_key=self.secret_access_key,
-        )
-        if router == 'avatar':
-            self._router = AvatarDirectoryRouter.create_for_user(user_id)
-        else:
+    @classmethod
+    def create_with_router_for_user(cls, user_id, router):
+        if router != 'avatar':
             raise exceptions.InvalidRouter('Please pass a valid router for File')
 
-    @property
-    def access_key_id(self):
-        return self._access_key_id
+        router = AvatarDirectoryRouter.create_for_user(user_id)
+        return cls(user_id, router)
 
-    @property
-    def secret_access_key(self):
-        return self._secret_access_key
 
-    @property
-    def router(self):
-        return self._router
+class S3Scribe(AbstractScribe):
 
-    @property
-    def bucket_name(self):
-        return self._bucket_name
+    def __init__(self, user_id, router, access_key_id, secret_access_key, bucket_name, s3_client):
+        super(S3Scribe, self).__init__(user_id, router)
+        # INFO: How to test if a S3Scribe instance has this properties below?
+        self.access_key_id = access_key_id
+        self.secret_access_key = secret_access_key
+        self.bucket_name = bucket_name
+        self.s3_client = s3_client
 
-    @property
-    def s3_client(self):
-        return self._s3_client
+    @classmethod
+    def create_with_router_for_user(cls, user_id, router):
+        access_key_id = config.S3_AWS_ACCESS_KEY_ID
+        secret_access_key = config.S3_AWS_SECRET_ACCESS_KEY
+        bucket_name = config.AVATAR_BUCKET_NAME
+        s3_client = boto3.client(
+            's3',
+            aws_access_key_id=access_key_id,
+            aws_secret_access_key=secret_access_key,
+        )
+
+        if router != 'avatar':
+            raise exceptions.InvalidRouter('Please pass a valid router for File')
+
+        router = AvatarDirectoryRouter.create_for_user(user_id)
+        return cls(user_id, router, access_key_id, secret_access_key, bucket_name, s3_client)
 
     def save(self, file):
         self.s3_client.upload_file(file, self.bucket_name, self.router.file_name)
         return self.router.file_name
 
 
-class DirectoryRouter(object):
+class AbstractDirectoryRouter(object):
 
     def __init__(self, user_id):
         self._user_id = user_id
@@ -107,7 +108,7 @@ class DirectoryRouter(object):
         raise NotImplemented
 
 
-class AvatarDirectoryRouter(DirectoryRouter):
+class AvatarDirectoryRouter(AbstractDirectoryRouter):
 
     def __init__(self, user_id):
         super(AvatarDirectoryRouter, self).__init__(user_id)

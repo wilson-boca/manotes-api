@@ -2,7 +2,7 @@
 import secrets
 from importlib import import_module
 from passlib.hash import pbkdf2_sha256
-from app.files_drawer import drawer
+from app.central_files import archive
 from app.house import residents
 
 
@@ -60,7 +60,7 @@ class FileService(Service):
 
     @classmethod
     def save_avatar(cls, temp_file_path, user_id):
-        file = drawer.File.create_with_environment(user_id, router='avatar')
+        file = archive.ScribeFactory.create_with_environment(user_id, router='avatar')
         return file.save(temp_file_path)
 
 
