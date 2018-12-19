@@ -6,26 +6,35 @@ from app.resource import resources
 
 class ResourceBaseLoggedUserTest(base.TestCase):
 
-    def test_should_return_user_from_g(self):
-        pass
+    @base.mock.patch('app.resource.resources.g')
+    def test_should_return_user_from_g(self, g_mock):
+        user_mock = self.mock.MagicMock()
+        g_mock.user = user_mock
+        resource_base = resources.ResourceBase()
+        self.assertEqual(resource_base.logged_user, user_mock)
 
 
 class ResourceBaseMeTest(base.TestCase):
 
-    def test_should_return_me_if_me(self):
-        pass
+    @base.mock.patch('app.resource.resources.ResourceBase.logged_user')
+    def test_should_return_me(self, logged_user_mock):
+        resource_base = resources.ResourceBase()
+        resource_base._me = logged_user_mock
+        self.assertEqual(resource_base.me, logged_user_mock)
 
-    def test_should_set_logged_user_on_me_if_me_is_none(self):
-        pass
+    @base.mock.patch('app.resource.resources.ResourceBase.logged_user')
+    def test_should_set_logged_user_on_me_if_me_is_none(self, logged_user_mock):
+        resource_base = resources.ResourceBase()
+        resource_base._me = None
+        self.assertEqual(resource_base.me, logged_user_mock)
 
 
 class ResourceBaseClerkTest(base.TestCase):
 
-    def test_should_call_clerk_to_create_instance_if_clerk_is_none(self):
-        pass
-
-    def test_should_return_clerk(self):
-        pass
+    @base.mock.patch('app.resource.resources.reception.Clerk')
+    def test_should_return_reception_clerk(self, clerk_mock):
+        resource_base = resources.ResourceBase()
+        self.assertEqual(resource_base.clerk, clerk_mock)
 
 
 class ResourceBasePayloadTest(base.TestCase):

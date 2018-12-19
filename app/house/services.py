@@ -50,9 +50,9 @@ class NoteService(Service):
         return cls.entity.Note.create_for_user(id, user_id)
 
     @classmethod
-    def update_by_id(cls, id, note, user_id):
+    def update_by_id(cls, id, changed_note, user_id):
         note = cls.entity.Note.create_for_user(id, user_id)
-        note.update(note)
+        note.update(changed_note)
         return note
 
 

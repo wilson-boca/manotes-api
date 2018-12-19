@@ -5,11 +5,8 @@ from app import models, exceptions, config as config_module
 config = config_module.get_config()
 
 
-class AbstractUser(object):
+class User(object):
     repository = models.User
-
-
-class User(AbstractUser):
 
     def __init__(self, db_instance):
         self.db_instance = db_instance
@@ -98,17 +95,12 @@ class User(AbstractUser):
         self.db_instance.update_from_dict(payload)
 
     def change_avatar(self, files):
-        try:
-            avatar_file = files['avatar']
-            temp_file_path = '{}/{}-{}'.format(config.TEMP_PATH, self.id, 'avatar.png')
-            avatar_file.save(temp_file_path)
-
-            image_path = services.FileService.save_avatar(temp_file_path, self.id)
-
-            self.avatar_path = image_path
-            self.db_instance.save_db()
-        except Exception as ex:
-            pass
+        avatar_file = files['avatar']
+        temp_file_path = '{}/{}-{}'.format(config.TEMP_PATH, self.id, 'avatar.png')
+        avatar_file.save(temp_file_path)
+        image_path = services.FileService.save_avatar(temp_file_path, self.id)
+        self.db_instance.avatar_path = image_path
+        self.db_instance.save_db()
 
     def as_dict(self):
         return {

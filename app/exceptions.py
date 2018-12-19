@@ -24,3 +24,7 @@ class RepositoryError(Exception):
 
 class InvalidRouter(Exception):
     pass
+
+
+class UploadFileError(Exception):
+    pass

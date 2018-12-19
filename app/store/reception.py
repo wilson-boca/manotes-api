@@ -1,9 +1,8 @@
 from app.async_tasks import tasks
 from app.house import services
-from app.house.residents import AbstractUser
 
 
-class Clerk(AbstractUser):
+class Clerk(object):
 
     @classmethod
     def create_user_account(cls, user):

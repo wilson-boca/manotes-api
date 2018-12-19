@@ -91,7 +91,10 @@ class S3Scribe(AbstractScribe):
         return cls(user_id, router, access_key_id, secret_access_key, bucket_name, s3_client)
 
     def save(self, file):
-        self.s3_client.upload_file(file, self.bucket_name, self.router.file_name)
+        try:
+            self.s3_client.upload_file(file, self.bucket_name, self.router.file_name)
+        except Exception as ex:
+            raise exceptions.UploadFileError('Error uploading file to Amazon S3: {}'.format(str(ex)))
         return self.router.file_name
 
 

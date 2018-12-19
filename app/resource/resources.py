@@ -3,6 +3,7 @@ from functools import wraps
 from flask_restful import Resource
 from flask import g, Response, request
 from app import authentication, exceptions
+from app.store import reception
 
 
 def login_required(f):
@@ -43,10 +44,7 @@ class ResourceBase(Resource):
 
     @property
     def clerk(self):
-        from app.house import residents
-        if self._clerk is None:
-            self._clerk = residents.Clerk()
-        return self._clerk
+        return reception.Clerk
 
     @property
     def payload(self):
@@ -179,7 +177,7 @@ class NoteResource(ResourceBase):
 
         def query(self):
             notes = self.me.notes
-            return self.response([note.as_dict() for note in notes])
+            return [self.response(note.as_dict()) for note in notes]
 
         @login_required
         def get(self, note_id=None):
@@ -241,6 +239,8 @@ class AvatarResource(ResourceBase):
         try:
             self.me.change_avatar(self.files)
             return self.return_ok()
+        except exceptions.UploadFileError as ex:
+            return {'result': 'Error', 'message': 'We received the file but an error happened saving file to storage'}, 500
         except Exception as ex:
             return self.return_unexpected_error()
 
