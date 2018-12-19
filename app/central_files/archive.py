@@ -29,6 +29,7 @@ class AbstractScribe(object):
     def __init__(self, user_id, router):
         self._user_id = user_id
         self._router = router
+        print('GOTCHA! You should not be instatiating an abstract class.')
 
     @property
     def user_id(self):
@@ -39,7 +40,7 @@ class AbstractScribe(object):
         return self._router
 
     def save(self, file):
-        raise NotImplemented
+        raise NotImplemented('GOTCHA! You should not instantiate or use methods of an abstract class')
 
 
 class LocalScribe(AbstractScribe):
