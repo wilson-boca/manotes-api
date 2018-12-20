@@ -39,23 +39,137 @@ class ResourceBaseClerkTest(base.TestCase):
 
 class ResourceBasePayloadTest(base.TestCase):
 
-    def test_should_update_payload_with_transformed_if_request_json(self):
-        pass
+    @base.mock.patch('app.resource.resources.request')
+    @base.mock.patch('app.resource.resources.ResourceBase.transform_key')
+    def test_should_update_payload_with_transformed_if_request_json_is_not_none(self, transform_key_mock, request_mock):
+        request_mock.json = {'some_key': 'some_value'}
+        request_mock.args = None
+        request_mock.form = None
+        transform_key_mock.return_value = {'someKey': 'someValue'}
+        resource_base = resources.ResourceBase()
+        payload = resource_base.payload
+        self.assertEqual(payload, {'someKey': 'someValue'})
 
-    def test_should_call_transform_key_if_request_json(self):
-        pass
+    @base.mock.patch('app.resource.resources.request')
+    @base.mock.patch('app.resource.resources.ResourceBase.transform_key')
+    def test_should_not_update_payload_with_transformed_if_request_json_is_none(self, transform_key_mock, request_mock):
+        request_mock.json = None
+        request_mock.args = None
+        request_mock.form = None
+        transform_key_mock.return_value = {'someKey': 'someValue'}
+        resource_base = resources.ResourceBase()
+        payload = resource_base.payload
+        self.assertEqual(payload, {})
 
-    def test_should_update_payload_with_transformed_if_request_form(self):
-        pass
+    @base.mock.patch('app.resource.resources.request')
+    @base.mock.patch('app.resource.resources.ResourceBase.transform_key')
+    def test_should_call_transform_key_if_request_json_is_not_none(self, transform_key_mock, request_mock):
+        request_mock.json = {'some_key': 'some_value'}
+        request_mock.args = None
+        request_mock.form = None
+        transform_key_mock.return_value = {'someKey': 'someValue'}
+        resource_base = resources.ResourceBase()
+        payload = resource_base.payload
+        self.assertTrue(transform_key_mock.called)
 
-    def test_should_call_transform_key_if_request_form(self):
-        pass
+    @base.mock.patch('app.resource.resources.request')
+    @base.mock.patch('app.resource.resources.ResourceBase.transform_key')
+    def test_should_not_call_transform_key_if_request_json_is_none(self, transform_key_mock, request_mock):
+        request_mock.json = None
+        request_mock.form = None
+        request_mock.args = None
+        transform_key_mock.return_value = {'someKey': 'someValue'}
+        resource_base = resources.ResourceBase()
+        payload = resource_base.payload
+        self.assertFalse(transform_key_mock.called)
 
-    def test_should_update_payload_with_transformed_if_request_args(self):
-        pass
+    @base.mock.patch('app.resource.resources.request')
+    @base.mock.patch('app.resource.resources.ResourceBase.transform_key')
+    def test_should_update_payload_with_transformed_if_request_form_is_not_none(self, transform_key_mock, request_mock):
+        request_mock.form = {'some_key': 'some_value'}
+        request_mock.args = None
+        request_mock.form = None
+        transform_key_mock.return_value = {'someKey': 'someValue'}
+        resource_base = resources.ResourceBase()
+        payload = resource_base.payload
+        self.assertTrue({'someKey': 'someValue'})
 
-    def test_should_call_transform_key_if_request_args(self):
-        pass
+    @base.mock.patch('app.resource.resources.request')
+    @base.mock.patch('app.resource.resources.ResourceBase.transform_key')
+    def test_should_not_update_payload_with_transformed_if_request_form_is_none(self, transform_key_mock, request_mock):
+        request_mock.form = None
+        request_mock.args = None
+        request_mock.json = None
+        transform_key_mock.return_value = {'someKey': 'someValue'}
+        resource_base = resources.ResourceBase()
+        payload = resource_base.payload
+        self.assertEqual(payload, {})
+
+    @base.mock.patch('app.resource.resources.request')
+    @base.mock.patch('app.resource.resources.ResourceBase.transform_key')
+    def test_should_call_transform_key_if_request_form_is_not_none(self, transform_key_mock, request_mock):
+        request_mock.form = {'some_key': 'some_value'}
+        request_mock.args = None
+        request_mock.form = None
+        transform_key_mock.return_value = {'someKey': 'someValue'}
+        resource_base = resources.ResourceBase()
+        payload = resource_base.payload
+        self.assertTrue(transform_key_mock.called)
+
+    @base.mock.patch('app.resource.resources.request')
+    @base.mock.patch('app.resource.resources.ResourceBase.transform_key')
+    def test_should_not_call_transform_key_if_request_form_is_none(self, transform_key_mock, request_mock):
+        request_mock.form = None
+        request_mock.args = None
+        request_mock.json = None
+        transform_key_mock.return_value = {'someKey': 'someValue'}
+        resource_base = resources.ResourceBase()
+        payload = resource_base.payload
+        self.assertFalse(transform_key_mock.called)
+
+    @base.mock.patch('app.resource.resources.request')
+    @base.mock.patch('app.resource.resources.ResourceBase.transform_key')
+    def test_should_update_payload_with_transformed_key_if_request_args_is_not_none(self, transform_key_mock, request_mock):
+        request_mock.form = {'some_key': 'some_value'}
+        request_mock.args = None
+        request_mock.form = None
+        transform_key_mock.return_value = {'someKey': 'someValue'}
+        resource_base = resources.ResourceBase()
+        payload = resource_base.payload
+        self.assertTrue({'someKey': 'someValue'})
+
+    @base.mock.patch('app.resource.resources.request')
+    @base.mock.patch('app.resource.resources.ResourceBase.transform_key')
+    def test_should_not_update_payload_with_transformed_key_if_request_args_is_none(self, transform_key_mock, request_mock):
+        request_mock.form = None
+        request_mock.args = None
+        request_mock.json = None
+        transform_key_mock.return_value = {'someKey': 'someValue'}
+        resource_base = resources.ResourceBase()
+        payload = resource_base.payload
+        self.assertEqual(payload, {})
+
+    @base.mock.patch('app.resource.resources.request')
+    @base.mock.patch('app.resource.resources.ResourceBase.transform_key')
+    def test_should_call_transform_key_if_request_args_is_not_none(self, transform_key_mock, request_mock):
+        request_mock.form = {'some_key': 'some_value'}
+        request_mock.args = None
+        request_mock.form = None
+        transform_key_mock.return_value = {'someKey': 'someValue'}
+        resource_base = resources.ResourceBase()
+        payload = resource_base.payload
+        self.assertTrue(transform_key_mock.called)
+
+    @base.mock.patch('app.resource.resources.request')
+    @base.mock.patch('app.resource.resources.ResourceBase.transform_key')
+    def test_should_not_call_transform_key_if_request_args_is_none(self, transform_key_mock, request_mock):
+        request_mock.form = None
+        request_mock.args = None
+        request_mock.json = None
+        transform_key_mock.return_value = {'someKey': 'someValue'}
+        resource_base = resources.ResourceBase()
+        payload = resource_base.payload
+        self.assertFalse(transform_key_mock.called)
 
 
 class ResourceBaseFilesTest(base.TestCase):

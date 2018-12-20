@@ -32,4 +32,4 @@ class Postman(object):
             server.sendmail(from_address, to_address, text)
             server.quit()
         except Exception as ex:
-            print(ex)
+            print('ERROR: Oooops! The postman could not send the email: {}'.format(ex))
