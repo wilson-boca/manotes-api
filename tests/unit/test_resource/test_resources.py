@@ -174,53 +174,90 @@ class ResourceBasePayloadTest(base.TestCase):
 
 class ResourceBaseFilesTest(base.TestCase):
 
-    def test_should_call_request_to_files(self):
-        pass
-
-    def test_should_return_files(self):
-        pass
+    @base.mock.patch('app.resource.resources.request')
+    def test_should_return_request_files(self, request_mock):
+        files_mock = self.mock.MagicMock()
+        request_mock.files = files_mock
+        resource_base = resources.ResourceBase()
+        self.assertEqual(files_mock, resource_base.files)
 
 
 class ResourceBaseCamelToSnakeTest(base.TestCase):
 
-    def test_should_call_re_to_sub(self):
-        pass
+    @base.mock.patch('app.resource.resources.re')
+    def test_should_call_re_sub_to_pre_separate_terms_with_underscore(self, re_mock):
+        re_mock.sub.return_value = 'my_CamelCase'
+        resource_base = resources.ResourceBase()
+        resource_base.camel_to_snake('myCamelCase')
+        # TODO: Check if there is a better wall to check this call
+        self.assertEqual(re_mock.sub.mock_calls[0][1], ('(.)([A-Z][a-z]+)', r'\1_\2', 'myCamelCase'))
 
-    def test_should_call_re_to_sub_s1(self):
-        pass
+    @base.mock.patch('app.resource.resources.re')
+    def test_should_call_re_sub_to_separate_remaining_terms_with_underscore(self, re_mock):
+        re_mock.sub.return_value = 'my_Camel_Case'
+        resource_base = resources.ResourceBase()
+        resource_base.camel_to_snake('myCamelCase')
+        # TODO: Check if there is a better wall to check this call
+        self.assertEqual(re_mock.sub.mock_calls[1][1], ('([a-z0-9])([A-Z])', r'\1_\2', 'my_Camel_Case'))
 
-    def test_should_return_result_lowered(self):
-        pass
+    @base.mock.patch('app.resource.resources.re')
+    def test_should_return_result_lowered(self, re_mock):
+        re_mock.sub.return_value = 'my_Camel_Case'
+        resource_base = resources.ResourceBase()
+        result = resource_base.camel_to_snake('myCamelCase')
+        self.assertEqual(result, 'my_camel_case')
 
 
 class ResourceBaseSnakeToCamelTest(base.TestCase):
 
     def test_should_capitalize_text_after_underscore(self):
-        pass
+        resource_base = resources.ResourceBase()
+        result = resource_base.snake_to_camel('my_snake_to_camel')
+        self.assertEqual(result, 'mySnakeToCamel')
 
-    def test_should_not_capitalize_if_not_underscore(self):
-        pass
+    def test_should_not_capitalize_if_term_doesnt_have_a_previews_underscore(self):
+        resource_base = resources.ResourceBase()
+        result = resource_base.snake_to_camel('snake')
+        self.assertEqual(result, 'snake')
 
 
 class ResourceBaseTransformKeyTest(base.TestCase):
 
-    def test_should_for_each_item_on_dict_call_transform_key_with_value_if_data_is_a_dict(self):
-        pass
+    def setUp(self):
+        self.resource_base = resources.ResourceBase()
 
     def test_should_for_each_item_on_dict_call_method_with_key_if_data_is_a_dict(self):
+        method_mock = self.mock.MagicMock()
+        method_mock.side_effect = ['someKey', 'anotherKey']
+        result = self.resource_base.transform_key({'some_key': 'some_value', 'another_key': 'another_value'}, method_mock)
+        self.assertEqual([key for key in result.keys()], ['someKey', 'anotherKey'])
+
+    def test_should_for_each_item_on_dict_call_transform_key_with_value_if_data_is_a_dict(self):
+        # TODO: How to test this?
         pass
 
-    def test_should_return_a_dict_if_data_is_a_dict(self):
-        pass
+    def test_should_return_dict_if_data_is_dict(self):
+        method_mock = self.mock.MagicMock()
+        method_mock.side_effect = ['someKey', 'anotherKey']
+        result = self.resource_base.transform_key({'some_key': 'some_value', 'another_key': 'another_value'}, method_mock)
+        self.assertIsInstance(result, dict)
 
     def test_should_for_each_item_on_list_if_data_is_a_list_call_transform_key_with_value_if_item_is_a_dict(self):
+        # TODO: How to test this?
         pass
 
-    def test_should_for_each_item_on_list_if_data_is_a_list_call_method_with_key_item_is_a_dict(self):
-        pass
+    def test_should_for_each_item_on_list_if_data_is_a_list_call_method_with_key_if_item_is_a_dict(self):
+        method_mock = self.mock.MagicMock()
+        method_mock.side_effect = ['someKey', 'anotherKey']
+        result = self.resource_base.transform_key([{'some_key': 'some_value'}, {'another_key': 'another_value'}], method_mock)
+        keys = [key for item_dict in result for key in item_dict.keys()]
+        self.assertEqual(keys, ['someKey', 'anotherKey'])
 
     def test_should_return_list_if_data_is_a_list(self):
         pass
+
+    def tearDown(self):
+        self.resource_base = None
 
 
 class ResourceBaseResponseTest(base.TestCase):
