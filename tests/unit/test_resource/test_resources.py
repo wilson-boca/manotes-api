@@ -330,32 +330,60 @@ class ResourceBaseReturnOkTest(base.TestCase):
 
 class ResourceBaseReturnNotFoundTest(base.TestCase):
 
+    def setUp(self):
+        self.resource_base = resources.ResourceBase()
+
+    def test_should_return_tuple(self):
+        result = self.resource_base.return_not_found()
+        self.assertIsInstance(result, tuple)
+
     def test_should_return_not_found_if_extra_is_none(self):
-        pass
+        result = self.resource_base.return_not_found()
+        self.assertEqual(result[0]['result'], 'not-found')
 
     def test_should_update_result_with_extra_if_extra_is_not_none(self):
-        pass
+        result = self.resource_base.return_not_found(extra_key='extra_value')
+        self.assertEqual(result[0], {'result': 'not-found', 'error': 'Resource Not Found', 'extra_key': 'extra_value'})
 
     def test_should_return_404(self):
-        pass
+        result = self.resource_base.return_not_found()
+        self.assertEqual(result[1], 404)
 
     def test_should_return_404_if_extra_is_not_none(self):
-        pass
+        result = self.resource_base.return_not_found(extra_key='extra_value')
+        self.assertEqual(result[1], 404)
+
+    def tearDown(self):
+        self.resource_base = None
 
 
 class ResourceBaseReturnNotMineTest(base.TestCase):
 
+    def setUp(self):
+        self.resource_base = resources.ResourceBase()
+
+    def test_should_return_tuple(self):
+        result = self.resource_base.return_not_mine()
+        self.assertIsInstance(result, tuple)
+
     def test_should_return_not_mine_if_extra_is_none(self):
-        pass
+        result = self.resource_base.return_not_mine()
+        self.assertEqual(result[0]['result'], 'not-mine')
 
     def test_should_update_result_with_extra_if_extra_is_not_none(self):
-        pass
+        result = self.resource_base.return_not_mine(extra_key='extra_value')
+        self.assertEqual(result[0], {'result': 'not-mine', 'error': 'Resource Not Mine', 'extra_key': 'extra_value'})
 
     def test_should_return_405(self):
-        pass
+        result = self.resource_base.return_not_mine()
+        self.assertEqual(result[1], 405)
 
     def test_should_return_405_if_extra_is_not_none(self):
-        pass
+        result = self.resource_base.return_not_mine(extra_key='extra_value')
+        self.assertEqual(result[1], 405)
+
+    def tearDown(self):
+        self.resource_base = None
 
 
 class AccountResourceGetTest(base.TestCase):
@@ -534,33 +562,110 @@ class LoginResourceGetTest(base.TestCase):
 
 
 class LoginResourcePostTest(base.TestCase):
+    def setUp(self):
+        self.login_resource = resources.LoginResource()
 
-    def test_should_call_authentication_to_authenticate_with_credentials(self):
-        pass
+    # def post(self):
+    #     try:
+    #         authenticated, user = self.auth_service.authenticate_with_credentials(self.payload)
+    #         if authenticated:
+    #             g.user = user
+    #             g.current_token = user.token
+    #             return {'result': 'OK'}, 200
+    #         return {'result': 'Not Authorized'}, 401
+    #     except exceptions.UserNotExists as ex:
+    #         return {'result': 'not-found', 'error': 'Resource Not Found'}, 404
+    #     except Exception as ex:
+    #         return {'result': 'Not Authorized'}, 401
 
-    def test_should_set_user_to_g_if_authenticated(self):
-        pass
+    @base.mock.patch('app.resource.resources.LoginResource.payload')
+    @base.mock.patch('app.resource.resources.LoginResource.auth_service')
+    @base.mock.patch('app.resource.resources.g')
+    def test_should_call_authentication_to_authenticate_with_credentials(self, g_mock, auth_service_mock, payload_mock):
+        self.login_resource.post()
+        auth_service_mock.authenticate_with_credentials.assert_called_with(payload_mock)
 
-    def test_should_set_token_to_g_if_authenticated(self):
-        pass
+    @base.mock.patch('app.resource.resources.LoginResource.payload')
+    @base.mock.patch('app.resource.resources.LoginResource.auth_service')
+    @base.mock.patch('app.resource.resources.g')
+    def test_should_set_user_to_g_if_authenticated(self, g_mock, auth_service_mock, payload_mock):
+        user_mock = self.mock.MagicMock()
+        auth_service_mock.authenticate_with_credentials.return_value = True, user_mock
+        self.login_resource.post()
+        self.assertEqual(g_mock.user, user_mock)
 
-    def test_should_return_result_ok_if_authenticate(self):
-        pass
+    @base.mock.patch('app.resource.resources.LoginResource.payload')
+    @base.mock.patch('app.resource.resources.LoginResource.auth_service')
+    @base.mock.patch('app.resource.resources.g')
+    def test_should_not_set_user_to_g_if_authenticated(self, g_mock, auth_service_mock, payload_mock):
+        user_mock = self.mock.MagicMock()
+        auth_service_mock.authenticate_with_credentials.return_value = False, user_mock
+        self.login_resource.post()
+        self.assertNotEqual(g_mock.user, user_mock)
 
-    def test_should_return_status_code_200_if_authenticate(self):
-        pass
+    @base.mock.patch('app.resource.resources.LoginResource.payload')
+    @base.mock.patch('app.resource.resources.LoginResource.auth_service')
+    @base.mock.patch('app.resource.resources.g')
+    def test_should_set_token_to_g_if_authenticated(self, g_mock, auth_service_mock, payload_mock):
+        user_mock = self.mock.MagicMock(token='qwerty')
+        auth_service_mock.authenticate_with_credentials.return_value = True, user_mock
+        self.login_resource.post()
+        self.assertEqual(g_mock.current_token, 'qwerty')
 
-    def test_should_return_not_authorized_if_not_authenticated(self):
-        pass
+    @base.mock.patch('app.resource.resources.LoginResource.payload')
+    @base.mock.patch('app.resource.resources.LoginResource.auth_service')
+    @base.mock.patch('app.resource.resources.g')
+    def test_should_return_result_ok_if_authenticate(self, g_mock, auth_service_mock, payload_mock):
+        user_mock = self.mock.MagicMock(token='qwerty')
+        auth_service_mock.authenticate_with_credentials.return_value = True, user_mock
+        result = self.login_resource.post()
+        self.assertEqual(result[0], {'result': 'OK'})
 
-    def test_should_return_status_code_401_if_not_authenticated(self):
-        pass
+    @base.mock.patch('app.resource.resources.LoginResource.payload')
+    @base.mock.patch('app.resource.resources.LoginResource.auth_service')
+    @base.mock.patch('app.resource.resources.g')
+    def test_should_return_status_code_200_if_authenticate(self, g_mock, auth_service_mock, payload_mock):
+        user_mock = self.mock.MagicMock(token='qwerty')
+        auth_service_mock.authenticate_with_credentials.return_value = True, user_mock
+        result = self.login_resource.post()
+        self.assertEqual(result[1], 200)
 
-    def test_should_return_not_found_if_user_not_exists_raised(self):
-        pass
+    @base.mock.patch('app.resource.resources.LoginResource.payload')
+    @base.mock.patch('app.resource.resources.LoginResource.auth_service')
+    @base.mock.patch('app.resource.resources.g')
+    def test_should_return_not_authorized_if_not_authenticated(self, g_mock, auth_service_mock, payload_mock):
+        user_mock = self.mock.MagicMock()
+        auth_service_mock.authenticate_with_credentials.return_value = False, user_mock
+        result = self.login_resource.post()
+        self.assertEqual(result[0], {'result': 'Not Authorized'})
 
-    def test_should_return_404_if_user_not_exists_raised(self):
-        pass
+    @base.mock.patch('app.resource.resources.LoginResource.payload')
+    @base.mock.patch('app.resource.resources.LoginResource.auth_service')
+    @base.mock.patch('app.resource.resources.g')
+    def test_should_return_status_code_401_if_not_authenticated(self, g_mock, auth_service_mock, payload_mock):
+        user_mock = self.mock.MagicMock()
+        auth_service_mock.authenticate_with_credentials.return_value = False, user_mock
+        result = self.login_resource.post()
+        self.assertEqual(result[1], 401)
+
+    @base.mock.patch('app.resource.resources.LoginResource.payload')
+    @base.mock.patch('app.resource.resources.LoginResource.auth_service')
+    @base.mock.patch('app.resource.resources.g')
+    def test_should_return_not_found_if_user_not_exists_raised(self, g_mock, auth_service_mock, payload_mock):
+        auth_service_mock.authenticate_with_credentials = self.mock.MagicMock(side_effect=exceptions.UserNotExists('Exception message'))
+        result = self.login_resource.post()
+        self.assertEqual(result[0], {'result': 'not-found', 'error': 'Resource Not Found'})
+
+    @base.mock.patch('app.resource.resources.LoginResource.payload')
+    @base.mock.patch('app.resource.resources.LoginResource.auth_service')
+    @base.mock.patch('app.resource.resources.g')
+    def test_should_return_404_if_user_not_exists_raised(self, g_mock, auth_service_mock, payload_mock):
+        auth_service_mock.authenticate_with_credentials = self.mock.MagicMock(side_effect=exceptions.UserNotExists('Exception message'))
+        result = self.login_resource.post()
+        self.assertEqual(result[1], 404)
+
+    def tearDown(self):
+        self.login_resource = None
 
 
 class LoginResourcePutTest(base.TestCase):
