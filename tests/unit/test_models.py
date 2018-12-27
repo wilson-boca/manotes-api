@@ -12,7 +12,6 @@ class AbstractModelUpdateFromJsonTest(base.TestCase):
         abstract_model.update_from_dict({'oi': 'oi'})
         self.assertTrue(save_db_mock.called)
 
-
     @base.TestCase.mock.patch('app.models.AbstractModel.set_values')
     @base.TestCase.mock.patch('app.models.AbstractModel.save_db')
     def test_should_call_set_values(self, save_db_mock, set_values_mock):

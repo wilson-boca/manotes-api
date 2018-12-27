@@ -562,21 +562,9 @@ class LoginResourceGetTest(base.TestCase):
 
 
 class LoginResourcePostTest(base.TestCase):
+
     def setUp(self):
         self.login_resource = resources.LoginResource()
-
-    # def post(self):
-    #     try:
-    #         authenticated, user = self.auth_service.authenticate_with_credentials(self.payload)
-    #         if authenticated:
-    #             g.user = user
-    #             g.current_token = user.token
-    #             return {'result': 'OK'}, 200
-    #         return {'result': 'Not Authorized'}, 401
-    #     except exceptions.UserNotExists as ex:
-    #         return {'result': 'not-found', 'error': 'Resource Not Found'}, 404
-    #     except Exception as ex:
-    #         return {'result': 'Not Authorized'}, 401
 
     @base.mock.patch('app.resource.resources.LoginResource.payload')
     @base.mock.patch('app.resource.resources.LoginResource.auth_service')
