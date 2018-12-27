@@ -262,38 +262,70 @@ class ResourceBaseTransformKeyTest(base.TestCase):
 
 class ResourceBaseResponseTest(base.TestCase):
 
-    def test_should_call_transform_key(self):
-        pass
+    def setUp(self):
+        self.resource_base = resources.ResourceBase()
 
-    def test_should_return_a_dict(self):
-        pass
+    @base.mock.patch('app.resource.resources.ResourceBase.snake_to_camel')
+    @base.mock.patch('app.resource.resources.ResourceBase.transform_key')
+    def test_should_call_transform_key(self, transform_key_mock, snake_to_camel_mock):
+        self.resource_base.response({'i_am': 'a_dicionary'})
+        transform_key_mock.assert_called_with({'i_am': 'a_dicionary'}, snake_to_camel_mock)
+
+    @base.mock.patch('app.resource.resources.ResourceBase.snake_to_camel')
+    @base.mock.patch('app.resource.resources.ResourceBase.transform_key')
+    def test_should_return_a_dict(self, transform_key_mock, snake_to_camel_mock):
+        transform_key_mock.return_value = {'iAm': 'aDicionary'}
+        result = self.resource_base.response({'i_am': 'a_dicionary'})
+        self.assertEqual(result, {'iAm': 'aDicionary'})
+
+    def tearDown(self):
+        self.resource_base = None
 
 
 class ResourceBaseReturnUnexpectedErrorTest(base.TestCase):
 
+    def setUp(self):
+        self.resource_base = resources.ResourceBase()
+
     def test_should_return_a_tuple(self):
-        pass
+        result = self.resource_base.return_unexpected_error()
+        self.assertIsInstance(result, tuple)
 
     def test_should_return_result_error(self):
-        pass
+        result = self.resource_base.return_unexpected_error()
+        self.assertEqual(result[0]['result'], 'error')
 
     def test_should_return_internal_server_error(self):
-        pass
+        result = self.resource_base.return_unexpected_error()
+        self.assertEqual(result[0]['error'], 'Internal Server Error')
 
     def test_should_return_exception_an_unexpected_error_occurred(self):
-        pass
+        result = self.resource_base.return_unexpected_error()
+        self.assertEqual(result[0]['exception'], 'An unexpected error occurred')
 
     def test_should_return_500(self):
-        pass
+        result = self.resource_base.return_unexpected_error()
+        self.assertEqual(result[1], 500)
+
+    def tearDown(self):
+        self.resource_base = None
 
 
-class ResourceBaseResultOkTest(base.TestCase):
+class ResourceBaseReturnOkTest(base.TestCase):
+
+    def setUp(self):
+        self.resource_base = resources.ResourceBase()
 
     def test_should_update_result_with_extra_if_extra_is_not_none(self):
-        pass
+        result = self.resource_base.return_ok(some_key='some_value')
+        self.assertEqual({'result': 'OK', 'some_key': 'some_value'}, result)
 
     def test_should_return_dict_result_ok_if_extra_is_none(self):
-        pass
+        result = self.resource_base.return_ok()
+        self.assertEqual({'result': 'OK'}, result)
+
+    def tearDown(self):
+        self.resource_base = None
 
 
 class ResourceBaseReturnNotFoundTest(base.TestCase):
