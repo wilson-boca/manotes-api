@@ -52,6 +52,22 @@ class AvatarScribeRouterTest(base.TestCase):
         self.assertEqual(router_mock, abstract_scribe.router)
 
 
+class LocalScribeCreateWithRouterForUserTest(base.TestCase):
+
+    def test_should_raise_invalid_router_if_router_is_not_avatar(self):
+        with self.assertRaises(exceptions.InvalidRouter):
+            archive.LocalScribe.create_with_router_for_user(1, 'asdf')
+
+    @base.mock.patch('app.central_files.archive.AvatarDirectoryRouter.create_for_user')
+    def test_should_call_avatar_directory_router_to_create_for_user_if_router_is_avatar(self, create_for_user_mock):
+        archive.LocalScribe.create_with_router_for_user(1, 'avatar')
+        self.assertTrue(create_for_user_mock.called)
+
+    def test_should_return_instance(self):
+        local_scribe_instance = archive.LocalScribe.create_with_router_for_user(1, 'avatar')
+        self.assertIsInstance(local_scribe_instance, archive.LocalScribe)
+
+
 class LocalScribeSaveTest(base.TestCase):
 
     def setUp(self):
@@ -88,18 +104,6 @@ class LocalScribeSaveTest(base.TestCase):
 
     def tearDown(self):
         self.local_scribe = None
-
-
-class LocalScribeCreateWithRouterForUserTest(base.TestCase):
-
-    def test_should_raise_invalid_router_if_router_is_not_avatar(self):
-        pass
-
-    def test_should_call_avatar_directory_router_to_create_for_user(self):
-        pass
-
-    def test_should_return_instance(self):
-        pass
 
 
 class S3ScribeCreateWithRouterForUserTest(base.TestCase):

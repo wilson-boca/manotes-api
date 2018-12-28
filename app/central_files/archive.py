@@ -44,12 +44,6 @@ class LocalScribe(AbstractScribe):
     def __init__(self, user_id, router):
         super(LocalScribe, self).__init__(user_id, router)
 
-    def save(self, file):
-        if not os.path.exists(self.router.path):
-            os.makedirs(self.router.path)
-        shutil.move(file, self.router.file_path)
-        return self.router.file_path
-
     @classmethod
     def create_with_router_for_user(cls, user_id, router):
         if router != 'avatar':
@@ -57,6 +51,12 @@ class LocalScribe(AbstractScribe):
 
         router = AvatarDirectoryRouter.create_for_user(user_id)
         return cls(user_id, router)
+
+    def save(self, file):
+        if not os.path.exists(self.router.path):
+            os.makedirs(self.router.path)
+        shutil.move(file, self.router.file_path)
+        return self.router.file_path
 
 
 class S3Scribe(AbstractScribe):
