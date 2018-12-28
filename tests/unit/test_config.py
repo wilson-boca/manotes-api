@@ -1,40 +1,79 @@
+import os
 from tests import base
+from app import config
 
 
 class ConfigTest(base.TestCase):
 
+    def setUp(self):
+        super(ConfigTest, self).setUp()
+        self.config = config.Config()
+
+    def test_has_DEBUG(self):
+        self.assertTrue(hasattr(self.config, 'DEBUG'))
+
     def test_has_DEBUG_default_false(self):
-        pass
+        self.assertFalse(self.config.DEBUG)
+
+    def test_has_TESTING(self):
+        self.assertTrue(hasattr(self.config, 'TESTING'))
 
     def test_has_TESTING_default_false(self):
-        pass
+        self.assertFalse(self.config.TESTING)
+
+    def test_has_DEVELOPMENT(self):
+        self.assertTrue(hasattr(self.config, 'DEVELOPMENT'))
 
     def test_has_DEVELOPMENT_default_false(self):
-        pass
+        self.assertFalse(self.config.DEVELOPMENT)
+
+    def test_has_ENVIRONMENT(self):
+        self.assertTrue(hasattr(self.config, 'ENVIRONMENT'))
 
     def test_has_ENVIRONMENT_default_development(self):
-        pass
+        self.assertEqual(self.config.ENVIRONMENT, 'development')
+
+    def test_has_SQLALCHEMY_DATABASE_URI(self):
+        self.assertTrue(hasattr(self.config, 'SQLALCHEMY_DATABASE_URI'))
 
     def test_has_SQLALCHEMY_DATABASE_URI_from_environment(self):
-        pass
+        self.assertEqual(self.config.SQLALCHEMY_DATABASE_URI, os.environ['DATABASE_URL'])
+
+    def test_has_PORT(self):
+        self.assertTrue(hasattr(self.config, 'PORT'))
 
     def test_has_PORT_from_environment(self):
-        pass
+        self.assertEqual(self.config.PORT, os.environ['PORT'])
 
-    def test_has_REDIS_from_environment(self):
-        pass
+    def test_has_REDIS_URL(self):
+        self.assertTrue(hasattr(self.config, 'REDIS_URL'))
+
+    def test_has_REDIS_URL_from_environment(self):
+        self.assertEqual(self.config.REDIS_URL, os.environ['REDIS_URL'])
+
+    def test_has_SMTP_HOST(self):
+        self.assertTrue(hasattr(self.config, 'SMTP_HOST'))
 
     def test_has_SMTP_HOST_from_environment(self):
-        pass
+        self.assertEqual(self.config.SMTP_HOST, os.environ['SMTP_HOST'])
+
+    def test_has_SMTP_PORT(self):
+        self.assertTrue(hasattr(self.config, 'SMTP_PORT'))
 
     def test_has_SMTP_PORT_from_environment(self):
-        pass
+        self.assertEqual(self.config.SMTP_PORT, os.environ['SMTP_PORT'])
+
+    def test_has_SMTP_USERNAME(self):
+        self.assertTrue(hasattr(self.config, 'SMTP_USERNAME'))
 
     def test_has_SMTP_USERNAME_from_environment(self):
-        pass
+        self.assertEqual(self.config.SMTP_USERNAME, os.environ['SMTP_USERNAME'])
+
+    def test_has_SMTP_PASSWORD(self):
+        self.assertTrue(hasattr(self.config, 'SMTP_PASSWORD'))
 
     def test_has_SMTP_PASSWORD_from_environment(self):
-        pass
+        self.assertEqual(self.config.SMTP_PASSWORD, os.environ['SMTP_PASSWORD'])
 
     def test_has_FILE_STORAGE_PATH_from_environment(self):
         pass
