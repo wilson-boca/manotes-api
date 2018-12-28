@@ -82,7 +82,6 @@ class AbstractModelCreateFromJson(base.TestCase):
     def test_should_call_save_db(self, set_values_mock, save_db_mock, db_mock):
         session = self.mock.MagicMock()
         db_mock.session = session
-
         abstract_model = models.AbstractModel()
         abstract_model.create_from_dict({'key': 'value'})
         self.assertTrue(set_values_mock.called)
