@@ -36,3 +36,8 @@ class InvalidEnvironment(Exception):
 
 class NoImplementationError(Exception):
     pass
+
+
+class ConfigClassNotFound(Exception):
+    pass
+
