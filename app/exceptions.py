@@ -28,3 +28,11 @@ class InvalidRouter(Exception):
 
 class UploadFileError(Exception):
     pass
+
+
+class InvalidEnvironment(Exception):
+    pass
+
+
+class NoImplementationError(Exception):
+    pass

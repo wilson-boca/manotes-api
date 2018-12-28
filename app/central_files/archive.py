@@ -8,10 +8,6 @@ from app import exceptions
 config = config_module.get_config()
 
 
-class InvalidEnvironment(Exception):
-    pass
-
-
 class ScribeFactory(object):
 
     @classmethod
@@ -20,7 +16,7 @@ class ScribeFactory(object):
             return LocalScribe.create_with_router_for_user(user_id, router)
         if config.PRODUCTION:
             return S3Scribe.create_with_router_for_user(user_id, router)
-        raise InvalidEnvironment('Could  not instantiate a file class '
+        raise exceptions.InvalidEnvironment('Could  not instantiate a file class '
                                  'because the environment config is not development or production')
 
 
@@ -40,7 +36,7 @@ class AbstractScribe(object):
         return self._router
 
     def save(self, file):
-        raise NotImplemented('GOTCHA! You should not instantiate or use methods of an abstract class')
+        raise exceptions.NoImplementationError('GOTCHA! You should not instantiate or use methods of an abstract class')
 
 
 class LocalScribe(AbstractScribe):
