@@ -40,9 +40,6 @@ def add_token_header(response):
     user = g.get("user")
     if user is not None:
         token = g.current_token
-        ''' INFO: How to test this expire_dates stuff? 
-                  I really need to test if my expires_date has 90 days.
-                  Maybe we should create a time service?'''
         expire_date = datetime.datetime.now()
         expire_date = expire_date + datetime.timedelta(days=90)
         response.set_cookie('userToken', token, expires=expire_date)
