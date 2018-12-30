@@ -25,7 +25,6 @@ class AbstractScribe(object):
     def __init__(self, user_id, router):
         self._user_id = user_id
         self._router = router
-        print('GOTCHA! You should not be instatiating an abstract class.')
 
     @property
     def user_id(self):
@@ -63,7 +62,6 @@ class S3Scribe(AbstractScribe):
 
     def __init__(self, user_id, router, access_key_id, secret_access_key, bucket_name, s3_client):
         super(S3Scribe, self).__init__(user_id, router)
-        # INFO: How to test if a S3Scribe instance has this properties below?
         self.access_key_id = access_key_id
         self.secret_access_key = secret_access_key
         self.bucket_name = bucket_name
@@ -97,28 +95,16 @@ class S3Scribe(AbstractScribe):
 class AbstractDirectoryRouter(object):
 
     def __init__(self, user_id):
-        self._user_id = user_id
-
-    @property
-    def user_id(self):
-        return self._user_id
-
-    @property
-    def path(self):
-        raise NotImplemented
+        self.user_id = user_id
 
 
 class AvatarDirectoryRouter(AbstractDirectoryRouter):
 
-    def __init__(self, user_id):
+    def __init__(self, user_id, path, bucket_name, hash):
         super(AvatarDirectoryRouter, self).__init__(user_id)
-        self._path = '{}/{}/'.format(config.FILE_STORAGE_PATH, config.AVATAR_BUCKET_NAME)
-        self._bucket_name = config.AVATAR_BUCKET_NAME
-        self._hash = secrets.token_hex(8)
-
-    @property
-    def path(self):
-        return self._path
+        self.path = path
+        self.bucket_name = bucket_name
+        self.hash = hash
 
     @property
     def file_path(self):
@@ -128,14 +114,9 @@ class AvatarDirectoryRouter(AbstractDirectoryRouter):
     def file_name(self):
         return 'avatar-{}-{}.png'.format(self.hash, self.user_id)
 
-    @property
-    def bucket_name(self):
-        return self._bucket_name
-
-    @property
-    def hash(self):
-        return self._hash
-
     @classmethod
     def create_for_user(cls, user_id):
-        return cls(user_id)
+        path = '{}/{}/'.format(config.FILE_STORAGE_PATH, config.AVATAR_BUCKET_NAME)
+        bucket_name = config.AVATAR_BUCKET_NAME
+        haash = secrets.token_hex(8)
+        return cls(user_id, path, bucket_name, haash)
