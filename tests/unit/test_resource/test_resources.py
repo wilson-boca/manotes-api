@@ -254,7 +254,10 @@ class ResourceBaseTransformKeyTest(base.TestCase):
         self.assertEqual(keys, ['someKey', 'anotherKey'])
 
     def test_should_return_list_if_data_is_a_list(self):
-        pass
+        method_mock = self.mock.MagicMock()
+        method_mock.side_effect = ['someKey', 'anotherKey']
+        result = self.resource_base.transform_key([{'some_key': 'some_value'}, {'another_key': 'another_value'}], method_mock)
+        self.assertIsInstance(result, list)
 
     def tearDown(self):
         self.resource_base = None

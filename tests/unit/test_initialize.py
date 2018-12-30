@@ -1,4 +1,7 @@
 from tests import base
+from app import config as config_module
+
+config = config_module.get_config()
 
 
 class BeforeRequestTest(base.TestCase):
@@ -59,17 +62,23 @@ class AddTokenHeaderTest(base.TestCase):
 
 class CreateApiTest(base.TestCase):
 
-    def test_should_call_web_app_to_run(self):
-        pass
-
-    def test_should_call_config_to_get_port(self):
-        pass
+    @base.mock.patch('app.api.create_api')
+    @base.mock.patch('app.initialize.web_app')
+    def test_should_call_api_to_create_api(self, web_app_mock, create_api_mock):
+        base.initialize.create_api()
+        create_api_mock.assert_called_with(web_app_mock)
 
 
 class RunTest(base.TestCase):
 
-    def test_should_call_create_api(self):
-        pass
+    @base.mock.patch('app.initialize.web_app')
+    @base.mock.patch('app.initialize.create_api')
+    def test_should_call_create_api(self, create_api_mock, web_app_mock):
+        base.initialize.run()
+        self.assertTrue(create_api_mock.called)
 
-    def test_should_call_web_app_to_run(self):
-        pass
+    @base.mock.patch('app.initialize.web_app')
+    @base.mock.patch('app.initialize.create_api')
+    def test_should_call_web_app_to_run(self, create_api_mock, web_app_mock):
+        base.initialize.run()
+        web_app_mock.run.assert_called_with(host='127.0.0.1', port=int(config.PORT), debug=True, threaded=True)
