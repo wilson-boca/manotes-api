@@ -46,5 +46,5 @@ class HashService(Service):
 class TokenService(Service):
 
     @classmethod
-    def generate_a_token(cls):
-        return secrets.token_hex(40)
+    def generate(cls, size=40):
+        return secrets.token_hex(size)

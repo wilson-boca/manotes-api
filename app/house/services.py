@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-import secrets
 from importlib import import_module
-from passlib.hash import pbkdf2_sha256
 from app.central_files import archive
 from app.house import residents
 
@@ -62,21 +60,6 @@ class FileService(Service):
     def save_avatar(cls, temp_file_path, user_id):
         file = archive.ScribeFactory.create_with_environment(user_id, router='avatar')
         return file.save(temp_file_path)
-
-
-class SecurityService(Service):
-
-    @classmethod
-    def generate_a_token(cls):
-        return secrets.token_hex(40)
-
-    @classmethod
-    def hash(cls, word):
-        return pbkdf2_sha256.hash(word)
-
-    @classmethod
-    def is_string_equals_to_hash(cls, string, hashed_string):
-        return pbkdf2_sha256.verify(string, hashed_string)
 
 
 class UserService(Service):

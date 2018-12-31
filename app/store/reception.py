@@ -1,13 +1,14 @@
 from app.async_tasks import tasks
 from app.house import services
+from app.security import security_services
 
 
 class Clerk(object):
 
     @classmethod
     def create_user_account(cls, user):
-        user['password'] = services.SecurityService.hash(user['password'])
-        user['token'] = services.SecurityService.generate_a_token()
+        user['password'] = security_services.HashService.hash(user['password'])
+        user['token'] = security_services.TokenService.generate()
         created_user = services.UserService.create_new(user)
         name = created_user.username
         from_address = "antunesleo4@gmail.com"

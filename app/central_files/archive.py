@@ -4,6 +4,7 @@ import secrets
 import boto3
 from app import config as config_module
 from app import exceptions
+from app.security import security_services
 
 config = config_module.get_config()
 
@@ -100,23 +101,23 @@ class AbstractDirectoryRouter(object):
 
 class AvatarDirectoryRouter(AbstractDirectoryRouter):
 
-    def __init__(self, user_id, path, bucket_name, hash):
+    def __init__(self, user_id, path, bucket_name, token):
         super(AvatarDirectoryRouter, self).__init__(user_id)
         self.path = path
         self.bucket_name = bucket_name
-        self.hash = hash
+        self.token = token
 
     @property
     def file_path(self):
-        return '{}avatar-{}-{}.png'.format(self.path, self.hash, self.user_id)
+        return '{}avatar-{}-{}.png'.format(self.path, self.token, self.user_id)
 
     @property
     def file_name(self):
-        return 'avatar-{}-{}.png'.format(self.hash, self.user_id)
+        return 'avatar-{}-{}.png'.format(self.token, self.user_id)
 
     @classmethod
     def create_for_user(cls, user_id):
         path = '{}/{}/'.format(config.FILE_STORAGE_PATH, config.AVATAR_BUCKET_NAME)
         bucket_name = config.AVATAR_BUCKET_NAME
-        haash = secrets.token_hex(8)
-        return cls(user_id, path, bucket_name, haash)
+        token = security_services.TokenService.generate(8)
+        return cls(user_id, path, bucket_name, token)

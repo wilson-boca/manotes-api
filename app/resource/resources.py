@@ -2,7 +2,8 @@ import re
 from functools import wraps
 from flask_restful import Resource
 from flask import g, Response, request
-from app import authentication, exceptions
+from app import exceptions
+from app.security import authentication
 from app.store import reception
 
 
