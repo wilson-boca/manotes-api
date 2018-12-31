@@ -194,40 +194,54 @@ class S3ScribeSaveTest(base.TestCase):
 
 class AbstractDirectoryRouterInitTest(base.TestCase):
 
+    def setUp(self):
+        self.abstract_directory_router = archive.AbstractDirectoryRouter(1)
+
     def test_has_user_id(self):
-        pass
+        self.assertTrue(hasattr(self.abstract_directory_router, 'user_id'))
 
 
 class AvatarDirectoryRouterInitTest(base.TestCase):
 
+    def setUp(self):
+        self.avatar_directory_router = archive.AvatarDirectoryRouter(1, 'path', 'bucket_name', 'token')
+
     def test_has_path(self):
-        pass
+        self.assertTrue(hasattr(self.avatar_directory_router, 'path'))
 
     def test_has_bucket_name(self):
-        pass
+        self.assertTrue(hasattr(self.avatar_directory_router, 'bucket_name'))
 
-    def test_has_hash(self):
-        pass
+    def test_has_token(self):
+        self.assertTrue(hasattr(self.avatar_directory_router, 'token'))
 
 
 class AvatarDirectoryRouterFilePathTest(base.TestCase):
 
-    def test_should_use_path_to_construct_file_path(self):
-        pass
+    def setUp(self):
+        self.user_id = 1
+        self.path = 'path/'
+        self.bucket_name = 'bucket_name'
+        self.token = 'token'
+        self.avatar_directory_router = archive.AvatarDirectoryRouter(self.user_id, self.path, self.bucket_name, self.token)
 
-    def test_should_use_hash_to_construct_file_path(self):
-        pass
+    def test_should_use_path_to_construct_file_path(self):
+        used_path = '{}/'.format(self.avatar_directory_router.file_path.split('/')[0])
+        self.assertTrue(self.path == used_path)
+
+    def test_should_use_token_to_construct_file_path(self):
+        self.assertTrue(self.token == self.avatar_directory_router.file_path.split('-')[1])
 
     def test_should_use_user_id_to_construct_file_path(self):
-        pass
+        self.assertTrue(str(self.user_id) == self.avatar_directory_router.file_path.split('-')[2].split('.')[0])
 
-    def test_should_return_file_path_with_this_specific_format(self):
-        pass
+    def test_should_return_file_path_with_png_extension(self):
+        self.assertTrue('png' == self.avatar_directory_router.file_path.split('.')[1])
 
 
 class AvatarDirectoryRouterFileNameTest(base.TestCase):
 
-    def test_should_use_hash_to_construct_file_name(self):
+    def test_should_use_token_to_construct_file_name(self):
         pass
 
     def test_should_use_user_id_to_construct_file_name(self):
