@@ -29,13 +29,16 @@ class ScribeFactoryCreateWithEnvironmentTest(base.TestCase):
             archive.ScribeFactory.create_with_environment(1, self.mock.MagicMock())
 
 
-class AbstractInitTest(base.TestCase):
+class AbstractScribeInitTest(base.TestCase):
+
+    def setUp(self):
+        self.abstract_scribe = archive.AbstractScribe(1, self.mock.MagicMock())
 
     def test_has_user_id(self):
-        pass
+        self.assertTrue(hasattr(self.abstract_scribe, 'user_id'))
 
     def test_has_router(self):
-        pass
+        self.assertTrue(hasattr(self.abstract_scribe, 'router'))
 
 
 class AbstractScribeSaveTest(base.TestCase):
@@ -114,17 +117,23 @@ class LocalScribeSaveTest(base.TestCase):
 
 class S3ScribeInit(base.TestCase):
 
+    def setUp(self):
+        self.s3_scribe = archive.S3Scribe(1, self.mock.MagicMock(), 'access_key_id', 'secret_access_key', 'bucket_name', 's3_client')
+
+    def test_has_user_id(self):
+        self.assertTrue(hasattr(self.s3_scribe, 'user_id'))
+
     def test_has_access_key_id(self):
-        pass
+        self.assertTrue(hasattr(self.s3_scribe, 'access_key_id'))
 
     def test_has_secret_access_key(self):
-        pass
+        self.assertTrue(hasattr(self.s3_scribe, 'secret_access_key'))
 
     def test_has_bucket_name(self):
-        pass
+        self.assertTrue(hasattr(self.s3_scribe, 'bucket_name'))
 
     def test_has_s3_client(self):
-        pass
+        self.assertTrue(hasattr(self.s3_scribe, 's3_client'))
 
 
 class S3ScribeCreateWithRouterForUserTest(base.TestCase):
@@ -241,23 +250,42 @@ class AvatarDirectoryRouterFilePathTest(base.TestCase):
 
 class AvatarDirectoryRouterFileNameTest(base.TestCase):
 
+    def setUp(self):
+        self.user_id = 1
+        self.path = 'path/'
+        self.bucket_name = 'bucket_name'
+        self.token = 'token'
+        self.avatar_directory_router = archive.AvatarDirectoryRouter(self.user_id, self.path, self.bucket_name, self.token)
+
     def test_should_use_token_to_construct_file_name(self):
-        pass
+        self.assertTrue(self.token == self.avatar_directory_router.file_name.split('-')[1])
 
     def test_should_use_user_id_to_construct_file_name(self):
-        pass
-
-    def test_should_return_file_name_with_this_specific_format(self):
-        pass
+        self.assertTrue(str(self.user_id) == self.avatar_directory_router.file_name.split('-')[2].split('.')[0])
 
 
 class AvatarDirectoryRouterCreateForUser(base.TestCase):
 
-    def test_should_make_path_with_file_storage_path_and_avatar_bucket_name(self):
-        pass
+    @base.mock.patch('app.central_files.archive.config.FILE_STORAGE_PATH', 'some/path')
+    @base.mock.patch('app.central_files.archive.config.AVATAR_BUCKET_NAME', 'somename')
+    @base.mock.patch('app.security.security_services.TokenService.generate')
+    def test_should_make_path_with_FILE_STORAGE_PATH_and_AVATAR_BUCKET_NAME(self, generate_mock):
+        generate_mock.return_value = 'FSSDAGETEQE'
+        avatar_directory_router = archive.AvatarDirectoryRouter.create_for_user(1)
+        self.assertTrue(avatar_directory_router.path, 'some/path')
 
-    def test_should_call_security_service_to_generate_a_token(self):
-        pass
+    @base.mock.patch('app.central_files.archive.config.FILE_STORAGE_PATH', 'some/path')
+    @base.mock.patch('app.central_files.archive.config.AVATAR_BUCKET_NAME', 'somename')
+    @base.mock.patch('app.security.security_services.TokenService.generate')
+    def test_should_call_token_service_to_generate(self, generate_mock):
+        generate_mock.return_value = 'FSSDAGETEQE'
+        archive.AvatarDirectoryRouter.create_for_user(1)
+        self.assertTrue(generate_mock.called)
 
-    def test_should_return_instance(self):
-        pass
+    @base.mock.patch('app.central_files.archive.config.FILE_STORAGE_PATH', 'some/path')
+    @base.mock.patch('app.central_files.archive.config.AVATAR_BUCKET_NAME', 'somename')
+    @base.mock.patch('app.security.security_services.TokenService.generate')
+    def test_should_return_instance(self, generate_mock):
+        generate_mock.return_value = 'FSSDAGETEQE'
+        avatar_directory_router = archive.AvatarDirectoryRouter.create_for_user(1)
+        self.assertIsInstance(avatar_directory_router, archive.AvatarDirectoryRouter)
