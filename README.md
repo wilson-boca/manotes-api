@@ -4,7 +4,7 @@ A Python restful-api sample.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
@@ -57,58 +57,46 @@ $ python manage.py db upgrade
 
 ## Running the tests
 ```
+load-env-test
 python -m testtools.run
 ```
+
+## Running API
+```
+load-env
+python run.py
+```
+
 ## Features
 | Features        | Description   |
 | -------------   |:-------------:| 
-| Create Account  | [POST] in the endpoint 'api/account' unknow users can create account passing email, username and password| 
+| Login | [POST] in the endpoint 'api/login' unauthenticated users can login |
+| Create Account  | [POST] in the endpoint 'api/account' users can create account passing email, username and password| 
 | Update Account  | [PUT] in the endpoint 'api/account' authenticated users can update account infos passing email and/or username| 
+| Update Avatar   | [PUT] in the endpoint 'api/avatar' authenticated users can update avatar passing a file binary keyed avatar
 | Create Note     | [POST] in the endpoint 'api/notes' authenticated user can create a note passing name, content and color |
 | Update Note     | [PUT] in the endpoint 'api/notes' authenticated user can update a note passing name, content and color |
 | Get Note        | [GET] in the endpoint 'api/notes/<note_id>' authenticated user can list all notes or get a specific note if note_id is passed |
 | Delete Note     | [DELETE] in the endpoint 'api/notes/<note_id>' authenticated user can delete a note |
 
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
 
 ## Built With
 
+* [Alembic](http://alembic.zzzcomputing.com/en/latest/) - lightweight database migration tool for usage with the SQLAlchemy Database Toolkit
+* [boto3](https://pypi.org/project/boto3/) - AWS SDK for Python, which allows Python developers to write software that makes use of services like S3.
+* [celery](https://pypi.org/project/celery/) - Distributed task queue
 * [Flask](http://flask.pocoo.org/) - The web framework used
+* [flask-CORS](https://flask-cors.readthedocs.io/en/latest/) - A Flask extension for handling Cross Origin Resource Sharing (CORS), making cross-origin AJAX possible.
+* [Flask Migrate](https://flask-migrate.readthedocs.io/en/latest/) - an extension that handles SQLAlchemy database migrations for Flask applications using Alembic.
 * [Flask-RESTful](https://flask-restful.readthedocs.io/en/latest/) - an extension for Flask that adds support for quickly building REST APIs
+* [gunicorn](https://pypi.org/search/?q=gunicorn) - a Python WSGI HTTP Server for UNIX
+* [mock](https://pypi.org/project/mock/) - mock is a library for testing in Python. It allows you to replace parts of your system under test with mock objects and make assertions about how they have been used.
+* [passlib](https://pypi.org/project/passlib/) - comprehensive password hashing framework
+* [pip](https://pypi.org/project/pip/) - Dependency Management
 * [Psycopg](http://initd.org/psycopg/) - PostgreSQL adapter for the Python programming language
 * [SQLAlchemy](https://www.sqlalchemy.org/) - Python SQL toolkit and Object Relational Mapper
-* [Alembic](http://alembic.zzzcomputing.com/en/latest/) - lightweight database migration tool for usage with the SQLAlchemy Database Toolkit
-* [Flask Migrate](https://flask-migrate.readthedocs.io/en/latest/) - an extension that handles SQLAlchemy database migrations for Flask applications using Alembic.
-* [flask-CORS](https://flask-cors.readthedocs.io/en/latest/) - A Flask extension for handling Cross Origin Resource Sharing (CORS), making cross-origin AJAX possible.
-* [pip](https://pypi.org/project/pip/) - Dependency Management
-* [mock](https://pypi.org/project/mock/) - mock is a library for testing in Python. It allows you to replace parts of your system under test with mock objects and make assertions about how they have been used.
+* [SQLAlchemy-Utils](https://pypi.org/project/SQLAlchemy-Utils/) - Various utility functions for SQLAlchemy.
 * [testtools](http://testtools.readthedocs.io/en/latest/for-test-authors.html) - testtools is a set of extensions to Python’s standard unittest module.
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://example.com) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
 
 ## Authors
 
@@ -121,7 +109,4 @@ See also the list of [contributors](https://github.com/your/project/contributors
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+pass
