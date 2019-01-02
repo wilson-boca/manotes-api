@@ -49,7 +49,7 @@ class AbstractModel(object):
 
     def set_values(self, json_data):
         for key, value in json_data.items():
-            setattr(self, key, json_data.get(key, getattr(self, key))) # WTF
+            setattr(self, key, json_data.get(key, getattr(self, key)))
 
 
 class User(db.Model, AbstractModel):
