@@ -102,6 +102,8 @@ python run.py
 * [Alembic](http://alembic.zzzcomputing.com/en/latest/) - lightweight database migration tool for usage with the SQLAlchemy Database Toolkit
 * [boto3](https://pypi.org/project/boto3/) - AWS SDK for Python, which allows Python developers to write software that makes use of services like S3.
 * [celery](https://pypi.org/project/celery/) - Distributed task queue
+* [coveralls](https://pypi.org/project/python-coveralls/) - Python interface to coveralls.io API
+* [coverage](https://pypi.org/project/coverage/) - Code coverage measurement for Python
 * [Flask](http://flask.pocoo.org/) - The web framework used
 * [flask-CORS](https://flask-cors.readthedocs.io/en/latest/) - A Flask extension for handling Cross Origin Resource Sharing (CORS), making cross-origin AJAX possible.
 * [Flask Migrate](https://flask-migrate.readthedocs.io/en/latest/) - an extension that handles SQLAlchemy database migrations for Flask applications using Alembic.
