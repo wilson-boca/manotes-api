@@ -51,3 +51,17 @@ class SecurityServiceIsStringEqualsToHashTest(base.TestCase):
         verify_mock.return_value = False
         is_equal = security_services.HashService.is_string_equals_to_hash('slowo', 'testyjednostkowe')
         self.assertFalse(is_equal)
+
+
+class ValidationServiceTest(base.TestCase):
+
+    @base.TestCase.mock.patch('app.security.security_services.ValidationService.is_email')
+    def test_should_call_validate_email(self, is_email_mock):
+        security_services.ValidationService.is_email('breno@breno.com')
+        is_email_mock.assert_called_with('breno@breno.com')
+
+    @base.TestCase.mock.patch('app.security.security_services.ValidationService.is_email')
+    def test_should_return_is_valid(self, is_email_mock):
+        is_email_mock.return_value = True
+        is_valid = security_services.ValidationService.is_email('breno@breno.com')
+        self.assertIsInstance(is_valid, bool)

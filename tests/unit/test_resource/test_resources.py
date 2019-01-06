@@ -475,6 +475,150 @@ class AccountResourcePostTest(base.TestCase):
         response = account_resource.post()
         self.assertEqual(response, {"username": "antunesleo"})
 
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.clerk')
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.payload')
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_email_already_exists_if_email_already_exists_raised(self, g_mock, payload_mock, clerk_mock):
+        clerk_mock.create_user_account = base.mock.MagicMock(side_effect=exceptions.EmailAlreadyExists)
+        g_mock.authenticated = True
+        payload_mock = {
+            "username": "antunesleo",
+            "password": 12345
+        }
+        user_mock = self.mock.MagicMock()
+        user_mock.as_dict.return_value = {
+            "username": "antunesleo"
+        }
+        account_resource = resources.AccountResource()
+        response = account_resource.post()
+        self.assertEqual(response[0]['result'], 'email-already-exists')
+
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.clerk')
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.payload')
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_400_bad_request_if_email_already_exists_raised(self, g_mock, payload_mock, clerk_mock):
+        clerk_mock.create_user_account = base.mock.MagicMock(side_effect=exceptions.EmailAlreadyExists)
+        g_mock.authenticated = True
+        payload_mock = {
+            "username": "antunesleo",
+            "password": 12345
+        }
+        user_mock = self.mock.MagicMock()
+        user_mock.as_dict.return_value = {
+            "username": "antunesleo"
+        }
+        account_resource = resources.AccountResource()
+        response = account_resource.post()
+        self.assertEqual(response[1], 400)
+
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.clerk')
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.payload')
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_username_already_exists_if_username_already_exists_raised(self, g_mock, payload_mock, clerk_mock):
+        clerk_mock.create_user_account = base.mock.MagicMock(side_effect=exceptions.UsernameAlreadyExists)
+        g_mock.authenticated = True
+        payload_mock = {
+            "username": "antunesleo",
+            "password": 12345
+        }
+        user_mock = self.mock.MagicMock()
+        user_mock.as_dict.return_value = {
+            "username": "antunesleo"
+        }
+        account_resource = resources.AccountResource()
+        response = account_resource.post()
+        self.assertEqual(response[0]['result'], 'username-already-exists')
+
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.clerk')
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.payload')
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_400_bad_request_if_username_already_exists_raised(self, g_mock, payload_mock, clerk_mock):
+        clerk_mock.create_user_account = base.mock.MagicMock(side_effect=exceptions.UsernameAlreadyExists)
+        g_mock.authenticated = True
+        payload_mock = {
+            "username": "antunesleo",
+            "password": 12345
+        }
+        user_mock = self.mock.MagicMock()
+        user_mock.as_dict.return_value = {
+            "username": "antunesleo"
+        }
+        account_resource = resources.AccountResource()
+        response = account_resource.post()
+        self.assertEqual(response[1], 400)
+
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.clerk')
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.payload')
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_invalid_email_if_invalid_email_raised(self, g_mock, payload_mock, clerk_mock):
+        clerk_mock.create_user_account = base.mock.MagicMock(side_effect=exceptions.InvalidEmail)
+        g_mock.authenticated = True
+        payload_mock = {
+            "username": "antunesleo",
+            "password": 12345
+        }
+        user_mock = self.mock.MagicMock()
+        user_mock.as_dict.return_value = {
+            "username": "antunesleo"
+        }
+        account_resource = resources.AccountResource()
+        response = account_resource.post()
+        self.assertEqual(response[0]['result'], 'invalid-email')
+
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.clerk')
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.payload')
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_400_if_invalid_email_raised(self, g_mock, payload_mock, clerk_mock):
+        clerk_mock.create_user_account = base.mock.MagicMock(side_effect=exceptions.InvalidEmail)
+        g_mock.authenticated = True
+        payload_mock = {
+            "username": "antunesleo",
+            "password": 12345
+        }
+        user_mock = self.mock.MagicMock()
+        user_mock.as_dict.return_value = {
+            "username": "antunesleo"
+        }
+        account_resource = resources.AccountResource()
+        response = account_resource.post()
+        self.assertEqual(response[1], 400)
+
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.clerk')
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.payload')
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_unexpected_error_if_exception_raised(self, g_mock, payload_mock, clerk_mock):
+        clerk_mock.create_user_account = base.mock.MagicMock(side_effect=Exception)
+        g_mock.authenticated = True
+        payload_mock = {
+            "username": "antunesleo",
+            "password": 12345
+        }
+        user_mock = self.mock.MagicMock()
+        user_mock.as_dict.return_value = {
+            "username": "antunesleo"
+        }
+        account_resource = resources.AccountResource()
+        response = account_resource.post()
+        self.assertEqual(response[0], {'result': 'error', 'error': 'Internal Server Error', 'exception': 'An unexpected error occurred'})
+
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.clerk')
+    @base.TestCase.mock.patch('app.resource.resources.AccountResource.payload')
+    @base.TestCase.mock.patch('app.resource.resources.g')
+    def test_should_return_500_internal_server_error_if_exception_raised(self, g_mock, payload_mock, clerk_mock):
+        clerk_mock.create_user_account = base.mock.MagicMock(side_effect=Exception)
+        g_mock.authenticated = True
+        payload_mock = {
+            "username": "antunesleo",
+            "password": 12345
+        }
+        user_mock = self.mock.MagicMock()
+        user_mock.as_dict.return_value = {
+            "username": "antunesleo"
+        }
+        account_resource = resources.AccountResource()
+        response = account_resource.post()
+        self.assertEqual(response[1], 500)
+
 
 class AccountResourcePutTest(base.TestCase):
 

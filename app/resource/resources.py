@@ -125,6 +125,8 @@ class AccountResource(ResourceBase):
             return {'result': 'email-already-exists', 'error': 'The resource was not created because the email already exists'}, 400
         except exceptions.UsernameAlreadyExists as ex:
             return {'result': 'username-already-exists', 'error': 'The resource was not created because the username already exists'}, 400
+        except exceptions.InvalidEmail as ex:
+            return {'result': 'invalid-email', 'error': 'The resource was not created because the email is invalid'}, 400
         except Exception as ex:
             return self.return_unexpected_error()
 

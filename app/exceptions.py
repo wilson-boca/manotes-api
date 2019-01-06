@@ -41,3 +41,6 @@ class NoImplementationError(Exception):
 class ConfigClassNotFound(Exception):
     pass
 
+
+class InvalidEmail(Exception):
+    pass

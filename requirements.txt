@@ -10,3 +10,4 @@ passlib==1.7.1
 psycopg2==2.7.5
 sqlalchemy-utils==0.33.3
 redis==2.10.6
+validate_email==1.3
