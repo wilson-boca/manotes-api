@@ -58,10 +58,24 @@ $ python manage.py db upgrade
 
 ```
 
+Configuring tests coverage
+```
+sudo vim .coveralls.yml
+
+repo_token: <repo_token>
+service_name: manotes
+```
+
 ## Running the tests
 ```
 load-env-test
 python -m testtools.run
+```
+
+## Updating testing-coverage
+```
+coverage run --omit=<path_to_envs>/* run.py
+coveralls
 ```
 
 ## Running API
