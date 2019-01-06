@@ -9,10 +9,15 @@ class AuthService(object):
     @classmethod
     def authenticate_with_credentials(cls, credentials):
         from app.house import residents
+        username_or_email = credentials['username_or_email']
         try:
-            user = residents.User.create_with_username(credentials['username'])
+            if security_services.ValidationService.is_email(username_or_email):
+                user = residents.User.create_with_email(username_or_email)
+            else:
+                user = residents.User.create_with_username(username_or_email)
         except exceptions.NotFound:
-            raise exceptions.UserNotExists('Could not find a user with username {}'.format(credentials['username']))
+            raise exceptions.UserNotExists('Could not find a user with username {}'.format(username_or_email))
+
         return security_services.HashService.is_string_equals_to_hash(credentials['password'], user.password), user
 
     @classmethod

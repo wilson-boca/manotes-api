@@ -2,6 +2,7 @@
 import secrets
 from importlib import import_module
 from passlib.hash import pbkdf2_sha256
+from validate_email import validate_email
 
 
 class ClassProperty(object):
@@ -48,3 +49,10 @@ class TokenService(Service):
     @classmethod
     def generate(cls, size=40):
         return secrets.token_hex(size)
+
+
+class ValidationService(Service):
+
+    @classmethod
+    def is_email(cls, email):
+        return validate_email(email)

@@ -11,3 +11,4 @@ psycopg2==2.7.5
 python-coveralls=2.9.1
 sqlalchemy-utils==0.33.3
 redis==2.10.6
+validate_email==1.3

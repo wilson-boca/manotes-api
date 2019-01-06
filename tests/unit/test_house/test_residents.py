@@ -8,7 +8,7 @@ class UserCreateWithIdTest(base.TestCase):
     def test_should_return_instance(self, repository_mock):
         user_mocked = self.mock.MagicMock('something')
         user_mocked.id = 1
-        repository_mock.one_or_none.return_value = user_mocked
+        repository_mock.one_or_ndone.return_value = user_mocked
         user_created = residents.User.create_with_id(1)
         self.assertTrue(isinstance(user_created, residents.User))
 
@@ -82,6 +82,23 @@ class UserCreateWithUsernameTest(base.TestCase):
         repository_mock.one_or_none.return_value = None
         with self.assertRaises(exceptions.NotFound):
             residents.User.create_with_username('UsErRToKeN')
+
+
+class UserCreateWithEmailTest(base.TestCase):
+
+    @base.TestCase.mock.patch('app.house.residents.User.repository')
+    def test_should_return_instance(self, repository_mock):
+        user_mocked = self.mock.MagicMock('something')
+        user_mocked.id = 1
+        repository_mock.one_or_none.return_value = user_mocked
+        user_created = residents.User.create_with_email('breno')
+        self.assertTrue(isinstance(user_created, residents.User))
+
+    @base.TestCase.mock.patch('app.house.residents.User.repository')
+    def test_should_raise_not_found_if_username_dont_exists(self, repository_mock):
+        repository_mock.one_or_none.return_value = None
+        with self.assertRaises(exceptions.NotFound):
+            residents.User.create_with_email('UsErRToKeN')
 
 
 class UserGetANoteTest(base.TestCase):

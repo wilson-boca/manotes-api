@@ -69,6 +69,13 @@ class User(object):
         return cls(db_instance=db_instance)
 
     @classmethod
+    def create_with_email(cls, email):
+        db_instance = cls.repository.one_or_none(email=email)
+        if db_instance is None:
+            raise exceptions.NotFound('Could not find a user with email {}'.format(email))
+        return cls(db_instance=db_instance)
+
+    @classmethod
     def create_new(cls, user):
         car = cls.repository.create_from_dict(user)
         return cls.create_with_instance(car)
