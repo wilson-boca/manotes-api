@@ -2,6 +2,9 @@
 
 A Python restful-api sample.
 
+### Test coverage
+[![Coverage Status](https://coveralls.io/repos/github/antunesleo/manotes-api/badge.svg?branch=master)](https://coveralls.io/github/antunesleo/manotes-api?branch=master)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.

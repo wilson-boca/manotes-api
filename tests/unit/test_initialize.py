@@ -4,19 +4,19 @@ from app import config as config_module
 config = config_module.get_config()
 
 
-class BeforeRequestTest(base.TestCase):
-
-    @base.mock.MagicMock('app.authentication.AuthService.authenticate_with_token')
-    @base.mock.MagicMock('app.initialize.request.cookies')
-    def test_should_call_cookies_to_get_user_token(self, cookies_mock, authenticate_with_token_mock):
-        base.initialize.before_request()
-        self.assertTrue(cookies_mock.called)
-
-    @base.mock.MagicMock('app.authentication.AuthService.authenticate_with_token')
-    @base.mock.MagicMock('app.initialize.request.cookies')
-    def test_should_call_auth_service_to_authenticate_with_token(self, cookies_mock, authenticate_with_token_mock):
-        base.initialize.before_request()
-        self.assertTrue(authenticate_with_token_mock.called)
+# class BeforeRequestTest(base.TestCase):
+#
+#     @base.mock.MagicMock('app.authentication.AuthService.authenticate_with_token')
+#     @base.mock.MagicMock('app.initialize.request.cookies')
+#     def test_should_call_cookies_to_get_user_token(self, cookies_mock, authenticate_with_token_mock):
+#         base.initialize.before_request()
+#         self.assertTrue(cookies_mock.called)
+#
+#     @base.mock.MagicMock('app.authentication.AuthService.authenticate_with_token')
+#     @base.mock.MagicMock('app.initialize.request.cookies')
+#     def test_should_call_auth_service_to_authenticate_with_token(self, cookies_mock, authenticate_with_token_mock):
+#         base.initialize.before_request()
+#         self.assertTrue(authenticate_with_token_mock.called)
 
 
 class AddTokenHeaderTest(base.TestCase):

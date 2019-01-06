@@ -4,6 +4,9 @@ from tests import base
 
 class ClerkCreateAccountTest(base.TestCase):
 
+    def setUp(self):
+        pass
+
     @base.TestCase.mock.patch('app.async_tasks.tasks.start_send_email')
     @base.TestCase.mock.patch('app.security.security_services.TokenService')
     @base.TestCase.mock.patch('app.security.security_services.HashService')

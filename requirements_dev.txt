@@ -1,1 +1,3 @@
 testtools
+coverage==4.0.3
+coveralls==2.9.1
