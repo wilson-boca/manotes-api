@@ -74,7 +74,7 @@ python -m testtools.run
 
 ## Updating testing-coverage
 ```
-coverage run --omit=<path_to_envs>/* run.py
+coverage run --omit=<path_to_envs>/* -m testtools.run
 coveralls
 ```
 
