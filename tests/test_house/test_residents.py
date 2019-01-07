@@ -8,7 +8,7 @@ class UserCreateWithIdTest(base.TestCase):
     def test_should_return_instance(self, repository_mock):
         user_mocked = self.mock.MagicMock('something')
         user_mocked.id = 1
-        repository_mock.one_or_ndone.return_value = user_mocked
+        repository_mock.one_or_none.return_value = user_mocked
         user_created = residents.User.create_with_id(1)
         self.assertTrue(isinstance(user_created, residents.User))
 
