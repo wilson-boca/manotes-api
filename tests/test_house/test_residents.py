@@ -1,6 +1,9 @@
 from tests import base
 from app import exceptions
+from app import config as config_module
 from app.house import residents
+
+config = config_module.get_config()
 
 
 class UserCreateWithIdTest(base.TestCase):
@@ -65,6 +68,71 @@ class UserNotesTest(base.TestCase):
         notes = user.notes
         self.assertFalse(note_service.list_for_user.called)
         self.assertEqual(notes, [])
+
+
+class UserTokenTest(base.TestCase):
+
+    def setUp(self):
+        db_instance_mock = self.mock.MagicMock()
+        db_instance_mock.token = 'ahfhiewuhajhaiu'
+        db_instance_mock.id = 1
+        self.user = residents.User(db_instance_mock)
+
+    def test_should_return_db_instance_token(self):
+        token = self.user.token
+        self.assertEqual(token, 'ahfhiewuhajhaiu')
+
+
+class UserPasswordTest(base.TestCase):
+
+    def setUp(self):
+        db_instance_mock = self.mock.MagicMock()
+        db_instance_mock.password = 'ahfhiewuhajhaiu'
+        db_instance_mock.id = 1
+        self.user = residents.User(db_instance_mock)
+
+    def test_should_return_db_instance_password(self):
+        password = self.user.password
+        self.assertEqual(password, 'ahfhiewuhajhaiu')
+
+
+class UserUsernameTest(base.TestCase):
+
+    def setUp(self):
+        db_instance_mock = self.mock.MagicMock()
+        db_instance_mock.username = 'ahfhiewuhajhaiu'
+        db_instance_mock.id = 1
+        self.user = residents.User(db_instance_mock)
+
+    def test_should_return_db_instance_username(self):
+        username = self.user.username
+        self.assertEqual(username, 'ahfhiewuhajhaiu')
+
+
+class UserEmailTest(base.TestCase):
+
+    def setUp(self):
+        db_instance_mock = self.mock.MagicMock()
+        db_instance_mock.email = 'breno@breno.com'
+        db_instance_mock.id = 1
+        self.user = residents.User(db_instance_mock)
+
+    def test_should_return_db_instance_email(self):
+        email = self.user.email
+        self.assertEqual(email, 'breno@breno.com')
+
+
+class UserAvatarPathTest(base.TestCase):
+
+    def setUp(self):
+        db_instance_mock = self.mock.MagicMock()
+        db_instance_mock.avatar_path = 'some/path'
+        db_instance_mock.id = 1
+        self.user = residents.User(db_instance_mock)
+
+    def test_should_return_db_instance_avatar_path(self):
+        avatar_path = self.user.avatar_path
+        self.assertEqual(avatar_path, 'some/path')
 
 
 class UserCreateWithUsernameTest(base.TestCase):
@@ -185,3 +253,40 @@ class UserDeleteANoteTest(base.TestCase):
         user = residents.User(db_instance=db_instance)
         user.delete_a_note(id=1)
         self.assertTrue(note_mock.delete.called)
+
+
+class UserChangeAvatarTest(base.TestCase):
+
+    def setUp(self):
+        db_instance_mock = self.mock.MagicMock()
+        db_instance_mock.id = 1
+        self.user = residents.User(db_instance_mock)
+
+    @base.mock.patch('app.house.services.FileService.save_avatar', base.mock.MagicMock())
+    def test_should_call_avatar_file_to_save(self):
+        avatar_mock = self.mock.MagicMock()
+        files = {'avatar': avatar_mock}
+        self.user.change_avatar(files)
+        self.assertTrue(avatar_mock.save.called)
+
+    @base.mock.patch('app.house.services.FileService.save_avatar')
+    def test_should_call_file_service_to_save_avatar(self, save_avatar_mock):
+        avatar_mock = self.mock.MagicMock()
+        files = {'avatar': avatar_mock}
+        self.user.change_avatar(files)
+        self.assertTrue(save_avatar_mock.called)
+
+    @base.mock.patch('app.house.services.FileService.save_avatar')
+    def test_db_instance_has_avatar_path(self, save_avatar_mock):
+        avatar_mock = self.mock.MagicMock()
+        save_avatar_mock.return_value = 'some/path'
+        files = {'avatar': avatar_mock}
+        self.user.change_avatar(files)
+        self.assertEqual('some/path', self.user.db_instance.avatar_path)
+
+    @base.mock.patch('app.house.services.FileService.save_avatar', base.mock.MagicMock)
+    def test_should_call_db_instance_to_save_db(self):
+        avatar_mock = self.mock.MagicMock()
+        files = {'avatar': avatar_mock}
+        self.user.change_avatar(files)
+        self.assertTrue(self.user.db_instance.save_db.called)
