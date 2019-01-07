@@ -169,6 +169,60 @@ class UserCreateWithEmailTest(base.TestCase):
             residents.User.create_with_email('UsErRToKeN')
 
 
+class UserUpdateTest(base.TestCase):
+
+    def setUp(self):
+        db_instance_mock = self.mock.MagicMock()
+        db_instance_mock.id = 1
+        self.user = residents.User(db_instance_mock)
+
+    @base.mock.MagicMock('app.house.residents.datetime.datetime.utc_now', base.mock.MagicMock)
+    def test_should_pop_password_from_payload(self):
+        payload_mock = self.mock.MagicMock()
+        self.user.update(payload_mock)
+        self.assertTrue(payload_mock.pop.called)
+
+    @base.mock.MagicMock('app.house.residents.datetime.datetime.utc_now')
+    def test_should_call_datetime_utcnow(self, utc_now_mock):
+        payload_mock = self.mock.MagicMock()
+        self.user.update(payload_mock)
+        self.assertTrue(utc_now_mock.called)
+
+    @base.mock.MagicMock('app.house.residents.datetime.datetime.utc_now')
+    def test_should_set_update_date_from_utcnow(self, utc_now_mock):
+        utc_now_mock.return_value = 'asd'
+        payload_mock = self.mock.MagicMock()
+        self.user.update(payload_mock)
+        self.assertTrue(payload_mock.update_date, 'asd')
+
+    @base.mock.MagicMock('app.house.residents.datetime.datetime.utc_now', base.mock.MagicMock)
+    def test_should_call_db_instance_to_update_from_dict(self):
+        payload_mock = self.mock.MagicMock()
+        self.user.update(payload_mock)
+        self.user.db_instance.update_from_dict.assert_called_with(payload_mock)
+
+
+class UserAsDictTest(base.TestCase):
+    def setUp(self):
+        db_instance_mock = self.mock.MagicMock()
+        db_instance_mock.id = 1
+        db_instance_mock.username = 'breno'
+        db_instance_mock.email = 'breno@breno'
+        self.user = residents.User(db_instance_mock)
+
+    def test_should_return_dict(self):
+        user = self.user.as_dict()
+        self.assertIsInstance(user, dict)
+
+    def test_should_return_db_instance_username(self):
+        user = self.user.as_dict()
+        self.assertTrue(user.get('username'), 'breno')
+
+    def test_should_return_db_instance_email(self):
+        user = self.user.as_dict()
+        self.assertTrue(user.get('username'), 'breno@breno')
+
+
 class UserGetANoteTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.house.services.NoteService')

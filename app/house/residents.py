@@ -39,10 +39,6 @@ class User(object):
     def avatar_path(self):
         return self.db_instance.avatar_path
 
-    @avatar_path.setter
-    def avatar_path(self, new_avatar_path):
-        self.db_instance.avatar_path = new_avatar_path
-
     @classmethod
     def create_with_id(cls, id):
         db_instance = cls.repository.one_or_none(id=id)
@@ -75,6 +71,7 @@ class User(object):
             raise exceptions.NotFound('Could not find a user with email {}'.format(email))
         return cls(db_instance=db_instance)
 
+    # TODO: Isso está errado? Deveria o clerk ter esse repositório e salvar?
     @classmethod
     def create_new(cls, user):
         car = cls.repository.create_from_dict(user)
@@ -111,6 +108,6 @@ class User(object):
 
     def as_dict(self):
         return {
-            "username": self.username,
-            "email": self.email
+            "username": self.db_instance.username,
+            "email": self.db_instance.email
         }
