@@ -176,27 +176,29 @@ class UserUpdateTest(base.TestCase):
         db_instance_mock.id = 1
         self.user = residents.User(db_instance_mock)
 
-    @base.mock.MagicMock('app.house.residents.datetime.datetime.utc_now', base.mock.MagicMock)
-    def test_should_pop_password_from_payload(self):
+    @base.mock.patch('app.house.residents.datetime.datetime')
+    def test_should_pop_password_from_payload(self, datetime_mock):
+        datetime_mock.utcnow = self.mock.MagicMock()
         payload_mock = self.mock.MagicMock()
         self.user.update(payload_mock)
         self.assertTrue(payload_mock.pop.called)
 
-    @base.mock.MagicMock('app.house.residents.datetime.datetime.utc_now')
-    def test_should_call_datetime_utcnow(self, utc_now_mock):
+    @base.mock.patch('app.house.residents.datetime.datetime')
+    def test_should_call_datetime_utcnow(self, datetime_mock):
         payload_mock = self.mock.MagicMock()
         self.user.update(payload_mock)
-        self.assertTrue(utc_now_mock.called)
+        self.assertTrue(datetime_mock.utcnow.called)
 
-    @base.mock.MagicMock('app.house.residents.datetime.datetime.utc_now')
-    def test_should_set_update_date_from_utcnow(self, utc_now_mock):
-        utc_now_mock.return_value = 'asd'
+    @base.mock.patch('app.house.residents.datetime.datetime')
+    def test_should_set_update_date_from_utcnow(self, datetime_mock):
+        datetime_mock.utcnow.return_value = 'asd'
         payload_mock = self.mock.MagicMock()
         self.user.update(payload_mock)
         self.assertTrue(payload_mock.update_date, 'asd')
 
-    @base.mock.MagicMock('app.house.residents.datetime.datetime.utc_now', base.mock.MagicMock)
-    def test_should_call_db_instance_to_update_from_dict(self):
+    @base.mock.patch('app.house.residents.datetime.datetime')
+    def test_should_call_db_instance_to_update_from_dict(self, datetime_mock):
+        datetime_mock.utcnow = self.mock.MagicMock()
         payload_mock = self.mock.MagicMock()
         self.user.update(payload_mock)
         self.user.db_instance.update_from_dict.assert_called_with(payload_mock)
