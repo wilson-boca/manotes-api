@@ -1,15 +1,16 @@
 import datetime
 from app.house import services
+from app.base import domain
 from app import models, exceptions, config as config_module
 
 config = config_module.get_config()
 
 
-class User(object):
+class User(domain.Entity):
     repository = models.User
 
     def __init__(self, db_instance):
-        self.db_instance = db_instance
+        super(User, self).__init__(db_instance)
         self.id = db_instance.id
         self._notes = None
 
@@ -40,17 +41,6 @@ class User(object):
         return self.db_instance.avatar_path
 
     @classmethod
-    def create_with_id(cls, id):
-        db_instance = cls.repository.one_or_none(id=id)
-        if db_instance is None:
-            raise exceptions.NotFound('Could not find a note with id {}'.format(id))
-        return cls(db_instance=db_instance)
-
-    @classmethod
-    def create_with_instance(cls, db_instance):
-        return cls(db_instance)
-
-    @classmethod
     def create_with_token(cls, token):
         return cls._create_with_keys(token=token)
 
@@ -61,13 +51,6 @@ class User(object):
     @classmethod
     def create_with_email(cls, email):
         return cls._create_with_keys(email=email)
-
-    @classmethod
-    def _create_with_keys(cls, **keys):
-        db_instance = cls.repository.one_or_none(**keys)
-        if db_instance is None:
-            raise exceptions.NotFound('Could not find a user with keys: {}'.format(keys))
-        return cls(db_instance=db_instance)
 
     # TODO: Isso está errado? Deveria o clerk ter esse repositório e salvar?
     @classmethod

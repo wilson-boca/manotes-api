@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import secrets
-from app.global_services import Service
+from app.base.services import Service
 from passlib.hash import pbkdf2_sha256
 from validate_email import validate_email
 

@@ -1,33 +1,8 @@
 from tests import base
-from app import exceptions
 from app import config as config_module
 from app.house import residents
 
 config = config_module.get_config()
-
-
-class UserCreateWithIdTest(base.TestCase):
-    @base.TestCase.mock.patch('app.house.residents.User.repository')
-    def test_should_return_instance(self, repository_mock):
-        user_mocked = self.mock.MagicMock('something')
-        user_mocked.id = 1
-        repository_mock.one_or_none.return_value = user_mocked
-        user_created = residents.User.create_with_id(1)
-        self.assertTrue(isinstance(user_created, residents.User))
-
-    @base.TestCase.mock.patch('app.house.residents.User.repository')
-    def test_should_raise_not_found_if_id_dont_exists(self, repository_mock):
-        repository_mock.one_or_none.return_value = None
-        with self.assertRaises(exceptions.NotFound):
-            residents.User.create_with_id(1)
-
-
-class UserCreateWithInstanceTest(base.TestCase):
-    def test_create_with_instance_should_return_instance(self):
-        instance_mocked = self.mock.MagicMock('something')
-        instance_mocked.id = 1
-        user_created = residents.User.create_with_instance(instance_mocked)
-        self.assertTrue(isinstance(user_created, residents.User))
 
 
 class UserCreateWithToken(base.TestCase):
@@ -132,31 +107,6 @@ class UserAvatarPathTest(base.TestCase):
     def test_should_return_db_instance_avatar_path(self):
         avatar_path = self.user.avatar_path
         self.assertEqual(avatar_path, 'some/path')
-
-
-class UserCreateWithKeys(base.TestCase):
-
-    @base.TestCase.mock.patch('app.house.residents.User.repository')
-    def test_should_return_instance(self, repository_mock):
-        user_mocked = self.mock.MagicMock('something')
-        user_mocked.id = 1
-        repository_mock.one_or_none.return_value = user_mocked
-        user_created = residents.User._create_with_keys(breno='breno')
-        self.assertTrue(isinstance(user_created, residents.User))
-
-    @base.TestCase.mock.patch('app.house.residents.User.repository')
-    def test_should_pass_keys_to_repository(self, repository_mock):
-        user_mocked = self.mock.MagicMock('something')
-        user_mocked.id = 1
-        repository_mock.one_or_none.return_value = user_mocked
-        residents.User._create_with_keys(breno='breno')
-        repository_mock.one_or_none.assert_called_with(breno='breno')
-
-    @base.TestCase.mock.patch('app.house.residents.User.repository')
-    def test_should_raise_not_found_if_one_or_none_returns_none(self, repository_mock):
-        repository_mock.one_or_none.return_value = None
-        with self.assertRaises(exceptions.NotFound):
-            residents.User._create_with_keys(breno='breno')
 
 
 class UserCreateWithUsernameTest(base.TestCase):

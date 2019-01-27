@@ -3,35 +3,6 @@ from app import exceptions
 from app.house import wall
 
 
-class NoteCreateWithIdTest(base.TestCase):
-
-    @base.TestCase.mock.patch('app.house.wall.Note.repository')
-    def test_should_call_repository_one_or_none(self, repository_mock):
-        wall.Note.create_with_id(1)
-        self.assertTrue(repository_mock.one_or_none)
-
-    @base.TestCase.mock.patch('app.house.wall.Note.repository')
-    def test_should_return_instance(self, repository_mock):
-        db_instance_mock = self.mock.MagicMock()
-        repository_mock.one_or_none.return_value = db_instance_mock
-        created_note = wall.Note.create_with_id(1)
-        self.assertTrue(isinstance(created_note, wall.Note))
-
-    @base.TestCase.mock.patch('app.house.wall.Note.repository.one_or_none')
-    def test_should_raise_not_found_if_id_dont_exists(self, one_or_none_mock):
-        one_or_none_mock.return_value = None
-        with self.assertRaises(exceptions.NotFound):
-            wall.Note.create_with_id(1)
-
-
-class NoteCreateWithInstanceTest(base.TestCase):
-
-    def test_should_return_instance(self):
-        db_instance_mock = self.mock.MagicMock()
-        created_note = wall.Note.create_with_instance(db_instance_mock)
-        self.assertTrue(isinstance(created_note, wall.Note))
-
-
 class NoteCreateForUserTest(base.TestCase):
 
     @base.TestCase.mock.patch('app.house.wall.Note.repository.one_or_none')

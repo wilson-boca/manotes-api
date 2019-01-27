@@ -1,13 +1,15 @@
 import datetime
 from app import config, models, exceptions
+from app.base import domain
 
 config = config.get_config()
 
 
-class Note(object):
+class Note(domain.Entity):
     repository = models.Note
 
     def __init__(self, db_instance):
+        super(Note, self).__init__(db_instance)
         self.db_instance = db_instance
         self.id = db_instance.id
         self.color = db_instance.color
@@ -21,13 +23,6 @@ class Note(object):
         return self.db_instance.content
 
     @classmethod
-    def create_with_id(cls, note_id):
-        db_instance = cls.repository.one_or_none(id=note_id)
-        if db_instance is None:
-            raise exceptions.NotFound('Could not find a note with id {}'.format(note_id))
-        return cls(db_instance=db_instance)
-
-    @classmethod
     def create_for_user(cls, id, user_id):
         db_instance = cls.repository.one_or_none(id=id)
         if db_instance is None:
@@ -35,10 +30,6 @@ class Note(object):
         if db_instance.user_id != user_id:
             raise exceptions.NotMine('Could not create note because it dont belong to user id {}'.format(user_id))
         return cls(db_instance=db_instance)
-
-    @classmethod
-    def create_with_instance(cls, db_instance):
-        return cls(db_instance)
 
     @classmethod
     def create_new(cls, note):

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from app.global_services import Service
+from app.base.services import Service
 from app.central_files import archive
 from app.house import residents
 
