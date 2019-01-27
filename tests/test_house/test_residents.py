@@ -31,19 +31,18 @@ class UserCreateWithInstanceTest(base.TestCase):
 
 
 class UserCreateWithToken(base.TestCase):
-    @base.TestCase.mock.patch('app.house.residents.User.repository')
-    def test_should_return_instance(self, repository_mock):
+    @base.TestCase.mock.patch('app.house.residents.User._create_with_keys')
+    def test_should_return_instance(self, create_with_keys_mock):
         user_mocked = self.mock.MagicMock('something')
         user_mocked.id = 1
-        repository_mock.one_or_none.return_value = user_mocked
-        user_created = residents.User.create_with_token('UsErRToKeN')
-        self.assertTrue(isinstance(user_created, residents.User))
+        create_with_keys_mock.return_value = user_mocked
+        user_created = residents.User.create_with_token('asfqERafd')
+        self.assertEqual(user_created, user_mocked)
 
-    @base.TestCase.mock.patch('app.house.residents.User.repository')
-    def test_should_raise_not_found_if_token_dont_exists(self, repository_mock):
-        repository_mock.one_or_none.return_value = None
-        with self.assertRaises(exceptions.NotFound):
-            residents.User.create_with_token('UsErRToKeN')
+    @base.TestCase.mock.patch('app.house.residents.User._create_with_keys')
+    def test_should_call_create_with_keys(self, create_with_keys_mock):
+        residents.User.create_with_token('asfqERafd')
+        create_with_keys_mock.assert_called_with(token='asfqERafd')
 
 
 class UserNotesTest(base.TestCase):
@@ -135,38 +134,61 @@ class UserAvatarPathTest(base.TestCase):
         self.assertEqual(avatar_path, 'some/path')
 
 
-class UserCreateWithUsernameTest(base.TestCase):
+class UserCreateWithKeys(base.TestCase):
 
     @base.TestCase.mock.patch('app.house.residents.User.repository')
     def test_should_return_instance(self, repository_mock):
         user_mocked = self.mock.MagicMock('something')
         user_mocked.id = 1
         repository_mock.one_or_none.return_value = user_mocked
-        user_created = residents.User.create_with_username('breno')
+        user_created = residents.User._create_with_keys(breno='breno')
         self.assertTrue(isinstance(user_created, residents.User))
 
     @base.TestCase.mock.patch('app.house.residents.User.repository')
-    def test_should_raise_not_found_if_username_dont_exists(self, repository_mock):
+    def test_should_pass_keys_to_repository(self, repository_mock):
+        user_mocked = self.mock.MagicMock('something')
+        user_mocked.id = 1
+        repository_mock.one_or_none.return_value = user_mocked
+        residents.User._create_with_keys(breno='breno')
+        repository_mock.one_or_none.assert_called_with(breno='breno')
+
+    @base.TestCase.mock.patch('app.house.residents.User.repository')
+    def test_should_raise_not_found_if_one_or_none_returns_none(self, repository_mock):
         repository_mock.one_or_none.return_value = None
         with self.assertRaises(exceptions.NotFound):
-            residents.User.create_with_username('UsErRToKeN')
+            residents.User._create_with_keys(breno='breno')
+
+
+class UserCreateWithUsernameTest(base.TestCase):
+
+    @base.TestCase.mock.patch('app.house.residents.User._create_with_keys')
+    def test_should_return_instance(self, create_with_keys_mock):
+        user_mocked = self.mock.MagicMock('something')
+        user_mocked.id = 1
+        create_with_keys_mock.return_value = user_mocked
+        user_created = residents.User.create_with_username('breno')
+        self.assertEqual(user_created, user_mocked)
+
+    @base.TestCase.mock.patch('app.house.residents.User._create_with_keys')
+    def test_should_call_create_with_keys(self, create_with_keys_mock):
+        residents.User.create_with_username('breno')
+        create_with_keys_mock.assert_called_with(username='breno')
 
 
 class UserCreateWithEmailTest(base.TestCase):
 
-    @base.TestCase.mock.patch('app.house.residents.User.repository')
-    def test_should_return_instance(self, repository_mock):
+    @base.TestCase.mock.patch('app.house.residents.User._create_with_keys')
+    def test_should_return_instance(self, create_with_keys_mock):
         user_mocked = self.mock.MagicMock('something')
         user_mocked.id = 1
-        repository_mock.one_or_none.return_value = user_mocked
-        user_created = residents.User.create_with_email('breno')
-        self.assertTrue(isinstance(user_created, residents.User))
+        create_with_keys_mock.return_value = user_mocked
+        user_created = residents.User.create_with_email('breno@breno.com')
+        self.assertEqual(user_created, user_mocked)
 
-    @base.TestCase.mock.patch('app.house.residents.User.repository')
-    def test_should_raise_not_found_if_username_dont_exists(self, repository_mock):
-        repository_mock.one_or_none.return_value = None
-        with self.assertRaises(exceptions.NotFound):
-            residents.User.create_with_email('UsErRToKeN')
+    @base.TestCase.mock.patch('app.house.residents.User._create_with_keys')
+    def test_should_call_create_with_keys(self, create_with_keys_mock):
+        residents.User.create_with_email('breno@breno.com')
+        create_with_keys_mock.assert_called_with(email='breno@breno.com')
 
 
 class UserUpdateTest(base.TestCase):

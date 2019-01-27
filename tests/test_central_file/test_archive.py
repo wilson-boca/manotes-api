@@ -118,16 +118,10 @@ class LocalScribeSaveTest(base.TestCase):
 class S3ScribeInit(base.TestCase):
 
     def setUp(self):
-        self.s3_scribe = archive.S3Scribe(1, self.mock.MagicMock(), 'access_key_id', 'secret_access_key', 'bucket_name', 's3_client')
+        self.s3_scribe = archive.S3Scribe(1, self.mock.MagicMock(), 'bucket_name', 's3_client')
 
     def test_has_user_id(self):
         self.assertTrue(hasattr(self.s3_scribe, 'user_id'))
-
-    def test_has_access_key_id(self):
-        self.assertTrue(hasattr(self.s3_scribe, 'access_key_id'))
-
-    def test_has_secret_access_key(self):
-        self.assertTrue(hasattr(self.s3_scribe, 'secret_access_key'))
 
     def test_has_bucket_name(self):
         self.assertTrue(hasattr(self.s3_scribe, 'bucket_name'))
@@ -184,8 +178,7 @@ class S3ScribeSaveTest(base.TestCase):
         self.file_name = 'asd'
         router_mock = self.mock.MagicMock(file_name=self.file_name)
         # TODO: Is this mock right?
-        self.s3_scribe = archive.S3Scribe(1, router_mock, 'access_key_id', 'secret_access_key',
-                                          'bucket_name', self.mock.MagicMock())
+        self.s3_scribe = archive.S3Scribe(1, router_mock, 'bucket_name', self.mock.MagicMock())
 
     def test_should_call_s3_client_to_upload_file(self):
         self.s3_scribe.save('image.png')

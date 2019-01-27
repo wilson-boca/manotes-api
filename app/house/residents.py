@@ -52,23 +52,21 @@ class User(object):
 
     @classmethod
     def create_with_token(cls, token):
-        db_instance = cls.repository.one_or_none(token=token)
-        if db_instance is None:
-            raise exceptions.NotFound('Could not find a user with token {}'.format(token))
-        return cls(db_instance=db_instance)
+        return cls._create_with_keys(token=token)
 
     @classmethod
     def create_with_username(cls, username):
-        db_instance = cls.repository.one_or_none(username=username)
-        if db_instance is None:
-            raise exceptions.NotFound('Could not find a user with username {}'.format(username))
-        return cls(db_instance=db_instance)
+        return cls._create_with_keys(username=username)
 
     @classmethod
     def create_with_email(cls, email):
-        db_instance = cls.repository.one_or_none(email=email)
+        return cls._create_with_keys(email=email)
+
+    @classmethod
+    def _create_with_keys(cls, **keys):
+        db_instance = cls.repository.one_or_none(**keys)
         if db_instance is None:
-            raise exceptions.NotFound('Could not find a user with email {}'.format(email))
+            raise exceptions.NotFound('Could not find a user with keys: {}'.format(keys))
         return cls(db_instance=db_instance)
 
     # TODO: Isso está errado? Deveria o clerk ter esse repositório e salvar?

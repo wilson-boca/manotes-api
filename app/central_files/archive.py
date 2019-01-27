@@ -61,10 +61,8 @@ class LocalScribe(AbstractScribe):
 
 class S3Scribe(AbstractScribe):
 
-    def __init__(self, user_id, router, access_key_id, secret_access_key, bucket_name, s3_client):
+    def __init__(self, user_id, router, bucket_name, s3_client):
         super(S3Scribe, self).__init__(user_id, router)
-        self.access_key_id = access_key_id
-        self.secret_access_key = secret_access_key
         self.bucket_name = bucket_name
         self.s3_client = s3_client
 
@@ -83,7 +81,7 @@ class S3Scribe(AbstractScribe):
             raise exceptions.InvalidRouter('Please pass a valid router for File')
 
         router = AvatarDirectoryRouter.create_for_user(user_id)
-        return cls(user_id, router, access_key_id, secret_access_key, bucket_name, s3_client)
+        return cls(user_id, router, bucket_name, s3_client)
 
     def save(self, file):
         try:
