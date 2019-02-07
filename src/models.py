@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
-from app import config as config_module
-from app import database, exceptions
+from src import config as config_module
+from src import database, exceptions
 
 db = database.AppRepository.db
 

@@ -1,6 +1,6 @@
 import datetime
-from app import config, models, exceptions
-from app.base import domain
+from src import config, models, exceptions
+from src.base import domain
 
 config = config.get_config()
 

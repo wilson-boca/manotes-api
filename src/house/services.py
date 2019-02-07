@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from app.base.services import Service
-from app.central_files import archive
-from app.house import residents
+from src.base.services import Service
+from src.central_files import archive
+from src.house import residents
 
 
 class NoteService(Service):
-    _entity = 'app.house.wall'
+    _entity = 'src.house.wall'
 
     @classmethod
     def create_new(cls, note):

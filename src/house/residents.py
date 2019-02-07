@@ -1,7 +1,7 @@
 import datetime
-from app.house import services
-from app.base import domain
-from app import models, config as config_module
+from src.house import services
+from src.base import domain
+from src import models, config as config_module
 
 config = config_module.get_config()
 

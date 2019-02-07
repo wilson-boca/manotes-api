@@ -1,12 +1,12 @@
 from tests import base
-from app import config as config_module
-from app.house import residents
+from src import config as config_module
+from src.house import residents
 
 config = config_module.get_config()
 
 
 class UserCreateWithToken(base.TestCase):
-    @base.TestCase.mock.patch('app.house.residents.User._create_with_keys')
+    @base.TestCase.mock.patch('src.house.residents.User._create_with_keys')
     def test_should_return_instance(self, create_with_keys_mock):
         user_mocked = self.mock.MagicMock('something')
         user_mocked.id = 1
@@ -14,7 +14,7 @@ class UserCreateWithToken(base.TestCase):
         user_created = residents.User.create_with_token('asfqERafd')
         self.assertEqual(user_created, user_mocked)
 
-    @base.TestCase.mock.patch('app.house.residents.User._create_with_keys')
+    @base.TestCase.mock.patch('src.house.residents.User._create_with_keys')
     def test_should_call_create_with_keys(self, create_with_keys_mock):
         residents.User.create_with_token('asfqERafd')
         create_with_keys_mock.assert_called_with(token='asfqERafd')
@@ -22,7 +22,7 @@ class UserCreateWithToken(base.TestCase):
 
 class UserNotesTest(base.TestCase):
 
-    @base.TestCase.mock.patch('app.house.services.NoteService')
+    @base.TestCase.mock.patch('src.house.services.NoteService')
     def test_should_call_service_if_not_cached(self, note_service):
         note_service.list_for_user.return_value = []
         db_instance = self.mock.MagicMock()
@@ -32,7 +32,7 @@ class UserNotesTest(base.TestCase):
         self.assertTrue(note_service.list_for_user.called)
         self.assertEqual(notes, [])
 
-    @base.TestCase.mock.patch('app.house.services.NoteService')
+    @base.TestCase.mock.patch('src.house.services.NoteService')
     def test_should_return_notes_if_cached(self, note_service):
         note_service.list_for_user.return_value = []
         db_instance = self.mock.MagicMock()
@@ -111,7 +111,7 @@ class UserAvatarPathTest(base.TestCase):
 
 class UserCreateWithUsernameTest(base.TestCase):
 
-    @base.TestCase.mock.patch('app.house.residents.User._create_with_keys')
+    @base.TestCase.mock.patch('src.house.residents.User._create_with_keys')
     def test_should_return_instance(self, create_with_keys_mock):
         user_mocked = self.mock.MagicMock('something')
         user_mocked.id = 1
@@ -119,7 +119,7 @@ class UserCreateWithUsernameTest(base.TestCase):
         user_created = residents.User.create_with_username('breno')
         self.assertEqual(user_created, user_mocked)
 
-    @base.TestCase.mock.patch('app.house.residents.User._create_with_keys')
+    @base.TestCase.mock.patch('src.house.residents.User._create_with_keys')
     def test_should_call_create_with_keys(self, create_with_keys_mock):
         residents.User.create_with_username('breno')
         create_with_keys_mock.assert_called_with(username='breno')
@@ -127,7 +127,7 @@ class UserCreateWithUsernameTest(base.TestCase):
 
 class UserCreateWithEmailTest(base.TestCase):
 
-    @base.TestCase.mock.patch('app.house.residents.User._create_with_keys')
+    @base.TestCase.mock.patch('src.house.residents.User._create_with_keys')
     def test_should_return_instance(self, create_with_keys_mock):
         user_mocked = self.mock.MagicMock('something')
         user_mocked.id = 1
@@ -135,7 +135,7 @@ class UserCreateWithEmailTest(base.TestCase):
         user_created = residents.User.create_with_email('breno@breno.com')
         self.assertEqual(user_created, user_mocked)
 
-    @base.TestCase.mock.patch('app.house.residents.User._create_with_keys')
+    @base.TestCase.mock.patch('src.house.residents.User._create_with_keys')
     def test_should_call_create_with_keys(self, create_with_keys_mock):
         residents.User.create_with_email('breno@breno.com')
         create_with_keys_mock.assert_called_with(email='breno@breno.com')
@@ -148,27 +148,27 @@ class UserUpdateTest(base.TestCase):
         db_instance_mock.id = 1
         self.user = residents.User(db_instance_mock)
 
-    @base.mock.patch('app.house.residents.datetime.datetime')
+    @base.mock.patch('src.house.residents.datetime.datetime')
     def test_should_pop_password_from_payload(self, datetime_mock):
         datetime_mock.utcnow = self.mock.MagicMock()
         payload_mock = self.mock.MagicMock()
         self.user.update(payload_mock)
         self.assertTrue(payload_mock.pop.called)
 
-    @base.mock.patch('app.house.residents.datetime.datetime')
+    @base.mock.patch('src.house.residents.datetime.datetime')
     def test_should_call_datetime_utcnow(self, datetime_mock):
         payload_mock = self.mock.MagicMock()
         self.user.update(payload_mock)
         self.assertTrue(datetime_mock.utcnow.called)
 
-    @base.mock.patch('app.house.residents.datetime.datetime')
+    @base.mock.patch('src.house.residents.datetime.datetime')
     def test_should_set_update_date_from_utcnow(self, datetime_mock):
         datetime_mock.utcnow.return_value = 'asd'
         payload_mock = self.mock.MagicMock()
         self.user.update(payload_mock)
         self.assertTrue(payload_mock.update_date, 'asd')
 
-    @base.mock.patch('app.house.residents.datetime.datetime')
+    @base.mock.patch('src.house.residents.datetime.datetime')
     def test_should_call_db_instance_to_update_from_dict(self, datetime_mock):
         datetime_mock.utcnow = self.mock.MagicMock()
         payload_mock = self.mock.MagicMock()
@@ -199,7 +199,7 @@ class UserAsDictTest(base.TestCase):
 
 class UserGetANoteTest(base.TestCase):
 
-    @base.TestCase.mock.patch('app.house.services.NoteService')
+    @base.TestCase.mock.patch('src.house.services.NoteService')
     def test_should_call_services_to_instantiate(self, note_service_mock):
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
@@ -210,7 +210,7 @@ class UserGetANoteTest(base.TestCase):
 
 class UserCreateANoteTest(base.TestCase):
 
-    @base.TestCase.mock.patch('app.house.services.NoteService')
+    @base.TestCase.mock.patch('src.house.services.NoteService')
     def test_should_call_services_to_create_new(self, note_service_mock):
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
@@ -227,7 +227,7 @@ class UserCreateANoteTest(base.TestCase):
 
 class UpdateANoteTest(base.TestCase):
 
-    @base.TestCase.mock.patch('app.house.services.NoteService')
+    @base.TestCase.mock.patch('src.house.services.NoteService')
     def test_should_call_services_to_instantiate(self, note_service_note):
         note_mock = self.mock.MagicMock()
         note_service_note.create_for_user.return_value = note_mock
@@ -243,7 +243,7 @@ class UpdateANoteTest(base.TestCase):
         user.update_a_note(id=1, note_changes=note_changes)
         self.assertTrue(note_service_note.create_for_user.called)
 
-    @base.TestCase.mock.patch('app.house.services.NoteService')
+    @base.TestCase.mock.patch('src.house.services.NoteService')
     def test_should_call_update_if_note_was_instantiated(self, note_service_note):
         note_mock = self.mock.MagicMock()
         note_service_note.create_for_user.return_value = note_mock
@@ -262,7 +262,7 @@ class UpdateANoteTest(base.TestCase):
 
 class UserDeleteANoteTest(base.TestCase):
 
-    @base.TestCase.mock.patch('app.house.services.NoteService')
+    @base.TestCase.mock.patch('src.house.services.NoteService')
     def test_should_call_services_to_instantiate(self, note_service_note):
         note_mock = self.mock.MagicMock()
         note_service_note.create_for_user.return_value = note_mock
@@ -272,7 +272,7 @@ class UserDeleteANoteTest(base.TestCase):
         user.delete_a_note(id=1)
         self.assertTrue(note_service_note.create_for_user)
 
-    @base.TestCase.mock.patch('app.house.services.NoteService')
+    @base.TestCase.mock.patch('src.house.services.NoteService')
     def test_should_call_delete_if_note_instantiated(self, note_service_note):
         note_mock = self.mock.MagicMock()
         note_service_note.create_for_user.return_value = note_mock
@@ -290,21 +290,21 @@ class UserChangeAvatarTest(base.TestCase):
         db_instance_mock.id = 1
         self.user = residents.User(db_instance_mock)
 
-    @base.mock.patch('app.house.services.FileService.save_avatar', base.mock.MagicMock())
+    @base.mock.patch('src.house.services.FileService.save_avatar', base.mock.MagicMock())
     def test_should_call_avatar_file_to_save(self):
         avatar_mock = self.mock.MagicMock()
         files = {'avatar': avatar_mock}
         self.user.change_avatar(files)
         self.assertTrue(avatar_mock.save.called)
 
-    @base.mock.patch('app.house.services.FileService.save_avatar')
+    @base.mock.patch('src.house.services.FileService.save_avatar')
     def test_should_call_file_service_to_save_avatar(self, save_avatar_mock):
         avatar_mock = self.mock.MagicMock()
         files = {'avatar': avatar_mock}
         self.user.change_avatar(files)
         self.assertTrue(save_avatar_mock.called)
 
-    @base.mock.patch('app.house.services.FileService.save_avatar')
+    @base.mock.patch('src.house.services.FileService.save_avatar')
     def test_db_instance_has_avatar_path(self, save_avatar_mock):
         avatar_mock = self.mock.MagicMock()
         save_avatar_mock.return_value = 'some/path'
@@ -312,7 +312,7 @@ class UserChangeAvatarTest(base.TestCase):
         self.user.change_avatar(files)
         self.assertEqual('some/path', self.user.db_instance.avatar_path)
 
-    @base.mock.patch('app.house.services.FileService.save_avatar', base.mock.MagicMock)
+    @base.mock.patch('src.house.services.FileService.save_avatar', base.mock.MagicMock)
     def test_should_call_db_instance_to_save_db(self):
         avatar_mock = self.mock.MagicMock()
         files = {'avatar': avatar_mock}
