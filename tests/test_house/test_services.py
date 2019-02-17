@@ -57,3 +57,11 @@ class FileServiceSaveAvatarTest(base.TestCase):
         scribe_instance.save.return_value = '/path'
         path = services.FileService.save_avatar('/some_path', 1)
         self.assertEqual('/path', path)
+
+
+class NoteSharingServiceShareThisNoteForMe(base.TestCase):
+
+    @base.TestCase.mock.patch('src.house.sharing.NoteSharing.share')
+    def test_should_call_note_sharing_to_share(self, share_mock):
+        services.NoteSharingService.share_it_for_me(1, 2, 3)
+        share_mock.assert_called_with(1, 2, 3)

@@ -318,3 +318,40 @@ class UserChangeAvatarTest(base.TestCase):
         files = {'avatar': avatar_mock}
         self.user.change_avatar(files)
         self.assertTrue(self.user.db_instance.save_db.called)
+
+
+class UserNoteSharing(base.TestCase):
+
+    def setUp(self):
+        db_instance_mock = self.mock.MagicMock()
+        db_instance_mock.id = 1
+        self.user = residents.User(db_instance_mock)
+
+    @base.mock.patch('src.house.services.NoteSharingService.share_it_for_me')
+    @base.mock.patch('src.house.services.NoteService.create_for_user')
+    def test_should_call_note_service_to_create_for_user(self, create_for_user_mock, share_it_for_me_mock):
+        self.user.share_a_note(note_id=5, user_id=2)
+        create_for_user_mock.assert_called_with(1, 5)
+    #
+    # @base.mock.patch('src.house.services.UserService.create_with_id')
+    # def test_should_call_user_service_to_create_target_user_instance(self, create_with_id_mock):
+    #     self.user.share_a_note(note_id=5, target_user_id=2)
+    #     create_with_id_mock.assert_called_with(2)
+
+    @base.mock.patch('src.house.services.NoteService.create_for_user')
+    @base.mock.patch('src.house.services.UserService.create_with_id')
+    @base.mock.patch('src.house.services.NoteSharingService.share_it_for_me')
+    def test_should_call_share_service_to_share_a_note(self, share_it_for_me_mock, create_with_id_mock, create_for_user_mock):
+        note_mock = self.mock.MagicMock(id=5)
+        create_for_user_mock.return_value = note_mock
+        self.user.share_a_note(note_id=5, user_id=2)
+        share_it_for_me_mock.assert_called_with(1, 5, 2)
+
+    @base.mock.patch('src.house.services.NoteService.create_for_user')
+    @base.mock.patch('src.house.services.UserService.create_with_id')
+    @base.mock.patch('src.house.services.NoteSharingService.share_it_for_me')
+    def test_should_call_note_instance_be_marked_as_shared(self, share_it_for_me_mock, create_with_id_mock, create_for_user_mock):
+        note_mock = self.mock.MagicMock()
+        create_for_user_mock.return_value = note_mock
+        self.user.share_a_note(note_id=5, user_id=2)
+        self.assertTrue(note_mock.mark_as_shared.called)

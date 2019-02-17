@@ -49,6 +49,10 @@ class Note(domain.Entity):
     def delete(self):
         self.db_instance.delete_db()
 
+    def mark_as_shared(self):
+        self.db_instance.shared = True
+        self.db_instance.save_db()
+
     def as_dict(self):
         return {
             'id': self.id,

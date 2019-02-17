@@ -72,3 +72,18 @@ class NoteUpdateTest(base.TestCase):
         note = wall.Note.create_with_instance(self.mock.MagicMock())
         note.update({'key': 'value'})
         self.assertTrue(note.db_instance.update_from_dict.called)
+
+
+class NoteMarkAsShared(base.TestCase):
+
+    def setUp(self):
+        self.db_instance = self.mock.MagicMock()
+        self.note = wall.Note.create_with_instance(self.db_instance)
+
+    def test_should_set_true_on_shared_db_instance_attribute(self):
+        self.note.mark_as_shared()
+        self.assertEqual(self.db_instance.shared, True)
+
+    def test_should_call_db_instance_to_save_db(self):
+        self.note.mark_as_shared()
+        self.assertTrue(self.db_instance.save_db.called)

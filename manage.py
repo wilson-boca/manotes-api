@@ -13,7 +13,7 @@ manager = Manager(initialize.web_app)
 
 
 def register_migrate(manager):
-    from src.models import db, Note, User
+    from src.models import db
     migrate = Migrate(initialize.web_app, db)
     manager.add_command('db', MigrateCommand)
     return migrate

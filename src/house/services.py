@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from src.base.services import Service
 from src.central_files import archive
-from src.house import residents
+from src.house import residents, sharing
 
 
 class NoteService(Service):
@@ -39,3 +39,14 @@ class UserService(Service):
     @classmethod
     def create_new(cls, user):
         return residents.User.create_new(user)
+
+    @classmethod
+    def create_with_id(cls, user_id):
+        return residents.User.create_with_id(user_id)
+
+
+class NoteSharingService(Service):
+
+    @classmethod
+    def share_it_for_me(cls, giver_id, note_id, target_user_id):
+        sharing.NoteSharing.share(giver_id, note_id, target_user_id)

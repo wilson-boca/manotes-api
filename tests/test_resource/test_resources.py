@@ -1221,6 +1221,106 @@ class NoteResourceDeleteTest(base.TestCase):
         self.assertEqual(response[1], 405)
 
 
+class NoteSharingResourceGetTest(base.TestCase):
+
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_not_allowed(self, g_mock):
+        note_sharing_resource = resources.NoteSharingResource()
+        response = note_sharing_resource.get(note_id=1)
+        self.assertEqual(json.loads(response.data), {'result': 'Method not allowed'})
+
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_status_code_405(self, g_mock):
+        note_sharing_resource = resources.NoteSharingResource()
+        response = note_sharing_resource.get(note_id=1)
+        self.assertEqual(response.status_code, 405)
+
+
+class NoteSharingResourcePostTest(base.TestCase):
+
+    @base.TestCase.mock.patch('src.resource.resources.NoteSharingResource.logged_user')
+    @base.TestCase.mock.patch('src.resource.resources.NoteSharingResource.payload')
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_call_me_for_share_a_note(self, g_mock, payload_mock, logged_user_mock):
+        note_sharing_resource = resources.NoteSharingResource()
+        note_sharing_resource.post(note_id=1)
+        logged_user_mock.share_a_note.assert_called_with(1, payload_mock)
+
+    @base.TestCase.mock.patch('src.resource.resources.NoteSharingResource.logged_user')
+    @base.TestCase.mock.patch('src.resource.resources.NoteSharingResource.payload')
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_ok(self, g_mock, payload_mock, logged_user_mock):
+        note_sharing_resource = resources.NoteSharingResource()
+        response = note_sharing_resource.post(note_id=1)
+        self.assertTrue(response, note_sharing_resource.return_ok())
+
+    @base.TestCase.mock.patch('src.resource.resources.NoteSharingResource.logged_user')
+    @base.TestCase.mock.patch('src.resource.resources.NoteSharingResource.payload')
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_user_not_exists_if_user_not_exists_raised(self, g_mock, payload_mock, logged_user_mock):
+        logged_user_mock.share_a_note = self.mock.MagicMock(side_effect=exceptions.UserNotExists('Something got wrong'))
+        note_sharing_resource = resources.NoteSharingResource()
+        response = note_sharing_resource.post(note_id=1)
+        self.assertEqual(response, ({'result': 'not-found', 'error': 'Resource Not Found'}, 404))
+
+    @base.TestCase.mock.patch('src.resource.resources.NoteSharingResource.logged_user')
+    @base.TestCase.mock.patch('src.resource.resources.NoteSharingResource.payload')
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_note_not_found_if_note_not_found_raised(self, g_mock, payload_mock, logged_user_mock):
+        logged_user_mock.share_a_note = self.mock.MagicMock(side_effect=exceptions.NoteNotFound('Something got wrong'))
+        note_sharing_resource = resources.NoteSharingResource()
+        response = note_sharing_resource.post(note_id=1)
+        self.assertEqual(response, note_sharing_resource.return_not_found())
+
+    @base.TestCase.mock.patch('src.resource.resources.NoteSharingResource.logged_user')
+    @base.TestCase.mock.patch('src.resource.resources.NoteSharingResource.payload')
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_note_not_mine_if_note_not_mine_raised(self, g_mock, payload_mock, logged_user_mock):
+        logged_user_mock.share_a_note = self.mock.MagicMock(side_effect=exceptions.NoteNotMine('Something got wrong'))
+        note_sharing_resource = resources.NoteSharingResource()
+        response = note_sharing_resource.post(note_id=1)
+        self.assertEqual(response, note_sharing_resource.return_not_mine())
+
+    @base.TestCase.mock.patch('src.resource.resources.NoteSharingResource.logged_user')
+    @base.TestCase.mock.patch('src.resource.resources.NoteSharingResource.payload')
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_unexpected_error_if_exception_raised(self, g_mock, payload_mock, logged_user_mock):
+        logged_user_mock.share_a_note = self.mock.MagicMock(side_effect=Exception('Something got wrong'))
+        note_sharing_resource = resources.NoteSharingResource()
+        response = note_sharing_resource.post(note_id=1)
+        self.assertTrue(response, note_sharing_resource.return_unexpected_error())
+
+
+class NoteSharingResourcePutTest(base.TestCase):
+
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_not_allowed(self, g_mock):
+        note_sharing_resource = resources.NoteSharingResource()
+        response = note_sharing_resource.put(note_id=1)
+        self.assertEqual(json.loads(response.data), {'result': 'Method not allowed'})
+
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_status_code_405(self, g_mock):
+        note_sharing_resource = resources.NoteSharingResource()
+        response = note_sharing_resource.put(note_id=1)
+        self.assertEqual(response.status_code, 405)
+
+
+class NoteSharingResourceDeleteTest(base.TestCase):
+
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_not_allowed(self, g_mock):
+        note_sharing_resource = resources.NoteSharingResource()
+        response = note_sharing_resource.delete(note_id=1)
+        self.assertEqual(json.loads(response.data), {'result': 'Method not allowed'})
+
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_status_code_405(self, g_mock):
+        note_sharing_resource = resources.NoteSharingResource()
+        response = note_sharing_resource.delete(note_id=1)
+        self.assertEqual(response.status_code, 405)
+
+
 class AvatarResourceGetTest(base.TestCase):
 
     @base.TestCase.mock.patch('src.resource.resources.g')
