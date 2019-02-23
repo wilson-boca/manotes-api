@@ -236,7 +236,7 @@ class NoteSharingResource(ResourceBase):
     @login_required
     def post(self, note_id):
         try:
-            self.me.share_a_note(note_id, self.payload)
+            self.me.share_a_note(note_id, self.payload["user_id"])
             return self.return_ok()
         except exceptions.UserNotExists as ex:
             return self.response({'result': 'not-found', 'error': 'Resource Not Found'}), 404

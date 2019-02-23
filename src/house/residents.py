@@ -88,7 +88,7 @@ class User(domain.Entity):
         self.db_instance.save_db()
 
     def share_a_note(self, note_id, user_id):
-        note = services.NoteService.create_for_user(self.id, note_id)
+        note = services.NoteService.create_for_user(note_id, self.id)
         services.NoteSharingService.share_it_for_me(self.id, note.id, user_id)
         note.mark_as_shared()
 

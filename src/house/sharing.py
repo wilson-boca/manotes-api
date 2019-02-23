@@ -23,7 +23,7 @@ class NoteSharing(domain.Entity):
             raise exceptions.UserNotExists('Could not share note {} because the user {} does not exists'.format(user_id, note_id))
 
         try:
-            services.NoteService.create_for_user(note_id, user_id)
+            services.NoteService.create_for_user(note_id, giver_id)
         except exceptions.NotFound:
             raise exceptions.NoteNotFound('Could not share note {} because it was not found')
         except exceptions.NotMine:

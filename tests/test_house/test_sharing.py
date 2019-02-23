@@ -34,7 +34,7 @@ class NoteSharingShareTest(base.TestCase):
     @base.TestCase.mock.patch('src.models.NoteSharing.create_from_dict')
     def test_should_call_note_service_to_create_for_user(self, create_from_dict_mock, create_with_id_mock, create_for_user_mock):
         sharing.NoteSharing.share(1, 2, 3)
-        create_for_user_mock.assert_called_with(2, 3)
+        create_for_user_mock.assert_called_with(2, 1)
 
     @base.TestCase.mock.patch('src.house.services.NoteService')
     @base.TestCase.mock.patch('src.house.services.UserService.create_with_id')

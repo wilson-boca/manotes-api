@@ -331,7 +331,7 @@ class UserNoteSharing(base.TestCase):
     @base.mock.patch('src.house.services.NoteService.create_for_user')
     def test_should_call_note_service_to_create_for_user(self, create_for_user_mock, share_it_for_me_mock):
         self.user.share_a_note(note_id=5, user_id=2)
-        create_for_user_mock.assert_called_with(1, 5)
+        create_for_user_mock.assert_called_with(5, 1)
     #
     # @base.mock.patch('src.house.services.UserService.create_with_id')
     # def test_should_call_user_service_to_create_target_user_instance(self, create_with_id_mock):

@@ -1242,9 +1242,10 @@ class NoteSharingResourcePostTest(base.TestCase):
     @base.TestCase.mock.patch('src.resource.resources.NoteSharingResource.payload')
     @base.TestCase.mock.patch('src.resource.resources.g')
     def test_should_call_me_for_share_a_note(self, g_mock, payload_mock, logged_user_mock):
+        payload_mock.return_value = {"user_id": 5}
         note_sharing_resource = resources.NoteSharingResource()
         note_sharing_resource.post(note_id=1)
-        logged_user_mock.share_a_note.assert_called_with(1, payload_mock)
+        logged_user_mock.share_a_note.assert_called_with(1, payload_mock["user_id"])
 
     @base.TestCase.mock.patch('src.resource.resources.NoteSharingResource.logged_user')
     @base.TestCase.mock.patch('src.resource.resources.NoteSharingResource.payload')
