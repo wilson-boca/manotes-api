@@ -13,12 +13,21 @@ class User(domain.Entity):
         super(User, self).__init__(db_instance)
         self.id = db_instance.id
         self._notes = None
+        self._shared_notes = None
 
     @property
     def notes(self):
         if self._notes is None:
             self._notes = services.NoteService.list_for_user(user_id=self.id)
         return self._notes
+
+    @property
+    def shared_notes(self):
+        if self._shared_notes is None:
+            notes_sharing = services.NoteSharingService.list_it_for_user(self.id)
+            self._shared_notes = [services.NoteService.create_for_user(note_sharing.user_id, note_sharing.note_id)
+                                  for note_sharing in notes_sharing]
+        return self._shared_notes
 
     @property
     def token(self):

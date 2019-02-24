@@ -227,6 +227,32 @@ class NoteResource(ResourceBase):
                 return self.return_unexpected_error()
 
 
+class SharedNoteResource(ResourceBase):
+
+    def query(self):
+        return [self.response(shared_note) for shared_note in self.me.shared_notes]
+
+    @login_required
+    def get(self, note_id=None):
+        try:
+            if not note_id:
+                return self.query()
+        except Exception as ex:
+            return self.return_unexpected_error()
+
+    @not_allowed
+    def post(self, note_id):
+        pass
+
+    @not_allowed
+    def put(self, note_id):
+        pass
+
+    @not_allowed
+    def delete(self, note_id):
+        pass
+
+
 class NoteSharingResource(ResourceBase):
 
     @not_allowed

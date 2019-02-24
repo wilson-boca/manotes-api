@@ -50,3 +50,8 @@ class NoteSharingService(Service):
     @classmethod
     def share_it_for_me(cls, giver_id, note_id, target_user_id):
         sharing.NoteSharing.share(giver_id, note_id, target_user_id)
+
+    @classmethod
+    def list_it_for_user(cls, user_id):
+        notes_sharing = sharing.NoteSharing.list_for_user(user_id)
+        return notes_sharing

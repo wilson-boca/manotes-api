@@ -833,6 +833,11 @@ class LoginResourceDeleteTest(base.TestCase):
         self.assertEqual(response.status_code, 405)
 
 
+# TODO: Implement
+class NoteResourceQueryTest(base.TestCase):
+    pass
+
+
 class NoteResourceGetTest(base.TestCase):
 
     @base.TestCase.mock.patch('src.resource.resources.g')
@@ -1319,6 +1324,132 @@ class NoteSharingResourceDeleteTest(base.TestCase):
     def test_should_return_status_code_405(self, g_mock):
         note_sharing_resource = resources.NoteSharingResource()
         response = note_sharing_resource.delete(note_id=1)
+        self.assertEqual(response.status_code, 405)
+
+
+class SharedNoteResourceQueryTest(base.TestCase):
+
+    @base.TestCase.mock.patch('src.resource.resources.SharedNoteResource.response')
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    @base.TestCase.mock.patch('src.resource.resources.SharedNoteResource.logged_user')
+    def test_should_pass_user_shared_notes_to_response(self, logged_user_mock, g_mock, response_mock):
+        g_mock = self.mock.MagicMock()
+        g_mock.authenticated.return_value = True
+        shared_note_1 = self.mock.MagicMock()
+        shared_note_2 = self.mock.MagicMock()
+        shared_notes_mock = [shared_note_1, shared_note_2]
+        logged_user_mock.shared_notes = shared_notes_mock
+        shared_note_resource = resources.SharedNoteResource()
+        shared_note_resource.query()
+        response_mock.assert_called_with(shared_note_2)
+
+    @base.TestCase.mock.patch('src.resource.resources.SharedNoteResource.response')
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    @base.TestCase.mock.patch('src.resource.resources.SharedNoteResource.logged_user')
+    def test_should_return_list_from_responses(self, logged_user_mock, g_mock, response_mock):
+        g_mock = self.mock.MagicMock()
+        g_mock.authenticated.return_value = True
+        shared_note_1 = self.mock.MagicMock()
+        shared_note_2 = self.mock.MagicMock()
+        shared_notes_mock = [shared_note_1, shared_note_2]
+        logged_user_mock.shared_notes = shared_notes_mock
+        shared_note_expected_response = self.mock.MagicMock()
+        response_mock.return_value = shared_note_expected_response
+        shared_note_resource = resources.SharedNoteResource()
+        shared_notes_response = shared_note_resource.query()
+        self.assertEqual(shared_notes_response, [shared_note_expected_response, shared_note_expected_response])
+
+
+class SharedNoteResourceGetTest(base.TestCase):
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_status_code_401_if_not_auth(self, g_mock):
+        g_mock.authenticated = False
+        shared_note_resource = resources.SharedNoteResource
+        response = shared_note_resource.get()
+        self.assertEqual(response.status_code, 401)
+
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_not_authorized_not_authenticated(self, g_mock):
+        g_mock.authenticated = False
+        shared_note_resource = resources.SharedNoteResource
+        response = shared_note_resource.get()
+        self.assertEqual(json.loads(response.data), {"result": "Not Authorized"})
+
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_call_query_if_not_note_id(self, g_mock):
+        g_mock = self.mock.MagicMock()
+        g_mock.authenticated.return_value = True
+        shared_note_resource = resources.SharedNoteResource()
+        shared_note_resource.query = self.mock.MagicMock()
+        shared_note_resource.query.return_value = [
+            {
+                'id': 1,
+                'name': 'This is a note',
+                'content': 'And I need to write a mock content',
+                'color': '#FFFFFF'
+            },
+            {
+                'id': 2,
+                'name': 'This is another note',
+                'content': 'And I need to write another mock content',
+                'color': '#FFFFFF'
+            },
+        ]
+        shared_note_resource.get()
+        self.assertTrue(shared_note_resource.query.called)
+
+    @base.TestCase.mock.patch('src.resource.resources.SharedNoteResource.logged_user')
+    @base.TestCase.mock.patch('src.resource.resources.SharedNoteResource.query')
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_unexpected_error_if_exception_raised(self, g_mock, query_mock, logged_user_mock):
+        query_mock = self.mock.MagicMock(side_effect=Exception('Something got wrong'))
+        shared_note_resource = resources.SharedNoteResource()
+        response = shared_note_resource.get()
+        self.assertTrue(response, shared_note_resource.return_unexpected_error())
+
+
+class SharedNoteResourcePostTest(base.TestCase):
+
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_not_allowed(self, g_mock):
+        shared_notes_resource = resources.SharedNoteResource()
+        response = shared_notes_resource.post(note_id=1)
+        self.assertEqual(json.loads(response.data), {'result': 'Method not allowed'})
+
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_status_code_405(self, g_mock):
+        shared_notes_resource = resources.SharedNoteResource()
+        response = shared_notes_resource.post(note_id=1)
+        self.assertEqual(response.status_code, 405)
+
+
+class SharedNoteResourcePutTest(base.TestCase):
+
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_not_allowed(self, g_mock):
+        shared_notes_resource = resources.SharedNoteResource()
+        response = shared_notes_resource.put(note_id=1)
+        self.assertEqual(json.loads(response.data), {'result': 'Method not allowed'})
+
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_status_code_405(self, g_mock):
+        shared_notes_resource = resources.SharedNoteResource()
+        response = shared_notes_resource.put(note_id=1)
+        self.assertEqual(response.status_code, 405)
+
+
+class SharedNoteResourceDeleteTest(base.TestCase):
+
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_not_allowed(self, g_mock):
+        shared_notes_resource = resources.SharedNoteResource()
+        response = shared_notes_resource.delete(note_id=1)
+        self.assertEqual(json.loads(response.data), {'result': 'Method not allowed'})
+
+    @base.TestCase.mock.patch('src.resource.resources.g')
+    def test_should_return_status_code_405(self, g_mock):
+        shared_notes_resource = resources.SharedNoteResource()
+        response = shared_notes_resource.delete(note_id=1)
         self.assertEqual(response.status_code, 405)
 
 

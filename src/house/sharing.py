@@ -31,3 +31,8 @@ class NoteSharing(domain.Entity):
 
         sharing = {'giver_id': giver_id, 'note_id': note_id, 'user_id': user_id}
         cls.repository.create_from_dict(sharing)
+
+    @classmethod
+    def list_for_user(cls, user_id):
+        db_instances = cls.repository.filter(user_id=user_id)
+        return [cls.create_with_instance(db_instance) for db_instance in db_instances]

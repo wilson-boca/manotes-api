@@ -65,3 +65,17 @@ class NoteSharingServiceShareThisNoteForMe(base.TestCase):
     def test_should_call_note_sharing_to_share(self, share_mock):
         services.NoteSharingService.share_it_for_me(1, 2, 3)
         share_mock.assert_called_with(1, 2, 3)
+
+
+class NoteSharingServiceListForUser(base.TestCase):
+
+    @base.TestCase.mock.patch('src.house.sharing.NoteSharing.list_for_user')
+    def test_should_call_note_sharing_to_list_for_user(self, list_for_user_mock):
+        services.NoteSharingService.list_it_for_user(1)
+        list_for_user_mock.assert_called_with(1)
+
+    @base.TestCase.mock.patch('src.house.sharing.NoteSharing.list_for_user')
+    def test_should_return_list_of_notes_sharing(self, list_for_user_mock):
+        list_for_user_mock.return_value = []
+        notes_sharing = services.NoteSharingService.list_it_for_user(1)
+        self.assertEqual(notes_sharing, [])

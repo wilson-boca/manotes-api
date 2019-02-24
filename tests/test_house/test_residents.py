@@ -44,6 +44,41 @@ class UserNotesTest(base.TestCase):
         self.assertEqual(notes, [])
 
 
+class UserSharedNotesTest(base.TestCase):
+
+    @base.TestCase.mock.patch('src.house.services.NoteSharingService')
+    def test_should_call_note_sharing_service_to_list_for_user_if_not_cached(self, note_sharing_service_mock):
+        note_sharing_service_mock.list_it_for_user.return_value = []
+        db_instance = self.mock.MagicMock()
+        db_instance.id = 1
+        user = residents.User(db_instance=db_instance)
+        user.shared_notes
+        self.assertTrue(note_sharing_service_mock.list_it_for_user.called)
+        note_sharing_service_mock.list_it_for_user.assert_called_with(1)
+
+    @base.TestCase.mock.patch('src.house.services.NoteService')
+    @base.TestCase.mock.patch('src.house.services.NoteSharingService')
+    def test_should_call_note_service_to_create_for_user_if_not_cached(self, note_sharing_service_mock, note_service_mock):
+        note_sharing_1 = self.mock.MagicMock(user_id=1, note_id=10)
+        note_sharing_2 = self.mock.MagicMock(user_id=1, note_id=20)
+        note_sharing_service_mock.list_it_for_user.return_value = [note_sharing_1, note_sharing_2]
+        db_instance = self.mock.MagicMock()
+        db_instance.id = 1
+        user = residents.User(db_instance=db_instance)
+        user.shared_notes
+        note_service_mock.create_for_user.assert_called_with(1, 20) # TODO: How to test this better?
+
+    @base.TestCase.mock.patch('src.house.services.NoteSharingService')
+    def test_should_return_shared_notes_if_cached(self, note_sharing_service_mock):
+        note_sharing_service_mock.list_it_for_user.return_value = []
+        db_instance = self.mock.MagicMock()
+        db_instance.id = 1
+        user = residents.User(db_instance=db_instance)
+        user._shared_notes = []
+        shared_notes = user.shared_notes
+        self.assertEqual(shared_notes, [])
+
+
 class UserTokenTest(base.TestCase):
 
     def setUp(self):

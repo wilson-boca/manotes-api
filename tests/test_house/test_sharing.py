@@ -51,3 +51,20 @@ class NoteSharingShareTest(base.TestCase):
         note_service_mock.create_for_user = self.mock.MagicMock(side_effect=exceptions.NotMine)
         with self.assertRaises(exceptions.NoteNotMine):
             sharing.NoteSharing.share(1, 2, 3)
+
+
+class NoteSharingListForUserTest(base.TestCase):
+
+    @base.TestCase.mock.patch('src.models.NoteSharing.filter')
+    def test_should_call_repository_to_filter(self, filter_mock):
+        sharing.NoteSharing.list_for_user(1)
+        filter_mock.assert_called_with(user_id=1)
+
+    @base.TestCase.mock.patch('src.house.sharing.NoteSharing.create_with_instance')
+    @base.TestCase.mock.patch('src.models.NoteSharing.filter')
+    def test_should_call_create_with_instance_for_each_db_instance(self, filter_mock, create_with_instance_mock):
+        note_sharing_1 = self.mock.MagicMock()
+        note_sharing_2 = self.mock.MagicMock()
+        filter_mock.return_value = [note_sharing_1, note_sharing_2]
+        sharing.NoteSharing.list_for_user(1)
+        create_with_instance_mock.assert_called_with(note_sharing_2) # How to test it better?
