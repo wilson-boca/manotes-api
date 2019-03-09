@@ -772,7 +772,7 @@ class LoginResourcePostTest(base.TestCase):
         user_mock = self.mock.MagicMock()
         auth_service_mock.authenticate_with_credentials.return_value = False, user_mock
         result = self.login_resource.post()
-        self.assertEqual(result[0], {'result': 'Not Authorized'})
+        self.assertEqual(result[0], {'result': 'login-not-authorized', 'message': 'The user was not authorize because his credentials are invalid'})
 
     @base.mock.patch('src.resource.resources.LoginResource.payload')
     @base.mock.patch('src.resource.resources.LoginResource.auth_service')
@@ -789,7 +789,7 @@ class LoginResourcePostTest(base.TestCase):
     def test_should_return_not_found_if_user_not_exists_raised(self, g_mock, auth_service_mock, payload_mock):
         auth_service_mock.authenticate_with_credentials = self.mock.MagicMock(side_effect=exceptions.UserNotExists('Exception message'))
         result = self.login_resource.post()
-        self.assertEqual(result[0], {'result': 'not-found', 'error': 'Resource Not Found'})
+        self.assertEqual(result[0], {'result': 'user-from-login-not-found', 'message': 'Resource Not Found'})
 
     @base.mock.patch('src.resource.resources.LoginResource.payload')
     @base.mock.patch('src.resource.resources.LoginResource.auth_service')

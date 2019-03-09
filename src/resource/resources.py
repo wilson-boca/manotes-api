@@ -161,11 +161,21 @@ class LoginResource(ResourceBase):
                 g.user = user
                 g.current_token = user.token
                 return {'result': 'OK'}, 200
-            return {'result': 'Not Authorized'}, 401
+            return {
+                'result': 'login-not-authorized',
+                'message': 'The user was not authorize because his credentials are invalid'
+            }, 401
         except exceptions.UserNotExists as ex:
-            return {'result': 'not-found', 'error': 'Resource Not Found'}, 404
+            return {
+                'result': 'user-from-login-not-found',
+                'message': 'Resource Not Found'
+            }, 404
+        # TODO: Essa excepton genérica não está bem testada
         except Exception as ex:
-            return {'result': 'Not Authorized'}, 401
+            return {
+                'result': 'unexpected-login-error',
+                'message': 'The user was not authorize because an unexpected error occurred on login'
+            }, 401
 
     @not_allowed
     def put(self):
