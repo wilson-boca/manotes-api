@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import datetime
 from app.house import services
 from app.base import domain
