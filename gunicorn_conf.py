@@ -1,6 +1,6 @@
 import os
 
-bind = '0.0.0.0:{}'.format(os.environ['PORTA'])
+bind = '0.0.0.0:{}'.format(os.environ['PORT'])
 user = os.environ.get('GUNICORN_USER')
 workers = int(os.environ.get('GUNICORN_WORKERS', 2))
 timeout = 600
