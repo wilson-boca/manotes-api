@@ -29,30 +29,60 @@ establish.register_tasks(worker)
 database.AppRepository.db = SQLAlchemy(web_app)
 
 
+# @web_app.before_request
+# def before_request():
+#     from app.security import authentication
+#     token = request.cookies.get('userToken')
+#     authentication.AuthService.authenticate_with_token(token)
+#
+#
+# @web_app.after_request
+# def add_token_header(response):
+#     user = g.get("user")
+#     if user is not None:
+#         token = g.current_token
+#         expire_date = datetime.datetime.now()
+#         expire_date = expire_date + datetime.timedelta(days=90)
+#         response.set_cookie('userToken', token, expires=expire_date)
+#
+#     return response
+#
+#
+# def create_api():
+#     from app import api
+#     api.create_api(web_app)
+#
+#
+# def run():
+#     create_api()
+#     web_app.run(host='0.0.0.0', port=int(config.PORT), debug=True)
 @web_app.before_request
 def before_request():
-    from app.security import authentication
-    token = request.cookies.get('userToken')
-    authentication.AuthService.authenticate_with_token(token)
+    pass
+    # identity = check.Identity.create_for_request(config, g, request)
+    # identity.authenticate()
+
+
+@web_app.after_request
+def add_cache_header(response):
+    """
+    Add response headers for Cache Control
+    """
+    response.headers['Cache-Control'] = "no-cache, no-store, must-revalidate"
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 
 @web_app.after_request
 def add_token_header(response):
-    user = g.get("user")
-    if user is not None:
-        token = g.current_token
-        expire_date = datetime.datetime.now()
-        expire_date = expire_date + datetime.timedelta(days=90)
-        response.set_cookie('userToken', token, expires=expire_date)
-
+    """
+    Add response headers for Cache Control
+    """
+    # identity = check.Identity.create_for_response(config, g, response)
+    # identity.set_response_authorization()
     return response
 
 
-def create_api():
-    from app import api
-    api.create_api(web_app)
-
-
 def run():
-    create_api()
     web_app.run(host='0.0.0.0', port=int(config.PORT), debug=True)
