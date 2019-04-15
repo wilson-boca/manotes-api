@@ -2,7 +2,7 @@
 import datetime
 from flask import Flask, g, request
 from flask_sqlalchemy import SQLAlchemy
-# from flask_cors import CORS
+from flask_cors import CORS
 from app import database, config as config_module
 from app.async_tasks import establish
 
@@ -15,16 +15,15 @@ establish.make_worker(web_app)
 worker = establish.worker
 establish.register_tasks(worker)
 
-
-# CORS(
-#     web_app, origins="*",
-#     allow_headers=[
-#         "Content-Type",
-#         "Authorization",
-#         "Access-Control-Allow-Credentials"
-#     ],
-#     supports_credentials=True
-# )
+CORS(
+    web_app, origins="*",
+    allow_headers=[
+        "Content-Type",
+        "Authorization",
+        "Access-Control-Allow-Credentials"
+    ],
+    supports_credentials=True
+)
 
 database.AppRepository.db = SQLAlchemy(web_app)
 
@@ -56,3 +55,6 @@ def create_api():
 def run():
     create_api()
     web_app.run(host='127.0.0.1', port=int(config.PORT), debug=True)
+
+
+create_api()
