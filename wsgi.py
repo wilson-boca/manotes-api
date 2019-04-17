@@ -1,4 +1,5 @@
-from app.initialize import web_app
+from app import initialize
 
 if __name__ == "__main__":
-    web_app.run()
+    initialize.create_api()
+    initialize.web_app.run()

@@ -52,11 +52,6 @@ def create_api():
     api.create_api(web_app)
 
 
-create_api()
-
-
 def run():
     create_api()
     web_app.run(host='127.0.0.1', port=int(config.PORT), debug=True)
-
-
